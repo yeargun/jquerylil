@@ -1,0 +1,6 @@
+import { rnothtmlwhite } from "../var/rnothtmlwhite";
+import { stringMatch } from "../js-host.lil";
+
+export string stripAndCollapse(string value) {
+  return JS.assume(JS.invoke(JS.or(JS.stringMatch(value, rnothtmlwhite), JS.array()), "join", " "));
+}

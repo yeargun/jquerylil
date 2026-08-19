@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tabs · jquerylil</title>
+    <link rel="stylesheet" href="./app.css" />
+  </head>
+  <body>
+    <main class="wrap" id="app">
+      <nav class="nav">
+        <a href="./index.html">Examples</a>
+        <a href="./todos.html">Todos</a>
+        <a href="./tabs.html" aria-current="page">Tabs</a>
+        <a href="./search.html">Search</a>
+        <a href="./cart.html">Cart</a>
+        <a href="./accordion.html">Accordion</a>
+        <a href="./gallery.html">Gallery</a>
+      </nav>
+      <h1>Tabs</h1>
+      <p class="lede">Attribute state plus <code>.show</code> / <code>.hide</code>.</p>
+      <div class="tabs">
+        <button type="button" data-tab="read" aria-selected="true">Read</button>
+        <button type="button" data-tab="write">Write</button>
+        <button type="button" data-tab="ship">Ship</button>
+      </div>
+      <section class="panel card active" id="read">The port keeps the 3.7.1 names. Internals are LilScript.</section>
+      <section class="panel card" id="write">Apps import <code>jQuery</code> or <code>$</code> from <code>@itslil/jquery</code>.</section>
+      <section class="panel card" id="ship">Script-tag builds still set <code>window.jQuery</code> and <code>window.$</code>.</section>
+    </main>
+    <script type="module">
+      import { jQuery as $ } from "/dist/jquery.esm.js"
+      import { mount } from "./lib/tabs.js"
+      mount($, $("#app"))
+    </script>
+  </body>
+</html>

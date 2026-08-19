@@ -1,0 +1,360 @@
+import { jQuery, each } from "./core";
+import { isFunction } from "./var/isFunction";
+import { newCallbacksMemory } from "./callbacks";
+import { arr } from "./var/arr";
+import {
+  throwTypeError,
+  scheduleTimeout
+} from "./js-host.lil";
+
+struct PromiseApi {
+  JsValue state;
+  JsValue always;
+  JsValue catch;
+  JsValue pipe;
+  JsValue then;
+  JsValue promise;
+}
+
+struct DeferredStatics {
+  JsValue Deferred;
+  JsValue when;
+}
+
+JsValue Identity = (JsValue v) => {
+  return v;
+};
+
+JsValue Thrower = (JsValue ex) => {
+  throw ex;
+};
+
+void adoptValue(JsValue value, JsValue resolve, JsValue reject, bool noValue = false) {
+  try {
+    if (value.truthy()) {
+      JsValue method = value["promise"];
+      if (isFunction(method)) {
+        JS.invoke(JS.invoke(JS.call(method, value), "done", resolve), "fail", reject);
+        return;
+      }
+      method = value["then"];
+      if (isFunction(method)) {
+        JS.call(method, value, resolve, reject);
+        return;
+      }
+    }
+
+    JS.apply(resolve, JS.undefined(), JS.invoke([value], "slice", noValue));
+  } catch (JsValue error) {
+    JS.apply(reject, JS.undefined(), [error]);
+  }
+}
+
+export JsValue Deferred(JsValue fn = null) {
+  JsValue tuples = [
+    ["notify", "progress", JS.invoke(jQuery, "Callbacks", "memory"), JS.invoke(jQuery, "Callbacks", "memory"), 2.0],
+    ["resolve", "done", JS.invoke(jQuery, "Callbacks", "once memory"), JS.invoke(jQuery, "Callbacks", "once memory"), 0.0, "resolved"],
+    ["reject", "fail", JS.invoke(jQuery, "Callbacks", "once memory"), JS.invoke(jQuery, "Callbacks", "once memory"), 1.0, "rejected"]
+  ];
+
+  JsValue state = "pending";
+
+  JsValue deferred = JS.object();
+  JsValue promise = JS.undefined();
+
+  func(JsValue)->JsValue stateMethod = (JsValue _self) => {
+    return state;
+  };
+
+  func(JsValue, JsValue)->JsValue alwaysMethod = (JsValue thisArg, JsValue args) => {
+    JS.invoke(JS.invoke(deferred, "done", args), "fail", args);
+    return thisArg;
+  };
+
+  func(JsValue, JsValue)->JsValue catchMethod = (JsValue _self, JsValue catchFn) => {
+    return JS.invoke(promise, "then", null, catchFn);
+  };
+
+  func(JsValue, JsValue)->JsValue pipeMethod = (JsValue _self, JsValue fnsArgs) => {
+    JsValue pipeFns = fnsArgs;
+
+    JsValue newDeferred = JS.call(jQuery["Deferred"], JS.undefined(), (JsValue newDefer) => {
+      each(tuples, (JsValue _i, JsValue tuple) => {
+        JsValue fn = JS.and(isFunction(pipeFns[tuple[4]]), pipeFns[tuple[4]]);
+
+        JS.call(
+          deferred[tuple[1]],
+          deferred,
+          JS.methodRest((JsValue thisArg, JsValue args) => {
+            JsValue returned = JS.undefined();
+            if (fn.truthy()) {
+              returned = JS.apply(fn, thisArg, args);
+            }
+
+            if (returned.truthy() && isFunction(returned["promise"])) {
+              JS.invoke(
+                JS.invoke(
+                  JS.invoke(JS.invoke(returned, "promise"), "progress", newDefer["notify"]),
+                  "done",
+                  newDefer["resolve"]
+                ),
+                "fail",
+                newDefer["reject"]
+              );
+            } else {
+              JsValue passArgs = args;
+              if (fn.truthy()) {
+                passArgs = [returned];
+              }
+              string withName = JS.string(tuple[0]) + "With";
+              JS.invoke(newDefer, withName, thisArg, passArgs);
+            }
+            return JS.undefined();
+          })
+        );
+        return JS.undefined();
+      });
+      pipeFns = null;
+      return JS.undefined();
+    });
+    return JS.invoke(newDeferred, "promise");
+  };
+
+  func(JsValue, JsValue)->JsValue thenMethod = (JsValue _self, JsValue thenArgs) => {
+    JsValue onFulfilled = thenArgs[0];
+    JsValue onRejected = thenArgs[1];
+    JsValue onProgress = thenArgs[2];
+    float maxDepth = 0.0;
+
+    JsValue makeResolve = (
+      float depth,
+      JsValue newDefer,
+      JsValue handler,
+      JsValue special = null
+    ) => {
+      return JS.methodRest((JsValue thatArg, JsValue argsArg) => {
+        JsValue that = thatArg;
+        JsValue args = argsArg;
+
+        func()->JsValue mightThrow = () => {
+          if (depth < maxDepth) {
+            return JS.undefined();
+          }
+          JsValue returned = JS.apply(handler, that, args);
+
+          if (returned == JS.invoke(newDefer, "promise")) {
+            throwTypeError("Thenable self-resolution");
+          }
+
+          string returnedType = JS.typeOf(returned);
+          JsValue thenable = JS.undefined();
+          if (returned.truthy() && (returnedType == "object" || returnedType == "function")) {
+            thenable = returned["then"];
+          }
+
+          if (isFunction(thenable)) {
+            if (special.truthy()) {
+              JS.call(
+                thenable,
+                returned,
+                makeResolve(maxDepth, newDefer, Identity, special),
+                makeResolve(maxDepth, newDefer, Thrower, special)
+              );
+            } else {
+              maxDepth = maxDepth + 1.0;
+              JS.call(
+                thenable,
+                returned,
+                makeResolve(maxDepth, newDefer, Identity, special),
+                makeResolve(maxDepth, newDefer, Thrower, special),
+                makeResolve(maxDepth, newDefer, Identity, newDefer["notifyWith"])
+              );
+            }
+          } else {
+            if (!(handler == Identity)) {
+              that = JS.undefined();
+              args = [returned];
+            }
+
+            JS.call(JS.or(special, newDefer["resolveWith"]), JS.undefined(), that, args);
+          }
+          return JS.undefined();
+        };
+
+        JsValue process = mightThrow;
+        if (!special.truthy()) {
+          process = () => {
+            try {
+              mightThrow();
+            }             catch (JsValue e) {
+              if (jQuery["Deferred"]["exceptionHook"].truthy()) {
+                JS.invoke(jQuery["Deferred"], "exceptionHook", e, process["error"]);
+              }
+
+              if (depth + 1.0 >= maxDepth) {
+                if (!(handler == Thrower)) {
+                  that = JS.undefined();
+                  args = [e];
+                }
+                JS.call(newDefer["rejectWith"], JS.undefined(), that, args);
+              }
+            }
+            return JS.undefined();
+          };
+        }
+
+        if (depth != 0.0) {
+          process();
+        } else {
+          if (jQuery["Deferred"]["getErrorHook"].truthy()) {
+            process["error"] = JS.invoke(jQuery["Deferred"], "getErrorHook");
+          } else if (jQuery["Deferred"]["getStackHook"].truthy()) {
+            process["error"] = JS.invoke(jQuery["Deferred"], "getStackHook");
+          }
+          scheduleTimeout(process);
+        }
+        return JS.undefined();
+      });
+    };
+
+    return JS.invoke(
+      JS.call(jQuery["Deferred"], JS.undefined(), (JsValue newDefer) => {
+        JsValue progressHandler = Identity;
+        if (isFunction(onProgress)) {
+          progressHandler = onProgress;
+        }
+        JS.invoke(tuples[0][3], "add", makeResolve(0.0, newDefer, progressHandler, newDefer["notifyWith"]));
+
+        JsValue fulfilledHandler = Identity;
+        if (isFunction(onFulfilled)) {
+          fulfilledHandler = onFulfilled;
+        }
+        JS.invoke(tuples[1][3], "add", makeResolve(0.0, newDefer, fulfilledHandler));
+
+        JsValue rejectedHandler = Thrower;
+        if (isFunction(onRejected)) {
+          rejectedHandler = onRejected;
+        }
+        JS.invoke(tuples[2][3], "add", makeResolve(0.0, newDefer, rejectedHandler));
+        return JS.undefined();
+      }),
+      "promise"
+    );
+  };
+
+  func(JsValue, JsValue)->JsValue promiseMethod = (JsValue _self, JsValue obj) => {
+    if (!JS.isNullish(obj)) {
+      return JS.invoke(jQuery, "extend", obj, promise);
+    }
+    return promise;
+  };
+
+  promise = PromiseApi{
+    JS.method0(stateMethod),
+    JS.methodRest(alwaysMethod),
+    JS.method1(catchMethod),
+    JS.methodRest(pipeMethod),
+    JS.methodRest(thenMethod),
+    JS.method1(promiseMethod)
+  };
+
+  each(tuples, (float i, JsValue tuple) => {
+    JsValue list = tuple[2];
+    JsValue stateString = tuple[5];
+    promise[tuple[1]] = list["add"];
+
+    if (stateString.truthy()) {
+      JS.invoke(
+        list,
+        "add",
+        () => {
+          state = tuple[5];
+          return JS.undefined();
+        },
+        tuples[3.0 - i][2]["disable"],
+        tuples[3.0 - i][3]["disable"],
+        tuples[0][2]["lock"],
+        tuples[0][3]["lock"]
+      );
+    }
+
+    JS.invoke(list, "add", tuple[3]["fire"]);
+
+    deferred[tuple[0]] = JS.methodRest((JsValue thisArg, JsValue args) => {
+      JsValue context = thisArg;
+      if (thisArg == deferred) {
+        context = JS.undefined();
+      }
+      string withName = JS.string(tuple[0]) + "With";
+      JS.invoke(deferred, withName, context, args);
+      return thisArg;
+    });
+    deferred[JS.string(tuple[0]) + "With"] = list["fireWith"];
+    return JS.undefined();
+  });
+
+  JS.invoke(promise, "promise", deferred);
+
+  if (fn.truthy()) {
+    JS.call(fn, deferred, deferred);
+  }
+
+  return deferred;
+}
+
+JsValue when() {
+  float remaining = arguments.length;
+  float i = remaining;
+  JsValue singleValue = arguments[0];
+
+  JsValue resolveContexts = JS.array();
+  JsValue resolveValues = JS.invoke(arr["slice"], "call", arguments);
+
+  JsValue primary = JS.call(jQuery["Deferred"], JS.undefined());
+
+  func(JsValue)->JsValue updateFunc = (JsValue indexValue) => {
+    return JS.methodRest((JsValue thisArg, JsValue args) => {
+      resolveContexts[indexValue] = thisArg;
+      if (args.length > 1.0) {
+        resolveValues[indexValue] = JS.invoke(arr["slice"], "call", args);
+      } else {
+        resolveValues[indexValue] = args[0];
+      }
+
+      remaining = remaining - 1.0;
+      if (remaining == 0.0) {
+        JS.invoke(primary, "resolveWith", resolveContexts, resolveValues);
+      }
+      return JS.undefined();
+    });
+  };
+
+  if (remaining <= 1.0) {
+    JsValue adopted = JS.invoke(primary, "done", updateFunc(i));
+    adoptValue(
+      singleValue,
+      adopted["resolve"],
+      primary["reject"],
+      remaining == 0.0
+    );
+
+    JsValue maybe = resolveValues[i];
+    if (JS.invoke(primary, "state") == "pending" || isFunction(JS.and(maybe, maybe["then"]))) {
+      return JS.invoke(primary, "then");
+    }
+  }
+
+  while (i > 0.0) {
+    i = i - 1.0;
+    adoptValue(resolveValues[i], updateFunc(i), primary["reject"]);
+  }
+
+  return JS.invoke(primary, "promise");
+}
+
+JS.invoke(jQuery, "extend", DeferredStatics{
+  Deferred,
+  when
+});
+
+export { jQuery, when };

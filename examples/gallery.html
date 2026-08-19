@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gallery · jquerylil</title>
+    <link rel="stylesheet" href="./app.css" />
+  </head>
+  <body>
+    <main class="wrap" id="app">
+      <nav class="nav">
+        <a href="./index.html">Examples</a>
+        <a href="./todos.html">Todos</a>
+        <a href="./tabs.html">Tabs</a>
+        <a href="./search.html">Search</a>
+        <a href="./cart.html">Cart</a>
+        <a href="./accordion.html">Accordion</a>
+        <a href="./gallery.html" aria-current="page">Gallery</a>
+      </nav>
+      <h1>Gallery</h1>
+      <p class="lede">Six fake fetches joined with <code>$.when</code>.</p>
+      <p class="muted" id="status"></p>
+      <div class="grid" id="grid"></div>
+    </main>
+    <script type="module">
+      import { jQuery as $ } from "/dist/jquery.esm.js"
+      import { mount } from "./lib/gallery.js"
+      mount($, $("#app"))
+    </script>
+  </body>
+</html>

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Search · jquerylil</title>
+    <link rel="stylesheet" href="./app.css" />
+  </head>
+  <body>
+    <main class="wrap" id="app">
+      <nav class="nav">
+        <a href="./index.html">Examples</a>
+        <a href="./todos.html">Todos</a>
+        <a href="./tabs.html">Tabs</a>
+        <a href="./search.html" aria-current="page">Search</a>
+        <a href="./cart.html">Cart</a>
+        <a href="./accordion.html">Accordion</a>
+        <a href="./gallery.html">Gallery</a>
+      </nav>
+      <h1>Search</h1>
+      <p class="lede">Live filter with <code>.each</code> and <code>.toggle</code>.</p>
+      <div class="row">
+        <input id="q" placeholder="Filter modules" autocomplete="off" />
+        <strong id="count">0 modules</strong>
+      </div>
+      <ul class="list" id="results"></ul>
+    </main>
+    <script type="module">
+      import { jQuery as $ } from "/dist/jquery.esm.js"
+      import { mount } from "./lib/search.js"
+      mount($, $("#app"))
+    </script>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Accordion · jquerylil</title>
+    <link rel="stylesheet" href="./app.css" />
+  </head>
+  <body>
+    <main class="wrap" id="app">
+      <nav class="nav">
+        <a href="./index.html">Examples</a>
+        <a href="./todos.html">Todos</a>
+        <a href="./tabs.html">Tabs</a>
+        <a href="./search.html">Search</a>
+        <a href="./cart.html">Cart</a>
+        <a href="./accordion.html" aria-current="page">Accordion</a>
+        <a href="./gallery.html">Gallery</a>
+      </nav>
+      <h1>Accordion</h1>
+      <p class="lede">Effects through <code>.slideToggle</code> and <code>.slideUp</code>.</p>
+      <section class="section">
+        <h3>Why a separate package?</h3>
+        <div class="body">So an app can <code>npm install @itslil/jquery</code> without the LilScript compiler. The compiled JavaScript is the dependency.</div>
+      </section>
+      <section class="section">
+        <h3>Is it smaller than official min?</h3>
+        <div class="body">Not yet. The current compiler-selected artifact is larger than <code>jquery.min.js</code> on Brotli. The site table is the current snapshot, not a size claim.</div>
+      </section>
+      <section class="section">
+        <h3>What still matches?</h3>
+        <div class="body">Behavior of the 3.7.1 public API used by these apps: selectors, events, attributes, deferred, and effects.</div>
+      </section>
+    </main>
+    <script type="module">
+      import { jQuery as $ } from "/dist/jquery.esm.js"
+      import { mount } from "./lib/accordion.js"
+      mount($, $("#app"))
+    </script>
+  </body>
+</html>

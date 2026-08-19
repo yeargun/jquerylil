@@ -1,0 +1,16 @@
+import { jQuery } from "../core";
+import { expr } from "../selector";
+
+expr["pseudos"]["animated"] = (JsValue elem) => {
+  JsValue timers = jQuery["timers"];
+  float n = 0.0;
+  float i = 0.0;
+  for (; i < timers.length; i++) {
+    if (elem == timers[i]["elem"]) {
+      n = n + 1.0;
+    }
+  }
+  return n;
+};
+
+export { jQuery };

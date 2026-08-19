@@ -1,0 +1,193 @@
+import { emptyArray } from "./alloc.lil";
+import { jQuery, each, inArray } from "./core";
+import { isFunction } from "./var/isFunction";
+import { toType } from "./core/toType";
+import { rnothtmlwhite } from "./var/rnothtmlwhite";
+
+struct CallbacksApi {
+  JsValue add;
+  JsValue remove;
+  JsValue has;
+  JsValue empty;
+  JsValue disable;
+  JsValue disabled;
+  JsValue lock;
+  JsValue locked;
+  JsValue fireWith;
+  JsValue fire;
+  JsValue fired;
+}
+
+JsValue createOptions(string optionsStr) {
+  JsValue object = JS.object();
+  each(JS.or(JS.stringMatch(optionsStr, rnothtmlwhite), emptyArray()), (JsValue _i, JsValue flag) => {
+    object[flag] = true;
+    return JS.undefined();
+  });
+  return object;
+}
+
+JsValue CallbacksFactory(JsValue optionsArg = null) {
+  if (optionsArg is string) {
+    optionsArg = createOptions(optionsArg);
+  } else {
+    optionsArg = JS.or(optionsArg, JS.object());
+  }
+
+  JsValue firing = JS.undefined();
+  JsValue memory = JS.undefined();
+  JsValue fired = JS.undefined();
+  JsValue locked = JS.undefined();
+  JsValue list = emptyArray();
+  JsValue queue = emptyArray();
+  float firingIndex = -1.0;
+
+  func()->void fire = () => {
+    locked = JS.or(locked, optionsArg["once"]);
+    firing = true;
+    fired = firing;
+    for (; queue["length"].truthy(); firingIndex = -1.0) {
+      memory = JS.invoke(queue, "shift");
+      firingIndex++;
+      for (; JS.lessThan(firingIndex, list["length"]); firingIndex++) {
+        if (JS.isFalse(JS.apply(list[firingIndex], memory[0], memory[1])) && optionsArg["stopOnFalse"].truthy()) {
+          firingIndex = JS.number(list["length"]);
+          memory = false;
+        }
+      }
+    }
+    if (!optionsArg["memory"].truthy()) {
+      memory = false;
+    }
+    firing = false;
+    if (locked.truthy()) {
+      if (memory.truthy()) {
+        list = emptyArray();
+      } else {
+        list = "";
+      }
+    }
+  };
+
+  JsValue self = CallbacksApi{
+    JS.methodRest((JsValue thisArg, JsValue args) => {
+      if (list.truthy()) {
+        if (memory.truthy() && !firing.truthy()) {
+          firingIndex = JS.number(list["length"]) - 1.0;
+          JS.invoke(queue, "push", memory);
+        }
+        func(JsValue)->void addNested = (JsValue nested) => {
+          each(nested, (JsValue _i, JsValue arg) => {
+            if (isFunction(arg)) {
+              if (!optionsArg["unique"].truthy() || inArray(arg, list) < 0.0) {
+                JS.invoke(list, "push", arg);
+              }
+            } else if (arg.truthy() && arg["length"].truthy() && toType(arg) != "string") {
+              addNested(arg);
+            }
+            return JS.undefined();
+          });
+        };
+        addNested(args);
+        if (memory.truthy() && !firing.truthy()) {
+          fire();
+        }
+      }
+      return thisArg;
+    }),
+    JS.methodRest((JsValue thisArg, JsValue args) => {
+      each(args, (JsValue _i, JsValue arg) => {
+        float index = 0.0;
+        while (true) {
+          index = inArray(arg, list, index);
+          if (index < 0.0) {
+            break;
+          }
+          JS.invoke(list, "splice", index, 1.0);
+          if (index <= firingIndex) {
+            firingIndex--;
+          }
+        }
+        return JS.undefined();
+      });
+      return thisArg;
+    }),
+    (JsValue fn) => {
+      if (fn.truthy()) {
+        return inArray(fn, list) > -1.0;
+      }
+      return JS.number(list["length"]) > 0.0;
+    },
+    JS.method0((JsValue thisArg) => {
+      if (list.truthy()) {
+        list = emptyArray();
+      }
+      return thisArg;
+    }),
+    JS.method0((JsValue thisArg) => {
+      queue = emptyArray();
+      locked = queue;
+      memory = "";
+      list = memory;
+      return thisArg;
+    }),
+    () => {
+      return !list.truthy();
+    },
+    JS.method0((JsValue thisArg) => {
+      queue = emptyArray();
+      locked = queue;
+      if (!memory.truthy() && !firing.truthy()) {
+        memory = "";
+        list = memory;
+      }
+      return thisArg;
+    }),
+    () => {
+      return locked.truthy();
+    },
+    JS.method2((JsValue thisArg, JsValue context, JsValue fireArgs) => {
+      if (!locked.truthy()) {
+        fireArgs = JS.or(fireArgs, emptyArray());
+        if (fireArgs["slice"].truthy()) {
+          fireArgs = JS.invoke(fireArgs, "slice");
+        }
+        JsValue[] queued = [context, fireArgs];
+        JS.invoke(queue, "push", queued);
+        if (!firing.truthy()) {
+          fire();
+        }
+      }
+      return thisArg;
+    }),
+    JS.methodRest((JsValue thisArg, JsValue args) => {
+      JS.invoke(self, "fireWith", thisArg, args);
+      return thisArg;
+    }),
+    () => {
+      return fired.truthy();
+    }
+  };
+  return self;
+}
+
+export JsValue newCallbacksMemory() {
+  JsValue options = JS.object();
+  options["memory"] = true;
+  return CallbacksFactory(options);
+}
+
+export JsValue newCallbacksOnceMemory() {
+  JsValue options = JS.object();
+  options["once"] = true;
+  options["memory"] = true;
+  return CallbacksFactory(options);
+}
+
+jQuery["Callbacks"] = CallbacksFactory;
+
+export JsValue onceMemoryCallbacks() {
+  return newCallbacksOnceMemory();
+}
+
+export { jQuery };

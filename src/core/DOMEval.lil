@@ -1,0 +1,32 @@
+import { document } from "../var/document";
+
+struct PreservedScriptAttributes {
+  bool type;
+  bool src;
+  bool nonce;
+  bool noModule;
+}
+
+JsValue preservedScriptAttributes = PreservedScriptAttributes{
+  true,
+  true,
+  true,
+  true
+};
+
+export void DOMEval(JsValue code, JsValue node, JsValue docArg = null) {
+  JsValue doc = JS.or(docArg, document);
+  JsValue script = JS.invoke(doc, "createElement", "script");
+  script["text"] = code;
+
+  if (node.truthy()) {
+    for (string name in preservedScriptAttributes) {
+      JsValue val = JS.or(node[name], JS.and(node["getAttribute"], JS.invoke(node, "getAttribute", name)));
+      if (val.truthy()) {
+        JS.invoke(script, "setAttribute", name, val);
+      }
+    }
+  }
+
+  JS.invoke(JS.invoke(doc["head"], "appendChild", script)["parentNode"], "removeChild", script);
+}

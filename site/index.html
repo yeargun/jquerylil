@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="@itslil/jquery: jQuery 3.7.1 reimplemented in LilScript. Current snapshot versus official jquery.min.js, with measured throughput and example apps." />
+    <meta name="theme-color" content="#0769ad" />
+    <title>itslil/jquery — jQuery 3.7.1 through LilScript</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <div class="progress" aria-hidden="true"></div>
+    <header class="nav shell">
+      <a class="wordmark" href="#top" aria-label="itslil/jquery home">
+        <span class="mark">$</span>
+        <span>itslil/jquery</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#performance">performance</a>
+        <a href="#lab">demos</a>
+        <a href="#apps">apps</a>
+        <a href="#evidence">size</a>
+        <a href="https://github.com/yeargun/jquerylil">GitHub ↗</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero shell">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="live-dot"></span> jQuery 3.7.1 · LilScript port · @itslil/jquery</p>
+          <h1>jQuery,<br /><em>compiled.</em></h1>
+          <p class="lede">The <code>jquery@3.7.1</code> public API, rewritten in LilScript and shipped as a dependency-free drop-in. This is the current snapshot, not a size win yet. Official <code>jquery.min.js</code> is still smaller on Brotli. Throughput is measured against the same official package.</p>
+          <div class="install-row">
+            <code>npm install @itslil/jquery</code>
+            <button class="copy" data-copy="npm install @itslil/jquery" type="button">copy</button>
+          </div>
+          <div class="hero-actions">
+            <a class="button primary" href="#performance">Performance</a>
+            <a class="button secondary" href="https://www.npmjs.com/package/@itslil/jquery">npm ↗</a>
+          </div>
+        </div>
+
+        <div class="scoreboard" aria-label="Compression and performance results">
+          <div class="score-main">
+            <span class="score-label">Brotli-11 vs official min</span>
+            <strong id="hero-ratio">—<span>×</span></strong>
+            <p id="hero-bytes"></p>
+          </div>
+          <div class="score-grid">
+            <div><strong id="hero-vs-dev">—</strong><span>vs official jquery.js</span></div>
+            <div><strong id="hero-suites">—</strong><span>suites ≤ 1.05×</span></div>
+            <div><strong id="hero-apps">6</strong><span>example apps</span></div>
+            <div><strong id="hero-memory">—</strong><span>retained memory</span></div>
+          </div>
+          <p class="score-note">Canonical size is lilscript-codec gzip-9 / Brotli-11. The published artifact is the compiler-selected ESM, not a downstream Terser pick. Throughput is candidate / official, same Node process isolation.</p>
+        </div>
+      </section>
+
+      <section class="ticker" aria-label="Supported APIs">
+        <div>select <span>✦</span> events <span>✦</span> deferred <span>✦</span> callbacks <span>✦</span> ajax <span>✦</span> css <span>✦</span> effects <span>✦</span> traversing <span>✦</span> attributes <span>✦</span> data <span>✦</span> queue <span>✦</span> noConflict</div>
+      </section>
+
+      <section class="performance shell" id="performance">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Measured vs jquery@3.7.1</p>
+            <h2>Throughput,<br />not inferred.</h2>
+          </div>
+          <p>Same DOM fixture and checksums against official <code>jquery@3.7.1</code>. Isolated Node processes, <code>--expose-gc</code>, 8 samples, first 2 discarded, median of the rest. Ratio is @itslil/jquery / official (lower is faster).</p>
+        </div>
+        <div class="perf-cards" id="perf-cards"></div>
+        <div class="table-wrap light">
+          <table>
+            <thead>
+              <tr>
+                <th>Suite</th>
+                <th>jquery@3.7.1</th>
+                <th>@itslil/jquery</th>
+                <th>Ratio</th>
+              </tr>
+            </thead>
+            <tbody id="perf-body"></tbody>
+          </table>
+        </div>
+        <p class="perf-note" id="perf-note"></p>
+      </section>
+
+      <section class="lab shell" id="lab">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">The compiled runtime, in the browser</p>
+            <h2>Six small<br />apps.</h2>
+          </div>
+          <p>These load the same production ESM that npm publishes. Selectors, events, effects, and Deferred.</p>
+        </div>
+        <div class="demo-grid" id="demo-grid"></div>
+      </section>
+
+      <section class="apps shell" id="apps">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Vite production bundles</p>
+            <h2>Same apps,<br />both libraries.</h2>
+          </div>
+          <p>Each example is bundled twice with Vite minify: once with official <code>jquery@3.7.1</code>, once with <code>@itslil/jquery</code>. Bytes are the emitted JS chunk, scored with the same codec.</p>
+        </div>
+        <div class="table-wrap light">
+          <table>
+            <thead>
+              <tr>
+                <th>App</th>
+                <th>jquery Brotli</th>
+                <th>@itslil/jquery Brotli</th>
+                <th>Ratio</th>
+              </tr>
+            </thead>
+            <tbody id="apps-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="evidence" id="evidence">
+        <div class="shell">
+          <div class="section-heading inverse">
+            <div>
+              <p class="eyebrow">The receipts</p>
+              <h2>Raw, gzip,<br />and Brotli.</h2>
+            </div>
+            <p>Reusable package artifacts, not a closed-world app. Official lanes are the published <code>jquery.js</code> and <code>jquery.min.js</code>. @itslil/jquery is the LilScript compiler-selected ESM.</p>
+          </div>
+          <div class="total-bar" id="total-bar"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Lane</th>
+                  <th>Raw</th>
+                  <th>gzip-9</th>
+                  <th>Brotli-11</th>
+                  <th>vs official min</th>
+                </tr>
+              </thead>
+              <tbody id="results-body"></tbody>
+            </table>
+          </div>
+          <div class="method-note">
+            <p><strong>Why official min still wins.</strong> jQuery is a public-name, string-key, host-heavy library. The current port keeps that ABI, so LilScript cannot mangle the names a page already calls. The compiler-selected artifact is the published one. Downstream Terser of that artifact is a diagnostic only and is not what npm installs.</p>
+            <a href="https://github.com/yeargun/jquerylil#size">README ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing shell">
+        <p class="eyebrow">Zero runtime dependencies</p>
+        <h2>Install the<br />current port.</h2>
+        <div class="install-row large">
+          <code>npm install @itslil/jquery</code>
+          <button class="copy" data-copy="npm install @itslil/jquery" type="button">copy</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="shell">
+      <span>@itslil/jquery · MIT</span>
+      <span>Independent LilScript reimplementation of jquery@3.7.1</span>
+      <a href="https://github.com/yeargun/jquerylil">source ↗</a>
+    </footer>
+  </body>
+</html>

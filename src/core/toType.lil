@@ -1,0 +1,20 @@
+import { class2type } from "../var/class2type";
+import {
+  typeOf,
+  isNullish,
+  objectToStringTag
+} from "../js-host.lil";
+
+export string toType(JsValue obj) {
+  if (JS.isNullish(obj)) {
+    return JS.string(obj);
+  }
+  if (JS.typeOf(obj) == "object" || JS.typeOf(obj) == "function") {
+    JsValue mapped = class2type[objectToStringTag(obj)];
+    if (mapped.truthy()) {
+      return JS.assume(mapped);
+    }
+    return "object";
+  }
+  return JS.typeOf(obj);
+}

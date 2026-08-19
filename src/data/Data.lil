@@ -1,0 +1,152 @@
+import { jQuery, isEmptyObject } from "../core";
+import { camelCase } from "../core/camelCase";
+import { rnothtmlwhite } from "../var/rnothtmlwhite";
+import { defineConfigurable } from "../js-host.lil";
+
+export string dataPrivExpando = JS.string(jQuery["expando"]) + "1";
+export string dataUserExpando = JS.string(jQuery["expando"]) + "2";
+
+string camelKey(JsValue key) {
+  if (key is string) {
+    return camelCase(key);
+  }
+  return camelCase(JS.string(key));
+}
+
+JsValue cacheAt(string expando, JsValue owner) {
+  JsValue value = owner[expando];
+  if (value.truthy()) {
+    return value;
+  }
+  value = JS.object();
+  JsValue nodeType = owner["nodeType"];
+  if (nodeType == 1.0) {
+    owner[expando] = value;
+    return value;
+  }
+  if (nodeType == 9.0) {
+    owner[expando] = value;
+    return value;
+  }
+  if (!nodeType.truthy()) {
+    defineConfigurable(owner, expando, value);
+  }
+  return value;
+}
+
+JsValue setAt(string expando, JsValue owner, JsValue data, JsValue value) {
+  JsValue store = cacheAt(expando, owner);
+  if (data is string) {
+    store[camelCase(data)] = value;
+  } else {
+    for (string prop in data) {
+      store[camelCase(prop)] = data[prop];
+    }
+  }
+  return store;
+}
+
+JsValue getAt(string expando, JsValue owner, JsValue key) {
+  if (JS.isUndefined(key)) {
+    return cacheAt(expando, owner);
+  }
+  return JS.and(owner[expando], owner[expando][camelKey(key)]);
+}
+
+JsValue accessAt(string expando, JsValue owner, JsValue key, JsValue value) {
+  if (JS.isUndefined(key) || (key.truthy() && key is string && JS.isUndefined(value))) {
+    return getAt(expando, owner, key);
+  }
+  setAt(expando, owner, key, value);
+  if (!JS.isUndefined(value)) {
+    return value;
+  }
+  return key;
+}
+
+void removeAt(string expando, JsValue owner, JsValue key) {
+  JsValue store = owner[expando];
+  if (JS.isUndefined(store)) {
+    return;
+  }
+
+  if (!JS.isUndefined(key)) {
+    if (JS.isArray(key)) {
+      key = JS.invoke(key, "map", camelKey);
+    } else {
+      string camel = camelKey(key);
+      if (JS.in(camel, store)) {
+        key = [camel];
+      } else {
+        key = JS.or(JS.stringMatch(camel, rnothtmlwhite), JS.array());
+      }
+    }
+
+    float i = key.length;
+    while (i > 0.0) {
+      i = i - 1.0;
+      JS.delete(store, key[i]);
+    }
+  }
+
+  if (JS.isUndefined(key) || isEmptyObject(store)) {
+    if (owner["nodeType"].truthy()) {
+      owner[expando] = JS.undefined();
+    } else {
+      JS.delete(owner, expando);
+    }
+  }
+}
+
+bool hasDataAt(string expando, JsValue owner) {
+  JsValue store = owner[expando];
+  return !JS.isUndefined(store) && !isEmptyObject(store);
+}
+
+export JsValue dataPrivCache(JsValue owner) {
+  return cacheAt(dataPrivExpando, owner);
+}
+
+export JsValue dataPrivGet(JsValue owner, JsValue key = JS.undefined()) {
+  return getAt(dataPrivExpando, owner, key);
+}
+
+export JsValue dataPrivSet(JsValue owner, JsValue data, JsValue value = JS.undefined()) {
+  return setAt(dataPrivExpando, owner, data, value);
+}
+
+export JsValue dataPrivAccess(JsValue owner, JsValue key = JS.undefined(), JsValue value = JS.undefined()) {
+  return accessAt(dataPrivExpando, owner, key, value);
+}
+
+export void dataPrivRemove(JsValue owner, JsValue key = JS.undefined()) {
+  removeAt(dataPrivExpando, owner, key);
+}
+
+export bool dataPrivHasData(JsValue owner) {
+  return hasDataAt(dataPrivExpando, owner);
+}
+
+export JsValue dataUserCache(JsValue owner) {
+  return cacheAt(dataUserExpando, owner);
+}
+
+export JsValue dataUserGet(JsValue owner, JsValue key = JS.undefined()) {
+  return getAt(dataUserExpando, owner, key);
+}
+
+export JsValue dataUserSet(JsValue owner, JsValue data, JsValue value = JS.undefined()) {
+  return setAt(dataUserExpando, owner, data, value);
+}
+
+export JsValue dataUserAccess(JsValue owner, JsValue key = JS.undefined(), JsValue value = JS.undefined()) {
+  return accessAt(dataUserExpando, owner, key, value);
+}
+
+export void dataUserRemove(JsValue owner, JsValue key = JS.undefined()) {
+  removeAt(dataUserExpando, owner, key);
+}
+
+export bool dataUserHasData(JsValue owner) {
+  return hasDataAt(dataUserExpando, owner);
+}

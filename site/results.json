@@ -1,0 +1,187 @@
+{
+  "pin": "jquery@3.7.1",
+  "package": "@itslil/jquery",
+  "node": "v20.12.0",
+  "codec": "lilscript-codec gzip-9 / brotli-11",
+  "warmupDiscard": 2,
+  "memory": {
+    "retainedRatio": 0.9956062563261211
+  },
+  "size": [
+    {
+      "id": "officialDev",
+      "name": "Official jquery.js",
+      "raw": 285314,
+      "gzip9": 83619,
+      "brotli11": 69545,
+      "note": "published development artifact"
+    },
+    {
+      "id": "officialMin",
+      "name": "Official jquery.min.js",
+      "raw": 87533,
+      "gzip9": 30336,
+      "brotli11": 27445,
+      "note": "published minified artifact"
+    },
+    {
+      "id": "itslil",
+      "name": "@itslil/jquery",
+      "raw": 144763,
+      "gzip9": 40365,
+      "brotli11": 35349,
+      "note": "LilScript compiler-selected ESM",
+      "primary": true
+    }
+  ],
+  "apps": [
+    {
+      "id": "todos",
+      "title": "Todos",
+      "jquery": {
+        "raw": 88623,
+        "gzip9": 31779,
+        "brotli11": 28847
+      },
+      "itslil": {
+        "raw": 90987,
+        "gzip9": 34005,
+        "brotli11": 30462
+      }
+    },
+    {
+      "id": "tabs",
+      "title": "Tabs",
+      "jquery": {
+        "raw": 88119,
+        "gzip9": 31540,
+        "brotli11": 28634
+      },
+      "itslil": {
+        "raw": 90513,
+        "gzip9": 33772,
+        "brotli11": 30264
+      }
+    },
+    {
+      "id": "search",
+      "title": "Search",
+      "jquery": {
+        "raw": 88385,
+        "gzip9": 31714,
+        "brotli11": 28737
+      },
+      "itslil": {
+        "raw": 90775,
+        "gzip9": 33932,
+        "brotli11": 30367
+      }
+    },
+    {
+      "id": "cart",
+      "title": "Cart",
+      "jquery": {
+        "raw": 88699,
+        "gzip9": 31833,
+        "brotli11": 28877
+      },
+      "itslil": {
+        "raw": 91063,
+        "gzip9": 34051,
+        "brotli11": 30556
+      }
+    },
+    {
+      "id": "accordion",
+      "title": "Accordion",
+      "jquery": {
+        "raw": 87947,
+        "gzip9": 31473,
+        "brotli11": 28548
+      },
+      "itslil": {
+        "raw": 90341,
+        "gzip9": 33708,
+        "brotli11": 30206
+      }
+    },
+    {
+      "id": "gallery",
+      "title": "Gallery",
+      "jquery": {
+        "raw": 88440,
+        "gzip9": 31750,
+        "brotli11": 28790
+      },
+      "itslil": {
+        "raw": 90816,
+        "gzip9": 33972,
+        "brotli11": 30453
+      }
+    }
+  ],
+  "throughput": [
+    {
+      "name": "core",
+      "officialMs": 224.78345800000002,
+      "candidateMs": 212.68791599999997,
+      "ratio": 0.9461902485724726
+    },
+    {
+      "name": "events",
+      "officialMs": 37.6275,
+      "candidateMs": 33.553833,
+      "ratio": 0.8917369742874227
+    },
+    {
+      "name": "deferred",
+      "officialMs": 52.45675,
+      "candidateMs": 17.76891599999999,
+      "ratio": 0.33873459564307723
+    },
+    {
+      "name": "collection",
+      "officialMs": 4.223084,
+      "candidateMs": 4.037000000000006,
+      "ratio": 0.9559364672831528
+    },
+    {
+      "name": "event-state",
+      "officialMs": 8.61699999999999,
+      "candidateMs": 7.237332999999978,
+      "ratio": 0.8398901009632107
+    }
+  ],
+  "examples": [
+    {
+      "id": "todos",
+      "title": "Todos",
+      "blurb": "Delegated events, html, grep, merge."
+    },
+    {
+      "id": "tabs",
+      "title": "Tabs",
+      "blurb": "show/hide and aria-selected."
+    },
+    {
+      "id": "search",
+      "title": "Search",
+      "blurb": "Live filter of the 3.7.1 module list."
+    },
+    {
+      "id": "cart",
+      "title": "Cart",
+      "blurb": "Quantities and computed totals."
+    },
+    {
+      "id": "accordion",
+      "title": "Accordion",
+      "blurb": "slideToggle / slideUp effects."
+    },
+    {
+      "id": "gallery",
+      "title": "Gallery",
+      "blurb": "$.Deferred and $.when."
+    }
+  ]
+}

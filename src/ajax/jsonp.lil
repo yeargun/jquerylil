@@ -1,0 +1,110 @@
+import { jQuery, wrap } from "../core";
+import { isFunction } from "../var/isFunction";
+import { nonce } from "./var/nonce";
+import { rquery } from "./var/rquery";
+import {
+  windowSelf
+} from "../js-host.lil";
+
+Regex rjsonp = new Regex("(=)\\?(?=&|$)|\\?\\?");
+
+JsValue[] oldCallbacks = [];
+
+JsValue jsonpCallbackFactory() {
+  JsValue self = this;
+  JsValue callback = oldCallbacks.pop();
+  if (!callback.truthy()) {
+    JsValue guidVal = nonce["guid"];
+    nonce["guid"] = JS.add(guidVal, 1.0);
+    callback = JS.add(JS.add(jQuery["expando"], "_"), guidVal);
+  }
+  self[callback] = true;
+  return callback;
+}
+
+struct JsonpSetup {
+  string jsonp;
+  JsValue jsonpCallback;
+}
+
+JsValue jsonpSetupOptions = JsonpSetup{"callback", jsonpCallbackFactory};
+
+JsValue jsonpPrefilter(JsValue s, JsValue originalSettings, JsValue jqXHR) {
+  JsValue jsonProp = false;
+
+  if (s["jsonp"] != false) {
+    if (JS.regexTest(rjsonp, s["url"])) {
+      jsonProp = "url";
+    } else if (s["data"] is string && JS.strictEqual(JS.invoke(JS.or(s["contentType"], ""), "indexOf", "application/x-www-form-urlencoded"), 0.0) && JS.regexTest(rjsonp, s["data"])) {
+      jsonProp = "data";
+    }
+  }
+
+  if (jsonProp.truthy() || JS.strictEqual(s["dataTypes"][0], "jsonp")) {
+    JsValue jsonpCallbackSetting = s["jsonpCallback"];
+    JsValue callbackName = jsonpCallbackSetting;
+    if (isFunction(jsonpCallbackSetting)) {
+      callbackName = JS.invoke(s, "jsonpCallback");
+    }
+    s["jsonpCallback"] = callbackName;
+
+    if (jsonProp.truthy()) {
+      s[jsonProp] = JS.invoke(s[jsonProp], "replace", rjsonp, JS.add("$1", callbackName));
+    } else if (s["jsonp"] != false) {
+      JsValue sep = "?";
+      if (JS.regexTest(rquery, s["url"])) {
+        sep = "&";
+      }
+      s["url"] = JS.add(JS.add(s["url"], sep), JS.add(JS.add(s["jsonp"], "="), callbackName));
+    }
+
+    JsValue responseContainer = null;
+    JsValue overwritten = null;
+
+    s["converters"]["script json"] = () => {
+      if (!responseContainer.truthy()) {
+        JS.invoke(jQuery, "error", JS.add(callbackName, " was not called"));
+      }
+      return responseContainer[0];
+    };
+
+    s["dataTypes"][0] = "json";
+
+    JsValue win = windowSelf();
+    overwritten = win[callbackName];
+    win[callbackName] = JS.staticRest((JsValue args) => {
+      responseContainer = args;
+      return JS.undefined();
+    });
+
+    JS.invoke(jqXHR, "always", () => {
+      if (JS.isUndefined(overwritten)) {
+        JsValue wrapped = wrap(win);
+        JS.invoke(wrapped, "removeProp", callbackName);
+      } else {
+        win[callbackName] = overwritten;
+      }
+
+      if (s[callbackName].truthy()) {
+        s["jsonpCallback"] = originalSettings["jsonpCallback"];
+        oldCallbacks.push(callbackName);
+      }
+
+      if (responseContainer.truthy() && isFunction(overwritten)) {
+        overwritten(responseContainer[0]);
+      }
+
+      responseContainer = null;
+      overwritten = null;
+      return JS.undefined();
+    });
+
+    return "script";
+  }
+  return JS.undefined();
+}
+
+JS.invoke(jQuery, "ajaxSetup", jsonpSetupOptions);
+JS.invoke(jQuery, "ajaxPrefilter", "json jsonp", jsonpPrefilter);
+
+export { jQuery };

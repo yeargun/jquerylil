@@ -1,0 +1,11 @@
+import {
+  dataUserExpando as expando,
+  dataUserCache as cache,
+  dataUserGet as get,
+  dataUserSet as set,
+  dataUserAccess as access,
+  dataUserRemove as remove,
+  dataUserHasData as hasData
+} from "../Data";
+
+export { expando, cache, get, set, access, remove, hasData };

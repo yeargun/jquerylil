@@ -1,0 +1,20 @@
+import { jQuery } from "../deferred";
+import { windowSelf } from "../js-host.lil";
+
+Regex rerrorNames = new Regex("^(Eval|Internal|Range|Reference|Syntax|Type|URI)Error$");
+
+jQuery["Deferred"]["exceptionHook"] = (JsValue error, JsValue asyncError) => {
+  JsValue consoleObj = windowSelf()["console"];
+  if (consoleObj.truthy() && consoleObj["warn"].truthy() && error.truthy() && JS.regexTest(rerrorNames, error["name"])) {
+    JS.invoke(
+      consoleObj,
+      "warn",
+      "jQuery.Deferred exception: " + JS.string(error["message"]),
+      error["stack"],
+      asyncError
+    );
+  }
+  return JS.undefined();
+};
+
+export { jQuery };

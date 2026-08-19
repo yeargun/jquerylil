@@ -1,0 +1,139 @@
+import { jQuery, each } from "./core";
+import { camelCase } from "./core/camelCase";
+import {
+  get as dataPrivGet,
+  set as dataPrivSet,
+  access as dataPrivAccess,
+  remove as dataPrivRemove,
+  hasData as dataPrivHasData
+} from "./data/var/dataPriv";
+import {
+  get as dataUserGet,
+  set as dataUserSet,
+  access as dataUserAccess,
+  remove as dataUserRemove,
+  hasData as dataUserHasData
+} from "./data/var/dataUser";
+import {
+  stringReplace,
+  regexTest,
+  stringSlice
+} from "./js-host.lil";
+
+Regex rbrace = new Regex("^(?:\\{[\\w\\W]*\\}|\\[[\\w\\W]*\\])$");
+Regex rmultiDash = new Regex("[A-Z]", "g");
+
+JsValue getData(string data) {
+  if (data == "true") {
+    return true;
+  }
+  if (data == "false") {
+    return false;
+  }
+  if (data == "null") {
+    return null;
+  }
+  if (data == JS.add(JS.number(data), "")) {
+    return JS.number(data);
+  }
+  if (JS.regexTest(rbrace, data)) {
+    return JSON.parse(data);
+  }
+  return data;
+}
+
+JsValue dataAttr(JsValue elem, string key, JsValue data = JS.undefined()) {
+  if (JS.isUndefined(data) && elem["nodeType"] == 1.0) {
+    string name = "data-" + JS.stringReplace(key, rmultiDash, "-$&").toLowerCase();
+    data = JS.invoke(elem, "getAttribute", name);
+    if (data is string) {
+      try {
+        data = getData(data);
+      } catch {
+      }
+      dataUserSet(elem, key, data);
+    } else {
+      data = JS.undefined();
+    }
+  }
+  return data;
+}
+
+JsValue fnData(JsValue self, JsValue args) {
+  JsValue key = args[0];
+  JsValue value = args[1];
+
+  JsValue elem = self[0];
+  JsValue attrs = JS.and(elem, elem["attributes"]);
+
+  if (JS.isUndefined(key)) {
+    JsValue data = JS.undefined();
+    if (self.length > 0.0) {
+      data = dataUserGet(elem);
+      if (elem["nodeType"] == 1.0 && !dataPrivGet(elem, "hasDataAttrs").truthy()) {
+        float i = attrs.length;
+        while (i > 0.0) {
+          i = i - 1.0;
+          JsValue attrNode = attrs[i];
+          if (attrNode.truthy()) {
+            string name = JS.assume(attrNode["name"]);
+            if (name.indexOf("data-") == 0) {
+              string camel = camelCase(JS.stringSlice(name, 5.0));
+              dataAttr(elem, camel, data[camel]);
+            }
+          }
+        }
+        dataPrivSet(elem, "hasDataAttrs", true);
+      }
+    }
+    return data;
+  }
+
+  if (key.isObject()) {
+    JsValue keyObj = key;
+    return each(self, (JsValue _i, JsValue el) => {
+      dataUserSet(el, keyObj);
+      return JS.undefined();
+    });
+  }
+
+  if (!(args.length > 1.0)) {
+    if (elem.truthy()) {
+      JsValue data = dataUserGet(elem, key);
+      if (!JS.isUndefined(data)) {
+        return data;
+      }
+      data = dataAttr(elem, JS.string(key));
+      if (!JS.isUndefined(data)) {
+        return data;
+      }
+    }
+    return JS.undefined();
+  }
+
+  return each(self, (JsValue _i, JsValue el) => {
+    dataUserSet(el, key, value);
+    return JS.undefined();
+  });
+}
+
+JsValue fnRemoveData(JsValue self, JsValue key) {
+  return each(self, (JsValue _i, JsValue el) => {
+    dataUserRemove(el, key);
+    return JS.undefined();
+  });
+}
+
+jQuery["hasData"] = (JsValue elem) => {
+  return dataUserHasData(elem) || dataPrivHasData(elem);
+};
+
+jQuery["data"] = dataUserAccess;
+jQuery["removeData"] = dataUserRemove;
+jQuery["_data"] = dataPrivAccess;
+jQuery["_removeData"] = dataPrivRemove;
+
+jQuery["fn"]["data"] = JS.methodRest(fnData);
+jQuery["fn"]["removeData"] = JS.method1(fnRemoveData);
+
+export { jQuery };

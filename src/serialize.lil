@@ -1,0 +1,132 @@
+import { jQuery, isPlainObject, makeArray, each, map, wrap } from "./core";
+import { toType } from "./core/toType";
+import { rcheckableType } from "./var/rcheckableType";
+import { isFunction } from "./var/isFunction";
+import { prop } from "./attributes/prop";
+import { encodeURIComponentValue } from "./js-host.lil";
+
+
+struct NameValue {
+  string name;
+  string value;
+}
+
+Regex rbracket = new Regex("\\[\\]$");
+Regex rCRLF = new Regex("\\r?\\n", "g");
+Regex rsubmitterTypes = new Regex("^(?:submit|button|image|reset|file)$", "i");
+Regex rsubmittable = new Regex("^(?:input|select|textarea|keygen)", "i");
+
+void buildParams(string prefix, JsValue obj, bool traditional, func(string, JsValue)->void add) {
+  if (JS.isArray(obj)) {
+    int len = obj.length.toInt();
+    for (int i = 0; i < len; i++) {
+      JsValue v = obj[i];
+      if (traditional || JS.regexTest(rbracket, prefix)) {
+        add(prefix, v);
+      } else {
+        string indexPart = "";
+        if (JS.typeOf(v) == "object" && !JS.isNullish(v)) {
+          indexPart = JS.string(i);
+        }
+        buildParams(prefix + "[" + indexPart + "]", v, traditional, add);
+      }
+    }
+  } else if (!traditional && toType(obj) == "object") {
+    for (string name in obj) {
+      buildParams(prefix + "[" + name + "]", obj[name], traditional, add);
+    }
+  } else {
+    add(prefix, obj);
+  }
+}
+
+export string param(JsValue aArg, bool traditional = false) {
+  if (JS.isNullish(aArg)) {
+    return "";
+  }
+
+  JsValue[] s = [];
+
+  func(string, JsValue)->void add = (string key, JsValue valueOrFunction) => {
+    JsValue value = valueOrFunction;
+    if (isFunction(valueOrFunction)) {
+      value = valueOrFunction();
+    }
+    string valueStr = "";
+    if (!JS.isNullish(value)) {
+      valueStr = JS.string(value);
+    }
+    s.push(encodeURIComponentValue(key) + "=" + encodeURIComponentValue(valueStr));
+  };
+
+  bool isFormElementsArray = JS.isArray(aArg);
+  if (!isFormElementsArray) {
+    JsValue jqueryFlag = aArg["jquery"];
+    if (jqueryFlag.truthy() && !isPlainObject(aArg)) {
+      isFormElementsArray = true;
+    }
+  }
+
+  if (isFormElementsArray) {
+    each(aArg, JS.method0((JsValue elem) => {
+      add(JS.string(elem["name"]), elem["value"]);
+      return JS.undefined();
+    }));
+  } else {
+    for (string prefix in aArg) {
+      buildParams(prefix, aArg[prefix], traditional, add);
+    }
+  }
+
+  return JS.join(s, "&");
+}
+
+jQuery["param"] = param;
+
+JsValue fnSerializeArray() {
+  JsValue mapped = JS.invoke(this, "map", JS.method0((JsValue elem) => {
+    JsValue elementsProp = prop(elem, "elements", JS.undefined());
+    if (elementsProp.truthy()) {
+      return makeArray(elementsProp);
+    }
+    return elem;
+  }));
+
+  JsValue filtered = JS.invoke(mapped, "filter", JS.method0((JsValue elem) => {
+    JsValue typeRaw = elem["type"];
+    string typeStr = JS.string(JS.or(typeRaw, ""));
+    return elem["name"].truthy()
+      && !JS.invoke(wrap(elem), "is", ":disabled").truthy()
+      && JS.regexTest(rsubmittable, JS.string(elem["nodeName"]))
+      && !JS.regexTest(rsubmitterTypes, typeStr)
+      && (elem["checked"].truthy() || !JS.regexTest(rcheckableType, typeStr));
+  }));
+
+  JsValue results = JS.invoke(filtered, "map", JS.method0((JsValue elem) => {
+    JsValue val = JS.invoke(wrap(elem), "val");
+    if (JS.isNullish(val)) {
+      return null;
+    }
+
+    string elemName = JS.string(elem["name"]);
+    if (JS.isArray(val)) {
+      return map(val, (JsValue item) => {
+        return NameValue{elemName, JS.stringReplace(JS.string(item), rCRLF, "\r\n")};
+      });
+    }
+
+    return NameValue{elemName, JS.stringReplace(JS.string(val), rCRLF, "\r\n")};
+  }));
+
+  return JS.invoke(results, "get");
+}
+
+JsValue fnSerialize() {
+  return param(JS.invoke(this, "serializeArray"), false);
+}
+
+JsValue fn = jQuery["fn"];
+fn["serialize"] = fnSerialize;
+fn["serializeArray"] = fnSerializeArray;
+
+export { jQuery };
