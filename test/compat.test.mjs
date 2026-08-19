@@ -54,6 +54,24 @@ describe("@itslil/jquery vs jquery@3.7.1", () => {
     assert.deepEqual(run($l), run($u))
   })
 
+  it("ships the compiler-selected compact ESM, not a pretty-printed wrapper", async () => {
+    const { readFileSync } = await import("node:fs")
+    const esm = readFileSync(resolve(root, "dist/jquery.esm.js"), "utf8")
+    assert.ok(esm.split("\n").length <= 3, "ESM must stay compact compiler output")
+    assert.doesNotMatch(esm, /\/\/ jquery-measured/)
+    assert.match(esm, /export\{/)
+    assert.match(esm, /export default /)
+  })
+
+  it("loads from CommonJS", async () => {
+    const { createRequire } = await import("node:module")
+    const requireCjs = createRequire(import.meta.url)
+    const cjs = requireCjs(resolve(root, "dist/jquery.cjs"))
+    assert.equal(cjs.fn.jquery, "3.7.1")
+    assert.equal(cjs, cjs.jQuery)
+    assert.equal(cjs, cjs.$)
+  })
+
   it("selects, classes, and events", async () => {
     const { lil: $, document } = loaded
     document.body.innerHTML = `<main><button class="go" data-n="3">Go</button><p class="out"></p></main>`

@@ -56,61 +56,60 @@ function compileIfRequested() {
     "-o",
     raw,
   ])
-  const esbuild = resolve(root, "node_modules", ".bin", "esbuild")
-  run(esbuild, [
-    raw,
-    "--bundle",
-    "--format=esm",
-    "--platform=neutral",
-    `--outfile=${resolve(dist, "jquery.impl.js")}`,
-    "--log-level=error",
-  ])
 }
 
-function jqueryLocalName(impl) {
-  const match = impl.match(/(\w+)\s+as\s+jQuery/)
+function jqueryLocalName(source) {
+  const match = source.match(/export\s*\{\s*(\w+)\s+as\s+jQuery/)
   return match?.[1] ?? "e"
 }
 
-function writeEsm(impl) {
-  if (!impl.includes("export {")) {
-    throw new Error("compiler artifact is missing named exports")
+function stripNamedExport(source) {
+  const next = source.replace(/;?export\s*\{[^}]+\}\s*;?\s*$/, "")
+  if (next === source) {
+    throw new Error("compiler artifact is missing a trailing named export")
   }
-  if (impl.includes("export default")) return impl
-  return `${impl}\nexport default ${jqueryLocalName(impl)};\n`
+  return next
 }
 
-function writeUmd(impl) {
-  return `${banner}(function () {\n${impl.replace(/\nexport \{[\s\S]*$/, "\n")}\n})();\n`
+function withBanner(source) {
+  return source.startsWith("/*!") ? source : banner + source
+}
+
+function writeEsm(raw) {
+  if (!/export\s*\{/.test(raw)) {
+    throw new Error("compiler artifact is missing named exports")
+  }
+  if (raw.includes("export default")) return withBanner(raw)
+  return withBanner(`${terminate(raw)}export default ${jqueryLocalName(raw)};`)
+}
+
+function terminate(source) {
+  return source.endsWith(";") ? source : `${source};`
+}
+
+function writeCjs(raw) {
+  const name = jqueryLocalName(raw)
+  return withBanner(
+    `'use strict';${terminate(stripNamedExport(raw))}module.exports=${name};module.exports.jQuery=${name};module.exports.$=${name};module.exports.default=${name};`,
+  )
+}
+
+function writeUmd(raw) {
+  return withBanner(terminate(stripNamedExport(raw)))
 }
 
 compileIfRequested()
 mkdirSync(dist, { recursive: true })
 
-const implPath = resolve(dist, "jquery.impl.js")
-if (!existsSync(implPath)) {
-  throw new Error("dist/jquery.impl.js is missing. Run with --compile after building LilScript.")
+const rawPath = resolve(dist, "jquery.raw.js")
+if (!existsSync(rawPath)) {
+  throw new Error("dist/jquery.raw.js is missing. Run with --compile after building LilScript.")
 }
 
-const impl = readFileSync(implPath, "utf8")
-const esm = writeEsm(impl.startsWith("/*!") ? impl : banner + impl)
-writeFileSync(resolve(dist, "jquery.esm.js"), esm)
-writeFileSync(resolve(dist, "jquery.umd.js"), writeUmd(impl))
-
-const esbuild = resolve(root, "node_modules", ".bin", "esbuild")
-run(esbuild, [
-  resolve(dist, "jquery.esm.js"),
-  "--bundle",
-  "--format=cjs",
-  "--platform=neutral",
-  `--banner:js=${JSON.stringify(banner.trim())}`,
-  `--outfile=${resolve(dist, "jquery.cjs.bundle.js")}`,
-  "--log-level=error",
-])
-writeFileSync(
-  resolve(dist, "jquery.cjs"),
-  `${banner}'use strict';\nconst mod = require('./jquery.cjs.bundle.js');\nconst jq = mod.jQuery || mod.default;\nmodule.exports = jq;\nmodule.exports.jQuery = jq;\nmodule.exports.$ = jq;\nmodule.exports.default = jq;\n`,
-)
-
+const raw = readFileSync(rawPath, "utf8")
+writeFileSync(resolve(dist, "jquery.impl.js"), raw)
+writeFileSync(resolve(dist, "jquery.esm.js"), writeEsm(raw))
+writeFileSync(resolve(dist, "jquery.cjs"), writeCjs(raw))
+writeFileSync(resolve(dist, "jquery.umd.js"), writeUmd(raw))
 copyFileSync(resolve(root, "types", "jquery.d.ts"), resolve(dist, "jquery.d.ts"))
-console.log("wrote dist/jquery.esm.js, dist/jquery.cjs, dist/jquery.umd.js")
+console.log("wrote dist/jquery.esm.js, dist/jquery.cjs, dist/jquery.umd.js from compiler raw")

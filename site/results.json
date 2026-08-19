@@ -27,9 +27,9 @@
     {
       "id": "itslil",
       "name": "@itslil/jquery",
-      "raw": 144763,
-      "gzip9": 40365,
-      "brotli11": 35349,
+      "raw": 92765,
+      "gzip9": 34544,
+      "brotli11": 30973,
       "note": "LilScript compiler-selected ESM",
       "primary": true
     }
@@ -44,9 +44,9 @@
         "brotli11": 28847
       },
       "itslil": {
-        "raw": 90987,
-        "gzip9": 34005,
-        "brotli11": 30462
+        "raw": 90986,
+        "gzip9": 34004,
+        "brotli11": 30496
       }
     },
     {
@@ -58,9 +58,9 @@
         "brotli11": 28634
       },
       "itslil": {
-        "raw": 90513,
-        "gzip9": 33772,
-        "brotli11": 30264
+        "raw": 90512,
+        "gzip9": 33768,
+        "brotli11": 30273
       }
     },
     {
@@ -72,9 +72,9 @@
         "brotli11": 28737
       },
       "itslil": {
-        "raw": 90775,
-        "gzip9": 33932,
-        "brotli11": 30367
+        "raw": 90774,
+        "gzip9": 33924,
+        "brotli11": 30424
       }
     },
     {
@@ -86,9 +86,9 @@
         "brotli11": 28877
       },
       "itslil": {
-        "raw": 91063,
-        "gzip9": 34051,
-        "brotli11": 30556
+        "raw": 91062,
+        "gzip9": 34054,
+        "brotli11": 30503
       }
     },
     {
@@ -100,9 +100,9 @@
         "brotli11": 28548
       },
       "itslil": {
-        "raw": 90341,
-        "gzip9": 33708,
-        "brotli11": 30206
+        "raw": 90340,
+        "gzip9": 33699,
+        "brotli11": 30214
       }
     },
     {
@@ -114,9 +114,9 @@
         "brotli11": 28790
       },
       "itslil": {
-        "raw": 90816,
-        "gzip9": 33972,
-        "brotli11": 30453
+        "raw": 90815,
+        "gzip9": 33969,
+        "brotli11": 30421
       }
     }
   ],

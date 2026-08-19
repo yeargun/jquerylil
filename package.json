@@ -38,7 +38,10 @@
   },
   "files": [
     "src",
-    "dist",
+    "dist/jquery.esm.js",
+    "dist/jquery.cjs",
+    "dist/jquery.umd.js",
+    "dist/jquery.d.ts",
     "LICENSE",
     "NOTICE.md",
     "README.md"

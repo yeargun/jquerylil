@@ -39,9 +39,9 @@ Reusable package artifacts, measured with `lilscript-codec` gzip-9 / Brotli-11.
 | --- | ---: | ---: | ---: | ---: |
 | Official `jquery.js` | 285,314 | 83,619 | 69,545 | 2.53× |
 | Official `jquery.min.js` | 87,533 | 30,336 | 27,445 | 1.00× |
-| **`@itslil/jquery` ESM** | **144,763** | **40,365** | **35,349** | **1.29×** |
+| **`@itslil/jquery` ESM** | **92,765** | **34,544** | **30,973** | **1.13×** |
 
-Brotli is **1.29×** official min and **0.51×** official unminified `jquery.js`. The published file is the compiler-selected artifact. Downstream Vite/Terser of that file is not what npm installs.
+Brotli is **1.13×** official min and **0.45×** official unminified `jquery.js`. The published ESM is the LilScript compiler output plus a license banner and a default export. It is not pretty-printed and not run through Terser.
 
 ## Example app bundles
 
@@ -49,14 +49,14 @@ Same six apps, Vite production minify, official `jquery@3.7.1` vs `@itslil/jquer
 
 | App | jquery Brotli | @itslil/jquery Brotli | Ratio |
 | --- | ---: | ---: | ---: |
-| Todos | 28,847 | 30,462 | 1.06× |
-| Tabs | 28,634 | 30,264 | 1.06× |
-| Search | 28,737 | 30,367 | 1.06× |
-| Cart | 28,877 | 30,556 | 1.06× |
-| Accordion | 28,548 | 30,206 | 1.06× |
-| Gallery | 28,790 | 30,453 | 1.06× |
+| Todos | 28,847 | 30,496 | 1.06× |
+| Tabs | 28,634 | 30,273 | 1.06× |
+| Search | 28,737 | 30,424 | 1.06× |
+| Cart | 28,877 | 30,503 | 1.06× |
+| Accordion | 28,548 | 30,214 | 1.06× |
+| Gallery | 28,790 | 30,421 | 1.06× |
 
-Vite further minifies the LilScript output, so the app-bundle gap is tighter than the raw package gap. Official still wins.
+Vite minifies both lanes. Official still wins the app chunks.
 
 ## Performance
 
