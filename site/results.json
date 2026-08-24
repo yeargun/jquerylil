@@ -183,5 +183,58 @@
       "title": "Gallery",
       "blurb": "$.Deferred and $.when."
     }
-  ]
+  ],
+  "compilerComparison": {
+    "schemaVersion": 1,
+    "objective": "brotli11",
+    "runs": [
+      {
+        "id": "published-before",
+        "role": "before",
+        "label": "Published compiler-selected ESM before compiler work",
+        "recordedAt": "2026-08-24T00:00:00.000Z",
+        "source": {
+          "revision": "b860fe8c9d9799e5e6fbfc2204d7bdd00948d5a1",
+          "tree": "791d4eb6da3899c65cd289c2d31f578df661b1e4",
+          "entrySha256": "f986f027261729561669b6b0b49368f6d99ef1e8f1cf978efe97ef28c6e5e2bd",
+          "packageLockSha256": "694b0e61cee1560d7ebccb649e807bfd7965af8436fae8902b0d5d9c2fa13856"
+        },
+        "config": {
+          "path": "lilscript.toml",
+          "sha256": "9f4a0a5a043b1ecf20f80b8e1a6656ace8efb9cbe5cc06aee15b1deba638395d",
+          "derivation": {
+            "kind": "identity"
+          }
+        },
+        "compiler": {
+          "revision": null,
+          "binarySha256": null
+        },
+        "codec": {
+          "binarySha256": "b3d93da88e4516f3b22e5e67b288bb2504868f1c438010e0ac9492ec33de2063",
+          "gzipLevel": 9,
+          "brotliQuality": 11
+        },
+        "artifact": {
+          "path": "dist/jquery.esm.js",
+          "sha256": "865b0cbf9a52a692390bc5fa1bd4cee153d51256b911f6458199e71ef15c4d21",
+          "sizes": {
+            "raw": 92765,
+            "gzip9": 34544,
+            "brotli11": 30973
+          }
+        },
+        "timing": {
+          "scope": "compile",
+          "samples": [],
+          "unavailableReason": "published artifact has no reproducible compiler timing"
+        },
+        "semantic": {
+          "status": "reported-passed",
+          "command": null,
+          "summary": "project report: 6 of 6 compatibility tests passed"
+        }
+      }
+    ]
+  }
 }

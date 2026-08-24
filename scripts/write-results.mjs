@@ -5,6 +5,14 @@ import { fileURLToPath } from "node:url"
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..")
 const sizes = JSON.parse(readFileSync(join(root, "reports", "sizes.json"), "utf8"))
 const bench = JSON.parse(readFileSync(join(root, "reports", "bench.json"), "utf8"))
+let compilerComparison = null
+try {
+  compilerComparison = JSON.parse(
+    readFileSync(join(root, "site", "results.json"), "utf8"),
+  ).compilerComparison ?? null
+} catch {
+  // Compiler history is additive and may not exist in a fresh checkout.
+}
 
 const titles = {
   todos: "Todos",
@@ -56,6 +64,7 @@ const results = {
     title,
     blurb: blurbs[id],
   })),
+  ...(compilerComparison ? { compilerComparison } : {}),
 }
 
 writeFileSync(join(root, "site", "results.json"), `${JSON.stringify(results, null, 2)}\n`)
