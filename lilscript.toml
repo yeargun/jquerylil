@@ -6,6 +6,10 @@
 priority = "size-first"
 optimization_level = 15
 cost_model = "brotli"
+# `k(){…}` is shorter than `k:function(){…}` and, on this artifact, larger:
+# measured -94 Brotli and -404 raw with shorthand off, because the shapes the
+# emitter reaches without it repeat better. Neutral on the other ports.
+struct_method_shorthand = false
 assume_pristine_builtins = true
 strip_console = true
 local_name_reserve = 8
