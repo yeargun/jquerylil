@@ -27,9 +27,9 @@
     {
       "id": "itslil",
       "name": "@itslil/jquery",
-      "raw": 94289,
-      "gzip9": 34392,
-      "brotli11": 30741,
+      "raw": 83044,
+      "gzip9": 31530,
+      "brotli11": 28225,
       "note": "LilScript compiler-selected ESM",
       "primary": true
     }
