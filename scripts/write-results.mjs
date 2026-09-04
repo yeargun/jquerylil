@@ -102,6 +102,9 @@ const tables = {
     ...results.throughput.map((suite) =>
       `| ${suite.name} | ${suite.officialMs.toFixed(2)} ms | ${suite.candidateMs.toFixed(2)} ms | ${times(suite.ratio)} |`),
   ],
+  perfnote: [
+    `Isolated Node ${results.node} processes versus \`jquery@3.7.1\`. 8 samples, first ${results.warmupDiscard} discarded, median of the rest. Ratio is \`@itslil/jquery\` / official (lower is faster). Checksums match on every suite. Mean retained memory **${times(results.memory.retainedRatio)}**.`,
+  ],
   names: [
     "| Names in `dist/jquery.raw.js` | Count | Renameable |",
     "| --- | ---: | --- |",

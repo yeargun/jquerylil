@@ -64,7 +64,9 @@ Vite minifies both lanes. Official still wins the app chunks.
 
 ## Performance
 
-Isolated Node v20.12.0 processes versus `jquery@3.7.1`. 8 samples, first 2 discarded, median of the rest. Ratio is `@itslil/jquery` / official (lower is faster). Checksums match on every suite. Mean retained memory **1.00×**.
+<!-- generated:perfnote -->
+Isolated Node v20.19.0 processes versus `jquery@3.7.1`. 8 samples, first 2 discarded, median of the rest. Ratio is `@itslil/jquery` / official (lower is faster). Checksums match on every suite. Mean retained memory **1.06×**.
+<!-- /generated:perfnote -->
 
 <!-- generated:perf -->
 | Suite | jquery@3.7.1 | @itslil/jquery | Ratio |
@@ -76,7 +78,7 @@ Isolated Node v20.12.0 processes versus `jquery@3.7.1`. 8 samples, first 2 disca
 | event-state | 21.17 ms | 16.14 ms | 0.76× |
 <!-- /generated:perf -->
 
-**5 / 5 suites ≤ 1.05×.** All five are faster. The deferred suite is a much cheaper implementation of the same resolve/done checksum; it is not a different workload.
+**5 / 5 suites ≤ 1.05×.** All five are faster. The deferred suite is a much cheaper implementation of the same resolve/done checksum; it is not a different workload. Absolute milliseconds move with the host; the ratio is the result.
 
 ## Names
 
