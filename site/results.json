@@ -1,11 +1,11 @@
 {
   "pin": "jquery@3.7.1",
   "package": "@itslil/jquery",
-  "node": "v20.12.0",
+  "node": "v20.19.0",
   "codec": "lilscript-codec gzip-9 / brotli-11",
   "warmupDiscard": 2,
   "memory": {
-    "retainedRatio": 0.9956062563261211
+    "retainedRatio": 1.0598451985700337
   },
   "size": [
     {
@@ -27,9 +27,9 @@
     {
       "id": "itslil",
       "name": "@itslil/jquery",
-      "raw": 83044,
-      "gzip9": 31530,
-      "brotli11": 28225,
+      "raw": 86072,
+      "gzip9": 32042,
+      "brotli11": 28764,
       "note": "LilScript compiler-selected ESM",
       "primary": true
     }
@@ -44,9 +44,9 @@
         "brotli11": 28847
       },
       "itslil": {
-        "raw": 90986,
-        "gzip9": 34004,
-        "brotli11": 30496
+        "raw": 86316,
+        "gzip9": 32841,
+        "brotli11": 29488
       }
     },
     {
@@ -58,9 +58,9 @@
         "brotli11": 28634
       },
       "itslil": {
-        "raw": 90512,
-        "gzip9": 33768,
-        "brotli11": 30273
+        "raw": 85842,
+        "gzip9": 32612,
+        "brotli11": 29352
       }
     },
     {
@@ -72,9 +72,9 @@
         "brotli11": 28737
       },
       "itslil": {
-        "raw": 90774,
-        "gzip9": 33924,
-        "brotli11": 30424
+        "raw": 86104,
+        "gzip9": 32772,
+        "brotli11": 29490
       }
     },
     {
@@ -86,9 +86,9 @@
         "brotli11": 28877
       },
       "itslil": {
-        "raw": 91062,
-        "gzip9": 34054,
-        "brotli11": 30503
+        "raw": 86392,
+        "gzip9": 32899,
+        "brotli11": 29583
       }
     },
     {
@@ -100,9 +100,9 @@
         "brotli11": 28548
       },
       "itslil": {
-        "raw": 90340,
-        "gzip9": 33699,
-        "brotli11": 30214
+        "raw": 85670,
+        "gzip9": 32538,
+        "brotli11": 29256
       }
     },
     {
@@ -114,42 +114,42 @@
         "brotli11": 28790
       },
       "itslil": {
-        "raw": 90815,
-        "gzip9": 33969,
-        "brotli11": 30421
+        "raw": 86145,
+        "gzip9": 32811,
+        "brotli11": 29499
       }
     }
   ],
   "throughput": [
     {
       "name": "core",
-      "officialMs": 224.78345800000002,
-      "candidateMs": 212.68791599999997,
-      "ratio": 0.9461902485724726
+      "officialMs": 514.5200150000001,
+      "candidateMs": 473.61264900000003,
+      "ratio": 0.9204941211081944
     },
     {
       "name": "events",
-      "officialMs": 37.6275,
-      "candidateMs": 33.553833,
-      "ratio": 0.8917369742874227
+      "officialMs": 107.90046400000006,
+      "candidateMs": 92.32849999999996,
+      "ratio": 0.8556821405327777
     },
     {
       "name": "deferred",
-      "officialMs": 52.45675,
-      "candidateMs": 17.76891599999999,
-      "ratio": 0.33873459564307723
+      "officialMs": 144.04187900000005,
+      "candidateMs": 55.42536700000005,
+      "ratio": 0.3847864758831703
     },
     {
       "name": "collection",
-      "officialMs": 4.223084,
-      "candidateMs": 4.037000000000006,
-      "ratio": 0.9559364672831528
+      "officialMs": 10.801004999999975,
+      "candidateMs": 7.985919000000024,
+      "ratio": 0.7393681421312223
     },
     {
       "name": "event-state",
-      "officialMs": 8.61699999999999,
-      "candidateMs": 7.237332999999978,
-      "ratio": 0.8398901009632107
+      "officialMs": 21.16676799999999,
+      "candidateMs": 16.143703999999957,
+      "ratio": 0.7626910258571343
     }
   ],
   "examples": [
@@ -184,6 +184,26 @@
       "blurb": "$.Deferred and $.when."
     }
   ],
+  "names": {
+    "artifact": "dist/jquery.raw.js",
+    "upstream": "jquery@3.7.1",
+    "propertyNames": 476,
+    "upstreamNames": 472,
+    "platformNames": [
+      "hasOwn",
+      "charAt",
+      "borderWidth",
+      "define"
+    ],
+    "leakedNames": [],
+    "propertyNameBytes": 16824,
+    "distinctIdentifiers": 884,
+    "shortIdentifiers": 381,
+    "exports": [
+      "$",
+      "jQuery"
+    ]
+  },
   "compilerComparison": {
     "schemaVersion": 1,
     "objective": "brotli11",
@@ -233,6 +253,53 @@
           "status": "reported-passed",
           "command": null,
           "summary": "project report: 6 of 6 compatibility tests passed"
+        }
+      },
+      {
+        "id": "current-verified",
+        "role": "current",
+        "label": "Committed compiler, receiver fix, name audit green",
+        "recordedAt": "2026-09-04T10:35:42.450Z",
+        "source": {
+          "revision": "30c000def6c57cd550a1e2da6163235a3aa71d86",
+          "tree": "3008dc442301ab0fb191b3036c8344ad1904ac1b",
+          "entrySha256": "f986f027261729561669b6b0b49368f6d99ef1e8f1cf978efe97ef28c6e5e2bd",
+          "packageLockSha256": "694b0e61cee1560d7ebccb649e807bfd7965af8436fae8902b0d5d9c2fa13856"
+        },
+        "config": {
+          "path": "lilscript.toml",
+          "sha256": "f5a854578349276e8c6a87c468a531245de86496d4bf93ea431bf55e4016aa58",
+          "derivation": {
+            "kind": "identity"
+          }
+        },
+        "compiler": {
+          "revision": "f3aee0fe383b56344f8532d0018c8cf297912361",
+          "binarySha256": "e32a0e38b23f287cc4aa8fd7f438100314bf97f3098c7a5e25446ddaea77089e"
+        },
+        "codec": {
+          "binarySha256": "ac7b3ed1687159f8a3a26c1c5aa4580742c07ba79c8699e07ed630272a1824a5",
+          "gzipLevel": 9,
+          "brotliQuality": 11
+        },
+        "artifact": {
+          "path": "dist/jquery.esm.js",
+          "sha256": "bd56aab9531871cb4b24bf79d061fa50e6bcbccc68008c55fc6279cacb7ada24",
+          "sizes": {
+            "raw": 86072,
+            "gzip9": 32042,
+            "brotli11": 28764
+          }
+        },
+        "timing": {
+          "scope": "compile",
+          "samples": [],
+          "unavailableReason": "compiled on the build pool; wall clock is not a result"
+        },
+        "semantic": {
+          "status": "passed",
+          "command": "npm test && npm run check:names",
+          "summary": "6 of 6 compatibility tests passed; 0 port-invented property names left unmangled"
         }
       }
     ]

@@ -56,10 +56,12 @@
     "test": "node --test test/compat.test.mjs",
     "bench": "node scripts/bench.mjs",
     "measure": "node scripts/measure.mjs",
+    "record": "node scripts/record-compiler-run.mjs",
     "examples": "node examples/serve.mjs",
     "check:site": "npm run build:site && node --test test/site.test.mjs",
+    "check:names": "node scripts/audit-names.mjs",
     "check:pack": "node scripts/check-pack.mjs",
-    "prepublishOnly": "node --test test/compat.test.mjs && npm run check:pack && npm run check:site"
+    "prepublishOnly": "node --test test/compat.test.mjs && npm run check:names && npm run check:pack && npm run check:site"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.33",

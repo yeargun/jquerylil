@@ -111,6 +111,30 @@ function renderApps() {
     .join("")
 }
 
+function renderNames() {
+  const names = data.names
+  const grid = document.querySelector("#name-grid")
+  if (!names) {
+    document.querySelector("#names")?.remove()
+    return
+  }
+  const cards = [
+    { value: formatter.format(names.propertyNames), label: "property names emitted" },
+    { value: formatter.format(names.upstreamNames), label: `names ${names.upstream} also ships` },
+    { value: String(names.platformNames.length), label: "platform members" },
+    { value: String(names.leakedNames.length), label: "port-invented left", win: names.leakedNames.length === 0 },
+  ]
+  grid.innerHTML = cards
+    .map((card) => `<div class="name-card${card.win ? " win" : ""}"><strong>${card.value}</strong><span>${card.label}</span></div>`)
+    .join("")
+  document.querySelector("#name-note").textContent =
+    `${formatter.format(names.shortIdentifiers)} of ${formatter.format(names.distinctIdentifiers)} identifiers are one or two characters. ` +
+    `The ${formatter.format(names.propertyNames)} property names weigh ${formatter.format(names.propertyNameBytes)} bytes and every one of them is reachable from a caller: ` +
+    `${formatter.format(names.upstreamNames)} are spellings jQuery itself ships, ${names.platformNames.length} are platform members (${names.platformNames.join(", ")}), ` +
+    `and ${names.leakedNames.length === 0 ? "none were invented by the port" : names.leakedNames.map((entry) => entry.name).join(", ") + " were invented by the port"}. ` +
+    `Exports: ${names.exports.join(", ")}.`
+}
+
 function renderPerf() {
   const suites = data.throughput ?? []
   if (suites.length === 0) return
@@ -182,6 +206,7 @@ renderPerf()
 renderDemos()
 renderApps()
 renderSize()
+renderNames()
 renderCompilerComparison(data)
 bindCopy()
 bindProgress()
