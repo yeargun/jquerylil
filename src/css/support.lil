@@ -147,14 +147,14 @@ void initSupport() {
   JsValue clonedDiv = JS.invoke(div, "cloneNode", true);
   clonedDiv["style"]["backgroundClip"] = "";
   bool clearCloneStyle = JS.strictEqual(divStyle["backgroundClip"], "content-box");
-  support["clearCloneStyle"] = clearCloneStyle;
+  support.clearCloneStyle = clearCloneStyle;
 
-  support["boxSizingReliable"] = boxSizingReliable;
-  support["pixelBoxStyles"] = pixelBoxStyles;
-  support["pixelPosition"] = pixelPosition;
-  support["reliableMarginLeft"] = reliableMarginLeft;
-  support["scrollboxSize"] = scrollboxSize;
-  support["reliableTrDimensions"] = reliableTrDimensions;
+  support.boxSizingReliable = boxSizingReliable;
+  support.pixelBoxStyles = pixelBoxStyles;
+  support.pixelPosition = pixelPosition;
+  support.reliableMarginLeft = reliableMarginLeft;
+  support.scrollboxSize = scrollboxSize;
+  support.reliableTrDimensions = reliableTrDimensions;
 }
 
 initSupport();

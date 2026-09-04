@@ -8,13 +8,13 @@ void detect() {
 
   input["type"] = "checkbox";
 
-  support["checkOn"] = input["value"] != "";
-  support["optSelected"] = opt["selected"];
+  support.checkOn = input["value"] != "";
+  support.optSelected = JS.assume(opt["selected"]);
 
   input = JS.invoke(document, "createElement", "input");
   input["value"] = "t";
   input["type"] = "radio";
-  support["radioValue"] = input["value"] == "t";
+  support.radioValue = input["value"] == "t";
 }
 
 detect();

@@ -6,7 +6,7 @@ import { acceptData } from "../data/var/acceptData";
 import { isFunction } from "../var/isFunction";
 import { isWindow } from "../var/isWindow";
 import { hasOwn } from "../var/hasOwn";
-import { Event } from "../event";
+import { Event, SpecialView } from "../event";
 import {
   arraySort,
   arrayPop,
@@ -101,19 +101,19 @@ export JsValue trigger(JsValue eventArg, JsValue dataArg = null, JsValue elemArg
     data = makeArray(dataArg, data);
   }
 
-  JsValue specialForType = JS.or(jQuery["event"]["special"][type], emptySpecial);
+  SpecialView specialForType = JS.assume(JS.or(jQuery["event"]["special"][type], emptySpecial));
 
   if (
     !onlyHandlers &&
-    specialForType["trigger"].truthy() &&
-    JS.isFalse(JS.apply(specialForType["trigger"], elem, data))
+    specialForType.trigger.truthy() &&
+    JS.isFalse(JS.apply(specialForType.trigger, elem, data))
   ) {
     return JS.undefined();
   }
 
   JsValue bubbleType = type;
-  if (!onlyHandlers && !specialForType["noBubble"].truthy() && !isWindow(elem)) {
-    bubbleType = JS.or(specialForType["delegateType"], type);
+  if (!onlyHandlers && !specialForType.noBubble.truthy() && !isWindow(elem)) {
+    bubbleType = JS.or(specialForType.delegateType, type);
     if (!JS.regexTest(rfocusMorph, JS.string(JS.add(bubbleType, type)))) {
       cur = cur["parentNode"];
     }
@@ -139,7 +139,7 @@ export JsValue trigger(JsValue eventArg, JsValue dataArg = null, JsValue elemArg
     if (i > 1) {
       event["type"] = bubbleType;
     } else {
-      event["type"] = JS.or(specialForType["bindType"], type);
+      event["type"] = JS.or(specialForType.bindType, type);
     }
 
     JsValue events = dataPrivGet(cur, "events");
@@ -164,7 +164,7 @@ export JsValue trigger(JsValue eventArg, JsValue dataArg = null, JsValue elemArg
   event["type"] = type;
 
   if (!onlyHandlers && !JS.invoke(event, "isDefaultPrevented").truthy()) {
-    JsValue defaultFn = specialForType["_default"];
+    JsValue defaultFn = specialForType._default;
     bool allowNative = true;
     if (defaultFn.truthy()) {
       allowNative = JS.isFalse(JS.apply(defaultFn, JS.pop(eventPath), data));

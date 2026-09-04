@@ -10,6 +10,15 @@ struct QueueHooks {
   JsValue empty;
 }
 
+// View of the hooks bag queueHooks() allocates (QueueHooks above, kept in dataPriv):
+// effects.lil, delay.lil and user queue callbacks write `unqueued` and `stop` on it.
+// The port owns the allocation, so reads are typed field reads (finer/hypotheses/042).
+export struct QueueHooksView {
+  JsValue empty;
+  JsValue unqueued;
+  JsValue stop;
+}
+
 export JsValue queueStatic(JsValue elem, JsValue typeValue, JsValue data) {
   if (!elem.truthy()) {
     return JS.undefined();
@@ -44,7 +53,7 @@ export JsValue dequeueStatic(JsValue elem, JsValue typeValue) {
   JsValue queue = queueStatic(elem, type, JS.undefined());
   float startLength = queue.length;
   JsValue fn = JS.invoke(queue, "shift");
-  JsValue hooks = queueHooks(elem, type);
+  QueueHooksView hooks = JS.assume(queueHooks(elem, type));
 
   JsValue next = () => {
     dequeueStatic(elem, type);
@@ -64,8 +73,8 @@ export JsValue dequeueStatic(JsValue elem, JsValue typeValue) {
     JS.call(fn, elem, next, hooks);
   }
 
-  if (!(startLength > 0.0) && hooks.truthy()) {
-    JS.invoke(hooks["empty"], "fire");
+  if (!(startLength > 0.0)) {
+    JS.invoke(hooks.empty, "fire");
   }
   return JS.undefined();
 }

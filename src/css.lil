@@ -189,7 +189,7 @@ export JsValue style(JsValue elem, string name, JsValue valueArg = JS.undefined(
       value = JS.add(value, unit);
     }
 
-    if (!support["clearCloneStyle"].truthy() && JS.strictEqual(value, "") && finalName.indexOf("background") == 0) {
+    if (!support.clearCloneStyle && JS.strictEqual(value, "") && finalName.indexOf("background") == 0) {
       styleObj[finalName] = "inherit";
     }
 

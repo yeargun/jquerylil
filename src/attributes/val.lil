@@ -139,7 +139,7 @@ JsValue checkableGet(JsValue elem) {
 }
 
 JsValue checkableHooks = SetHook{checkableSet};
-if (!support["checkOn"].truthy()) {
+if (!support.checkOn) {
   checkableHooks = GetSetHook{checkableGet, checkableSet};
 }
 

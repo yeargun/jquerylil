@@ -13,6 +13,13 @@ struct_method_shorthand = false
 assume_pristine_builtins = true
 strip_console = true
 local_name_reserve = 8
+# Ask bindings that take part in a token idiom the artifact repeats for the
+# spelling that idiom's commonest occurrence uses, so two scopes writing the
+# same idiom write it the same way. Every conversion is scored by the exact
+# codec before it is kept, so the pass cannot make the artifact bigger; the
+# compiler default is off because four ports is not the fleet (lilscript
+# e41d433), and on this port it was measured at -40 Brotli with tests green.
+idiom_directed_naming = true
 candidate_search = "always"
 candidate_proposal_limit = 1536
 terminal_codec_probe_limit = 1536

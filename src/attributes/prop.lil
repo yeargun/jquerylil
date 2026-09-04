@@ -84,7 +84,7 @@ JsValue selectedSet(JsValue elem) {
   return null;
 }
 
-if (!support["optSelected"].truthy()) {
+if (!support.optSelected) {
   JsValue selectedHookBag = GetSetHook{selectedGet, selectedSet};
   propHooks["selected"] = selectedHookBag;
 }

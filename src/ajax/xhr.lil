@@ -34,9 +34,9 @@ float xhrMappedStatus(JsValue status) {
 }
 
 JsValue xhrProbe = xhrFactory();
-support["cors"] = xhrProbe.truthy() && JS.in("withCredentials", xhrProbe);
-support["ajax"] = xhrProbe.truthy();
-bool xhrSupported = support["ajax"].truthy();
+support.cors = xhrProbe.truthy() && JS.in("withCredentials", xhrProbe);
+support.ajax = xhrProbe.truthy();
+bool xhrSupported = support.ajax;
 
 enum XhrCb {
   Success,
@@ -58,7 +58,7 @@ struct XhrBinaryResponses {
 }
 
 JsValue xhrTransportFactory(JsValue options) {
-  if (support["cors"].truthy() || (xhrSupported && !options["crossDomain"].truthy())) {
+  if (support.cors || (xhrSupported && !options["crossDomain"].truthy())) {
     JsValue callback = null;
     JsValue errorCallback = null;
 

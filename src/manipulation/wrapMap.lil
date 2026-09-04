@@ -26,7 +26,7 @@ export Wrap wrapForTag(string tag) {
   if (tag == "thead" || tag == "tbody" || tag == "tfoot" || tag == "colgroup" || tag == "caption") {
     return theadWrap;
   }
-  if (!support["option"].truthy() && (tag == "option" || tag == "optgroup")) {
+  if (!support.option && (tag == "option" || tag == "optgroup")) {
     return optionWrap;
   }
   return defaultWrap;

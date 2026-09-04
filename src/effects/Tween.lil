@@ -7,12 +7,46 @@ import {
   mathPI
 } from "../js-host.lil";
 
+// View of the merged animation options bag effects.lil allocates (`jQuery.speed()` output
+// deep-extended over the {specialEasing, easing} seed by jQuery.extend, which copies data
+// values only), so reads are typed field reads (finer/hypotheses/042).
+export struct AnimOptsView {
+  JsValue duration;
+  JsValue easing;
+  JsValue queue;
+  JsValue specialEasing;
+  JsValue step;
+  JsValue progress;
+  JsValue complete;
+  JsValue start;
+  JsValue done;
+  JsValue fail;
+  JsValue always;
+  JsValue overflow;
+  JsValue old;
+}
+
+// View of a jQuery.Tween instance: createTween / Tween.prototype.init allocate it
+// (Object.create(Tween.prototype) or new) and write every field; propHooks and step
+// callbacks receive the same object, so reads are typed field reads (finer/hypotheses/042).
+export struct TweenView {
+  JsValue elem;
+  JsValue prop;
+  JsValue options;
+  JsValue end;
+  JsValue pos;
+  JsValue easing;
+  JsValue unit;
+  JsValue start;
+  JsValue now;
+}
+
 JsValue tweenPrototype = JS.undefined();
 JsValue tweenPropHooks = JS.undefined();
 
-JsValue tweenDefaultGet(JsValue tween) {
-  JsValue elem = tween["elem"];
-  JsValue prop = tween["prop"];
+JsValue tweenDefaultGet(TweenView tween) {
+  JsValue elem = tween.elem;
+  JsValue prop = tween.prop;
 
   bool useElemDirect = JS.and(elem, elem["nodeType"]) != 1.0;
   if (!useElemDirect) {
@@ -29,9 +63,9 @@ JsValue tweenDefaultGet(JsValue tween) {
   return result;
 }
 
-void tweenDefaultSet(JsValue tween) {
-  JsValue prop = tween["prop"];
-  JsValue elem = tween["elem"];
+void tweenDefaultSet(TweenView tween) {
+  JsValue prop = tween.prop;
+  JsValue elem = tween.elem;
   JsValue fxStep = jQuery["fx"]["step"][prop];
   if (fxStep.truthy()) {
     JS.call(fxStep, jQuery["fx"]["step"], tween);
@@ -41,21 +75,21 @@ void tweenDefaultSet(JsValue tween) {
   bool useStyle = JS.and(elem, elem["nodeType"]) == 1.0 &&
     (jQuery["cssHooks"][prop].truthy() || !JS.isNullish(elem["style"][finalPropName(JS.string(prop))]));
   if (useStyle) {
-    style(elem, JS.string(prop), JS.add(tween["now"], tween["unit"]));
+    style(elem, JS.string(prop), JS.add(tween.now, tween.unit));
   } else {
-    elem[prop] = tween["now"];
+    elem[prop] = tween.now;
   }
 }
 
-void tweenScrollSet(JsValue tween) {
-  JsValue elem = tween["elem"];
+void tweenScrollSet(TweenView tween) {
+  JsValue elem = tween.elem;
   if (JS.and(elem, elem["nodeType"]).truthy() && elem["parentNode"].truthy()) {
-    elem[tween["prop"]] = tween["now"];
+    elem[tween.prop] = tween.now;
   }
 }
 
-export JsValue tweenCur(JsValue tween) {
-  JsValue prop = tween["prop"];
+export JsValue tweenCur(TweenView tween) {
+  JsValue prop = tween.prop;
   JsValue hooks = tweenPropHooks[prop];
   if (!hooks.truthy()) {
     hooks = tweenPropHooks["_default"];
@@ -67,7 +101,7 @@ export JsValue tweenCur(JsValue tween) {
 }
 
 void initializeTween(
-  JsValue tween,
+  TweenView tween,
   JsValue elem,
   JsValue options,
   JsValue propArg,
@@ -75,17 +109,17 @@ void initializeTween(
   JsValue easingArg,
   JsValue unitArg
 ) {
-  tween["elem"] = elem;
-  tween["prop"] = propArg;
-  tween["options"] = options;
-  tween["end"] = endArg;
-  tween["pos"] = 0.0;
+  tween.elem = elem;
+  tween.prop = propArg;
+  tween.options = options;
+  tween.end = endArg;
+  tween.pos = 0.0;
 
   JsValue easing = easingArg;
   if (!easing.truthy()) {
     easing = jQuery["easing"]["_default"];
   }
-  tween["easing"] = easing;
+  tween.easing = easing;
 
   JsValue unit = "";
   if (unitArg.truthy()) {
@@ -93,11 +127,11 @@ void initializeTween(
   } else if (!jQuery["cssNumber"][propArg].truthy()) {
     unit = "px";
   }
-  tween["unit"] = unit;
+  tween.unit = unit;
 
   JsValue current = tweenCur(tween);
-  tween["start"] = current;
-  tween["now"] = current;
+  tween.start = current;
+  tween.now = current;
 }
 
 export JsValue createTween(
@@ -108,32 +142,32 @@ export JsValue createTween(
   JsValue easingArg = null,
   JsValue unitArg = null
 ) {
-  JsValue tween = objectCreate(tweenPrototype);
+  TweenView tween = JS.assume(objectCreate(tweenPrototype));
   initializeTween(tween, elem, options, prop, end, easingArg, unitArg);
   return tween;
 }
 
-export JsValue tweenRun(JsValue tween, float percent) {
+export JsValue tweenRun(TweenView tween, float percent) {
   float eased = percent;
-  JsValue options = tween["options"];
-  JsValue durationRaw = options["duration"];
+  AnimOptsView options = JS.assume(tween.options);
+  JsValue durationRaw = options.duration;
   if (durationRaw.truthy()) {
     float duration = JS.number(durationRaw);
-    JsValue easingFn = jQuery["easing"][tween["easing"]];
+    JsValue easingFn = jQuery["easing"][tween.easing];
     eased = JS.number(easingFn(percent, duration * percent, 0.0, 1.0, duration));
   }
-  tween["pos"] = eased;
-  float start = JS.number(tween["start"]);
-  float end = JS.number(tween["end"]);
+  tween.pos = eased;
+  float start = JS.number(tween.start);
+  float end = JS.number(tween.end);
   float now = (end - start) * eased + start;
-  tween["now"] = now;
+  tween.now = now;
 
-  JsValue step = options["step"];
+  JsValue step = options.step;
   if (step.truthy()) {
-    JS.call(step, tween["elem"], now, tween);
+    JS.call(step, tween.elem, now, tween);
   }
 
-  JsValue prop = tween["prop"];
+  JsValue prop = tween.prop;
   JsValue hooks = tweenPropHooks[prop];
   if (!hooks.truthy()) {
     hooks = tweenPropHooks["_default"];
@@ -153,18 +187,18 @@ JsValue TweenInit(
   JsValue unitArg = null
 ) {
   JsValue self = this;
-  initializeTween(self, elem, options, prop, end, easingArg, unitArg);
+  initializeTween(JS.assume(self), elem, options, prop, end, easingArg, unitArg);
   return self;
 }
 
 JsValue TweenCurMethod() {
   JsValue self = this;
-  return tweenCur(self);
+  return tweenCur(JS.assume(self));
 }
 
 JsValue TweenRunMethod(JsValue percent) {
   JsValue self = this;
-  return tweenRun(self, JS.number(percent));
+  return tweenRun(JS.assume(self), JS.number(percent));
 }
 
 float easingLinear(float p) {

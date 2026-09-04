@@ -47,7 +47,7 @@ JsValue removeAttrImpl(JsValue elem, JsValue value) {
 }
 
 JsValue typeHookSet(JsValue elem, JsValue value) {
-  if (!support["radioValue"].truthy() && value == "radio" && nodeName(elem, "input")) {
+  if (!support.radioValue && value == "radio" && nodeName(elem, "input")) {
     JsValue val = elem["value"];
     JS.invoke(elem, "setAttribute", "type", JS.string(value));
     if (val.truthy()) {

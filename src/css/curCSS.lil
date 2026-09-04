@@ -49,7 +49,7 @@ export JsValue curCSS(JsValue elem, string name, JsValue computedArg = null) {
 
     bool retIsNumNonPx = JS.regexTest(rnumnonpx, JS.string(ret));
 
-    bool pixelBoxStylesOk = JS.invoke(support, "pixelBoxStyles").truthy();
+    bool pixelBoxStylesOk = support.pixelBoxStyles();
 
     if (!pixelBoxStylesOk && retIsNumNonPx && JS.regexTest(rboxStyle, name)) {
       JsValue width = style["width"];

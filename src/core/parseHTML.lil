@@ -39,7 +39,7 @@ export JsValue parseHTML(JsValue data, JsValue context = null, JsValue keepScrip
   }
 
   if (!ctx.truthy()) {
-    if (support["createHTMLDocument"].truthy()) {
+    if (support.createHTMLDocument) {
       JsValue implementation = document["implementation"];
       ctx = JS.invoke(implementation, "createHTMLDocument", "");
       JsValue base = JS.invoke(ctx, "createElement", "base");

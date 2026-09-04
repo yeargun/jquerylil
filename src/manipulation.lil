@@ -143,7 +143,7 @@ export JsValue domManip(JsValue collection, JsValue argsIn, func(JsValue, JsValu
   bool valueIsFunction = isFunction(value);
 
   bool needsPerElementRecursion = valueIsFunction ||
-    (l > 1.0 && value is string && !support["checkClone"].truthy() &&
+    (l > 1.0 && value is string && !support.checkClone &&
       JS.regexTest(rchecked, JS.assume(value)));
 
   if (needsPerElementRecursion) {
@@ -263,7 +263,7 @@ export JsValue clone(JsValue elem, JsValue dataAndEventsArg = false, JsValue dee
   JsValue nodeTypeRaw = elem["nodeType"];
   bool isElementOrFragment = nodeTypeRaw == 1.0 || nodeTypeRaw == 11.0;
 
-  if (!support["noCloneChecked"].truthy() && isElementOrFragment && !isXMLDoc(elem)) {
+  if (!support.noCloneChecked && isElementOrFragment && !isXMLDoc(elem)) {
     destElements = getAll(cloned);
     srcElements = getAll(elem);
 

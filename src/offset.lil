@@ -224,7 +224,7 @@ fn["offset"] = fnOffset;
 fn["position"] = fnPosition;
 fn["offsetParent"] = fnOffsetParent;
 
-func()->bool pixelPositionCondition = () => JS.invoke(support, "pixelPosition").truthy();
+func()->bool pixelPositionCondition = () => support.pixelPosition();
 
 JsValue makeEdgeHook(string prop) {
   return addGetHookIf(pixelPositionCondition, (JsValue elem, JsValue computed) => {
@@ -246,8 +246,14 @@ jQuery["cssHooks"]["top"] = makeEdgeHook("top");
 jQuery["cssHooks"]["left"] = makeEdgeHook("left");
 
 void installScrollMethod(string method, string prop, bool isTop) {
-  fn[method] = (JsValue valArg) => {
-    JsValue self = this;
+  // Ambient `this` inside a closure is that closure's lexical `this`, not the
+  // receiver of the call -- reading it here only produced the collection while
+  // the emitter happened to spell this closure as an ordinary `function`. Under
+  // the arrow spelling the same source read the module's `this` (`undefined` in
+  // an ESM module) and `scrollTop`/`scrollLeft` threw. `JS.method1` is how a
+  // port asks for the receiver, and it means the same thing under every
+  // function spelling; the rest of this port already uses it 113 times.
+  fn[method] = JS.method1((JsValue self, JsValue valArg) => {
     return access(self, (JsValue elem, JsValue _method, JsValue valueArg) => {
       JsValue win = null;
       if (isWindow(elem)) {
@@ -277,7 +283,7 @@ void installScrollMethod(string method, string prop, bool isTop) {
       }
       return JS.undefined();
     }, method, valArg, !JS.isUndefined(valArg), null, false);
-  };
+  });
 }
 
 installScrollMethod("scrollLeft", "pageXOffset", false);

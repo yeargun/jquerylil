@@ -15,9 +15,9 @@ import {
 } from "./data/var/dataPriv";
 import { showHide } from "./css/showHide";
 import { css, style } from "./css";
-import { createTween, tweenRun } from "./effects/Tween";
+import { createTween, tweenRun, AnimOptsView, TweenView } from "./effects/Tween";
 import { Deferred } from "./deferred";
-import { queueStatic, dequeueStatic, queueHooks } from "./queue";
+import { queueStatic, dequeueStatic, queueHooks, QueueHooksView } from "./queue";
 import {
   dateNow,
   scheduleTimeoutMs,
@@ -178,8 +178,8 @@ JsValue tweenFromJsTweeners(JsValue collection, JsValue animation, JsValue prop,
 
 JsValue defaultTweener(JsValue propArg, JsValue value) {
   JsValue animation = this;
-  JsValue tween = JS.invoke(animation, "createTween", propArg, value);
-  adjustCSS(tween["elem"], JS.string(propArg), JS.regexExec(rcssNum, value), tween);
+  TweenView tween = JS.assume(JS.invoke(animation, "createTween", propArg, value));
+  adjustCSS(tween.elem, JS.string(propArg), JS.regexExec(rcssNum, value), tween);
   return tween;
 }
 
@@ -195,7 +195,7 @@ JsValue createTweenFn(JsValue value, JsValue prop, JsValue animation) {
   return tweenFromJsTweeners(animationTweeners["*"], animation, prop, value);
 }
 
-JsValue defaultPrefilter(JsValue elem, JsValue props, JsValue opts) {
+JsValue defaultPrefilter(JsValue elem, JsValue props, AnimOptsView opts) {
   JsValue anim = this;
   bool isBox = JS.in("width", props) || JS.in("height", props);
   JsValue orig = JS.object();
@@ -204,26 +204,26 @@ JsValue defaultPrefilter(JsValue elem, JsValue props, JsValue opts) {
   JsValue dataShow = dataPrivGet(elem, "fxshow");
   bool toggle = false;
 
-  if (!opts["queue"].truthy()) {
-    JsValue hooks = queueHooks(elem, "fx");
-    if (JS.isNullish(hooks["unqueued"])) {
-      hooks["unqueued"] = 0.0;
-      JsValue oldfire = hooks["empty"]["fire"];
-      hooks["empty"]["fire"] = () => {
-        if (!hooks["unqueued"].truthy()) {
+  if (!opts.queue.truthy()) {
+    QueueHooksView hooks = JS.assume(queueHooks(elem, "fx"));
+    if (JS.isNullish(hooks.unqueued)) {
+      hooks.unqueued = 0.0;
+      JsValue oldfire = hooks.empty["fire"];
+      hooks.empty["fire"] = () => {
+        if (!hooks.unqueued.truthy()) {
           oldfire();
         }
         return JS.undefined();
       };
     }
-    hooks["unqueued"] = JS.number(hooks["unqueued"]) + 1.0;
+    hooks.unqueued = JS.number(hooks.unqueued) + 1.0;
 
     JS.invoke(anim, "always", () => {
       JS.invoke(anim, "always", () => {
-        hooks["unqueued"] = JS.number(hooks["unqueued"]) - 1.0;
+        hooks.unqueued = JS.number(hooks.unqueued) - 1.0;
         JsValue fxQueue = queueStatic(elem, "fx", JS.undefined());
         if (fxQueue.length == 0.0) {
-          JS.invoke(hooks["empty"], "fire");
+          JS.invoke(hooks.empty, "fire");
         }
         return JS.undefined();
       });
@@ -262,7 +262,7 @@ JsValue defaultPrefilter(JsValue elem, JsValue props, JsValue opts) {
   JsValue restoreDisplay = JS.undefined();
 
   if (isBox && JS.strictEqual(elem["nodeType"], 1.0)) {
-    opts["overflow"] = [styleDecl["overflow"], styleDecl["overflowX"], styleDecl["overflowY"]];
+    opts.overflow = [styleDecl["overflow"], styleDecl["overflowX"], styleDecl["overflowY"]];
 
     restoreDisplay = JS.and(dataShow, dataShow["display"]);
     if (JS.isNullish(restoreDisplay)) {
@@ -303,12 +303,12 @@ JsValue defaultPrefilter(JsValue elem, JsValue props, JsValue opts) {
     }
   }
 
-  if (opts["overflow"].truthy()) {
+  if (opts.overflow.truthy()) {
     styleDecl["overflow"] = "hidden";
     JS.invoke(anim, "always", () => {
-      styleDecl["overflow"] = opts["overflow"][0];
-      styleDecl["overflowX"] = opts["overflow"][1];
-      styleDecl["overflowY"] = opts["overflow"][2];
+      styleDecl["overflow"] = opts.overflow[0];
+      styleDecl["overflowX"] = opts.overflow[1];
+      styleDecl["overflowY"] = opts.overflow[2];
       return JS.undefined();
     });
   }
@@ -348,10 +348,11 @@ JsValue defaultPrefilter(JsValue elem, JsValue props, JsValue opts) {
     JsValue startVal = JS.or(JS.and(hidden, dataShow[prop2]), 0.0);
     propTween = createTweenFn(startVal, prop2, anim);
     if (!JS.in(prop2, dataShow)) {
-      dataShow[prop2] = propTween["start"];
+      TweenView shownTween = JS.assume(propTween);
+      dataShow[prop2] = shownTween.start;
       if (hidden) {
-        propTween["end"] = propTween["start"];
-        propTween["start"] = 0.0;
+        shownTween.end = shownTween.start;
+        shownTween.start = 0.0;
       }
     }
   }
@@ -399,17 +400,17 @@ JsValue AnimationCtor(JsValue elem, JsValue properties, JsValue options) {
 
 JsValue AnimationWithOpts(JsValue elem, JsValue properties, JsValue originalOptions) {
   JsValue deferred = Deferred();
-  JsValue opts = mergeObject(AnimOptsSeed{JS.object(), jQuery["easing"]["_default"]}, originalOptions, true);
+  AnimOptsView opts = JS.assume(mergeObject(AnimOptsSeed{JS.object(), jQuery["easing"]["_default"]}, originalOptions, true));
   JsValue propsCopy = mergeObject(JS.object(), properties, false);
   float startTime = currentFxNow();
-  float duration = JS.number(opts["duration"]);
+  float duration = JS.number(opts.duration);
   JsValue[] tweens = [];
   bool stopped = false;
 
   JsValue animationCreateTween = (JsValue propArg, JsValue endArg) => {
-    JsValue easing = opts["specialEasing"][propArg];
+    JsValue easing = opts.specialEasing[propArg];
     if (!easing.truthy()) {
-      easing = opts["easing"];
+      easing = opts.easing;
     }
     JsValue tween = createTween(elem, opts, propArg, endArg, easing, "");
     tweens.push(tween);
@@ -436,7 +437,7 @@ JsValue AnimationWithOpts(JsValue elem, JsValue properties, JsValue originalOpti
     if (gotoEnd.truthy()) {
       int index = 0;
       while (index < tweens.length) {
-        tweenRun(tweens[index], 1.0);
+        tweenRun(JS.assume(tweens[index]), 1.0);
         index = index + 1;
       }
 
@@ -469,7 +470,7 @@ JsValue AnimationWithOpts(JsValue elem, JsValue properties, JsValue originalOpti
 
     int tweenIndex = 0;
     while (tweenIndex < tweens.length) {
-      tweenRun(tweens[tweenIndex], percent);
+      tweenRun(JS.assume(tweens[tweenIndex]), percent);
       tweenIndex = tweenIndex + 1;
     }
 
@@ -491,7 +492,7 @@ JsValue AnimationWithOpts(JsValue elem, JsValue properties, JsValue originalOpti
     return JS.undefined();
   });
 
-  propFilter(propsCopy, opts["specialEasing"]);
+  propFilter(propsCopy, opts.specialEasing);
 
   int pIndex = 0;
   int pLength = animationPrefilters.length;
@@ -499,8 +500,8 @@ JsValue AnimationWithOpts(JsValue elem, JsValue properties, JsValue originalOpti
     JsValue result = JS.call(animationPrefilters[pIndex], animation, elem, propsCopy, opts);
     if (result.truthy()) {
       if (isFunction(result["stop"])) {
-        JsValue stopHooks = queueHooks(elem, opts["queue"]);
-        stopHooks["stop"] = JS.invoke(result["stop"], "bind", result);
+        QueueHooksView stopHooks = JS.assume(queueHooks(elem, opts.queue));
+        stopHooks.stop = JS.invoke(result["stop"], "bind", result);
       }
       return result;
     }
@@ -508,18 +509,18 @@ JsValue AnimationWithOpts(JsValue elem, JsValue properties, JsValue originalOpti
 
   map(propsCopy, createTweenFn, animation);
 
-  if (isFunction(opts["start"])) {
-    JS.call(opts["start"], elem, animation);
+  if (isFunction(opts.start)) {
+    JS.call(opts.start, elem, animation);
   }
 
-  JS.invoke(animation, "progress", opts["progress"]);
-  JS.invoke(animation, "done", opts["done"], opts["complete"]);
-  JS.invoke(animation, "fail", opts["fail"]);
-  JS.invoke(animation, "always", opts["always"]);
+  JS.invoke(animation, "progress", opts.progress);
+  JS.invoke(animation, "done", opts.done, opts.complete);
+  JS.invoke(animation, "fail", opts.fail);
+  JS.invoke(animation, "always", opts.always);
 
   tickRun["elem"] = elem;
   tickRun["anim"] = animation;
-  tickRun["queue"] = opts["queue"];
+  tickRun["queue"] = opts.queue;
   enqueueFxTimer(tickRun);
 
   return animation;
@@ -563,7 +564,7 @@ JsValue animationPrefilter(JsValue callback, JsValue prepend = null) {
 }
 
 JsValue speed(JsValue speedArg, JsValue easingArg = null, JsValue fnArg = null) {
-  JsValue opt = JS.object();
+  AnimOptsView opt = JS.assume(JS.object());
 
   if (speedArg.truthy() && JS.typeOf(speedArg) == "object") {
     mergeObject(opt, speedArg, false);
@@ -577,36 +578,36 @@ JsValue speed(JsValue speedArg, JsValue easingArg = null, JsValue fnArg = null) 
     if (easingArg.truthy() && !isFunction(easingArg)) {
       easingFromArg = easingArg;
     }
-    opt = SpeedOpt{
+    opt = JS.assume(SpeedOpt{
       JS.or(fnArg, JS.or(easingArg, speedAsComplete)),
       speedArg,
       JS.or(easingFromFn, easingFromArg)
-    };
+    });
   }
 
   if (jQuery["fx"]["off"].truthy()) {
-    opt["duration"] = 0.0;
-  } else if (JS.typeOf(opt["duration"]) != "number") {
+    opt.duration = 0.0;
+  } else if (JS.typeOf(opt.duration) != "number") {
     JsValue speeds = jQuery["fx"]["speeds"];
-    if (JS.in(opt["duration"], speeds)) {
-      opt["duration"] = speeds[opt["duration"]];
+    if (JS.in(opt.duration, speeds)) {
+      opt.duration = speeds[opt.duration];
     } else {
-      opt["duration"] = speeds["_default"];
+      opt.duration = speeds["_default"];
     }
   }
 
-  if (JS.isNullish(opt["queue"]) || opt["queue"] == true) {
-    opt["queue"] = "fx";
+  if (JS.isNullish(opt.queue) || opt.queue == true) {
+    opt.queue = "fx";
   }
 
-  opt["old"] = opt["complete"];
+  opt.old = opt.complete;
 
-  opt["complete"] = JS.method0((JsValue self) => {
-    if (isFunction(opt["old"])) {
-      JS.call(opt["old"], self);
+  opt.complete = JS.method0((JsValue self) => {
+    if (isFunction(opt.old)) {
+      JS.call(opt.old, self);
     }
-    if (opt["queue"].truthy()) {
-      dequeueStatic(self, opt["queue"]);
+    if (opt.queue.truthy()) {
+      dequeueStatic(self, opt.queue);
     }
     return JS.undefined();
   });
@@ -617,7 +618,7 @@ JsValue speed(JsValue speedArg, JsValue easingArg = null, JsValue fnArg = null) 
 JsValue fnAnimate(JsValue prop, JsValue speedArg, JsValue easingArg, JsValue callbackArg) {
   JsValue self = this;
   bool empty = isEmptyObject(prop);
-  JsValue optall = speed(speedArg, easingArg, callbackArg);
+  AnimOptsView optall = JS.assume(speed(speedArg, easingArg, callbackArg));
 
   JsValue doAnimation = JS.method0((JsValue self2) => {
     JsValue propCopy = mergeObject(JS.object(), prop, false);
@@ -631,14 +632,14 @@ JsValue fnAnimate(JsValue prop, JsValue speedArg, JsValue easingArg, JsValue cal
   });
   doAnimation["finish"] = doAnimation;
 
-  if (empty || optall["queue"] == false) {
+  if (empty || optall.queue == false) {
     return each(self, doAnimation);
   }
-  return JS.invoke(self, "queue", optall["queue"], doAnimation);
+  return JS.invoke(self, "queue", optall.queue, doAnimation);
 }
 
-void stopQueue(JsValue hooks, JsValue gotoEnd) {
-  JsValue stop = hooks["stop"];
+void stopQueue(QueueHooksView hooks, JsValue gotoEnd) {
+  JsValue stop = hooks.stop;
   JS.delete(hooks, "stop");
   stop(gotoEnd);
 }
@@ -669,12 +670,12 @@ JsValue fnStop(JsValue type, JsValue clearQueue, JsValue gotoEnd) {
 
     if (hasIndex) {
       if (data[indexKey].truthy() && data[indexKey]["stop"].truthy()) {
-        stopQueue(data[indexKey], gotoEnd);
+        stopQueue(JS.assume(data[indexKey]), gotoEnd);
       }
     } else {
       for (string idx in data) {
         if (data[idx].truthy() && data[idx]["stop"].truthy() && JS.regexTest(rrun, idx)) {
-          stopQueue(data[idx], gotoEnd);
+          stopQueue(JS.assume(data[idx]), gotoEnd);
         }
       }
     }

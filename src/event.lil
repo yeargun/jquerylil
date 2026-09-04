@@ -231,12 +231,30 @@ HandleObj[]? typedHandlers(JsValue elem, JsValue type) {
   return asHandlerArray(events[type]);
 }
 
-JsValue specialFor(JsValue type) {
+// View of one jQuery.event.special entry: the port allocates the entries it ships
+// (Load/Click/Focus/EnterLeave structs) and user entries are plain objects with the same
+// optional keys, so reads are typed field reads (finer/hypotheses/042).
+export struct SpecialView {
+  JsValue bindType;
+  JsValue delegateType;
+  JsValue setup;
+  JsValue add;
+  JsValue remove;
+  JsValue teardown;
+  JsValue preDispatch;
+  JsValue postDispatch;
+  JsValue handle;
+  JsValue trigger;
+  JsValue noBubble;
+  JsValue _default;
+}
+
+SpecialView specialFor(JsValue type) {
   JsValue specialForType = special[type];
   if (specialForType.truthy()) {
-    return specialForType;
+    return JS.assume(specialForType);
   }
-  return emptySpecial;
+  return JS.assume(emptySpecial);
 }
 
 void mergeHandleObjIn(HandleObj handleObj, JsValue handleObjIn) {
@@ -489,10 +507,10 @@ export void add(JsValue elem, JsValue typesValue, JsValue handlerValue, JsValue 
       continue;
     }
 
-    JsValue specialForType = specialFor(type);
-    JsValue mappedType = specialForType["bindType"];
+    SpecialView specialForType = specialFor(type);
+    JsValue mappedType = specialForType.bindType;
     if (hasSelector) {
-      mappedType = specialForType["delegateType"];
+      mappedType = specialForType.delegateType;
     }
     type = JS.assume(JS.or(mappedType, type));
 
@@ -531,7 +549,7 @@ export void add(JsValue elem, JsValue typesValue, JsValue handlerValue, JsValue 
     } else {
       events[type] = handlers;
 
-      JsValue setup = specialForType["setup"];
+      JsValue setup = specialForType.setup;
       if (!setup.truthy() || JS.isFalse(JS.call(setup, elem, data, namespacesArray, eventHandle))) {
         if (elem["addEventListener"].truthy()) {
           addEventListener(elem, type, eventHandle);
@@ -539,8 +557,8 @@ export void add(JsValue elem, JsValue typesValue, JsValue handlerValue, JsValue 
       }
     }
 
-    if (specialForType["add"].truthy()) {
-      JS.call(specialForType["add"], elem, handleObj);
+    if (specialForType.add.truthy()) {
+      JS.call(specialForType.add, elem, handleObj);
       if (!handleObj.handler["guid"].truthy()) {
         handleObj.handler["guid"] = handler["guid"];
       }
@@ -586,10 +604,10 @@ export void remove(JsValue elem, JsValue typesValue, JsValue handler = null, JsV
       continue;
     }
 
-    JsValue specialForType = specialFor(type);
-    JsValue mappedType = specialForType["bindType"];
+    SpecialView specialForType = specialFor(type);
+    JsValue mappedType = specialForType.bindType;
     if (selector.truthy()) {
-      mappedType = specialForType["delegateType"];
+      mappedType = specialForType.delegateType;
     }
     type = JS.assume(JS.or(mappedType, type));
 
@@ -621,14 +639,14 @@ export void remove(JsValue elem, JsValue typesValue, JsValue handler = null, JsV
           if (handleObj.selector.truthy()) {
             setHandlerDelegateCount(handlers, handlerDelegateCount(handlers) - 1.0);
           }
-          if (specialForType["remove"].truthy()) {
-            JS.call(specialForType["remove"], elem, handleObj);
+          if (specialForType.remove.truthy()) {
+            JS.call(specialForType.remove, elem, handleObj);
           }
         }
       }
 
       if (origCount > 0 && handlers.length == 0) {
-        JsValue teardown = specialForType["teardown"];
+        JsValue teardown = specialForType.teardown;
         if (!teardown.truthy() || JS.isFalse(JS.call(teardown, elem, namespacesArray, elemData["handle"]))) {
           removeEvent(elem, type, elemData["handle"]);
         }
@@ -740,12 +758,12 @@ JsValue dispatch(JsValue thisArg, JsValue args) {
   if (typed != null) {
     handlers = typed;
   }
-  JsValue specialForType = specialFor(eventType);
+  SpecialView specialForType = specialFor(eventType);
 
   event["delegateTarget"] = thisArg;
 
-  if (specialForType["preDispatch"].truthy()) {
-    if (JS.call(specialForType["preDispatch"], thisArg, event) == false) {
+  if (specialForType.preDispatch.truthy()) {
+    if (JS.call(specialForType.preDispatch, thisArg, event) == false) {
       return JS.undefined();
     }
   }
@@ -795,8 +813,8 @@ JsValue dispatch(JsValue thisArg, JsValue args) {
     }
   }
 
-  if (specialForType["postDispatch"].truthy()) {
-    JS.call(specialForType["postDispatch"], thisArg, event);
+  if (specialForType.postDispatch.truthy()) {
+    JS.call(specialForType.postDispatch, thisArg, event);
   }
 
   return event["result"];

@@ -2,4 +2,27 @@ import {
   createEmptyObject
 } from "../js-host.lil";
 
-export JsValue support = JS.object();
+// The feature-detection bag jQuery exposes as `jQuery.support`. The port allocates it and
+// writes every field itself (core/, css/, manipulation/, attributes/, ajax/xhr), so it is
+// plain data: a struct view over the allocation lets each read lower to a typed field read
+// instead of an observable dynamic lookup (finer/hypotheses/042).
+export struct Support {
+  bool clearCloneStyle;
+  func()->bool boxSizingReliable;
+  func()->bool pixelBoxStyles;
+  func()->bool pixelPosition;
+  func()->bool reliableMarginLeft;
+  func()->bool scrollboxSize;
+  func()->bool reliableTrDimensions;
+  bool checkClone;
+  bool noCloneChecked;
+  bool option;
+  bool createHTMLDocument;
+  bool checkOn;
+  bool optSelected;
+  bool radioValue;
+  bool cors;
+  bool ajax;
+}
+
+export Support support = JS.assume(JS.object());
