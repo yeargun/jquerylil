@@ -12,7 +12,10 @@ cost_model = "brotli"
 struct_method_shorthand = false
 assume_pristine_builtins = true
 strip_console = true
-local_name_reserve = 8
+# 8.19 (measured, fleet sweep of five reserves): the naming reserve picks the
+# basin, not the depth, and the curve is not monotone -- 8(declared):+0, 16:-283, 32:-272, 64:-172
+# against the declared 8. Re-measure it after any emitter change.
+local_name_reserve = 16
 # Ask bindings that take part in a token idiom the artifact repeats for the
 # spelling that idiom's commonest occurrence uses, so two scopes writing the
 # same idiom write it the same way. Every conversion is scored by the exact
