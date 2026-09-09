@@ -65,6 +65,15 @@ compression = [
 # re-measured rather than trusted. (The five largest ports do not respond to it
 # at all: their width is clamped by the candidate limit before the beam binds.)
 candidate_beam_width = 16
+# 8.22 (measured, fleet): re-emitting a twice- or thrice-read member off a
+# short pure receiver instead of naming it. Raw goes up and Brotli down --
+# upstream repeats `e[p][1].end.offset` verbatim where SSA destruction names
+# it, and every name is a string the codec cannot match. -234 Brotli here;
+# +170 on micromarklil, +80 on markedlil, so it is declared per port.
+rematerialize_member_reads = true
+# Required by the rematerialisation above: a duplicated property read must
+# not be able to run a getter twice. This port reads plain data.
+assume_pure_property_reads = true
 
 [mangle]
 identifiers = true
