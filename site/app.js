@@ -1,4 +1,3 @@
-import { renderCompilerComparison } from "./compiler-comparison.js"
 
 const data = await fetch("./results.json").then((response) => {
   if (!response.ok) throw new Error(`Unable to load results: ${response.status}`)
@@ -207,6 +206,5 @@ renderDemos()
 renderApps()
 renderSize()
 renderNames()
-renderCompilerComparison(data)
 bindCopy()
 bindProgress()

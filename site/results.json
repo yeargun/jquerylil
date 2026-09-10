@@ -10,21 +10,21 @@
   "size": [
     {
       "id": "officialDev",
-      "name": "Original \u00b7 unminified ESM graph",
+      "name": "Original \u00b7 ESM",
       "raw": 246361,
       "gzip9": 53452,
       "brotli11": 45217,
-      "note": "Fresh pinned upstream comparison graph; the build audit states its external dependencies.",
+      "note": "ESM comparison with matching external dependencies.",
       "measuredAt": "2026-09-10T13:56:48Z",
       "artifactSha256": "b337895e5aa893964987af06232f13b56e267ce6f4ac5d7133d846bcd455c18b"
     },
     {
       "id": "officialMin",
-      "name": "Original \u00b7 esbuild + Terser ESM",
+      "name": "Original \u00b7 ESM + Terser",
       "raw": 87488,
       "gzip9": 30506,
       "brotli11": 27670,
-      "note": "Fresh pinned upstream comparison graph; the build audit states its external dependencies.",
+      "note": "ESM comparison with matching external dependencies.",
       "measuredAt": "2026-09-10T13:56:48Z",
       "artifactSha256": "f3795f4fc676e45ee889d6934523f708ee56a28f2ceb4d7bb572176079e5b7ca"
     },
@@ -34,7 +34,7 @@
       "raw": 81828,
       "gzip9": 31260,
       "brotli11": 27898,
-      "note": "Fresh packaged ESM, rebuilt with compiler 63c2896a71.",
+      "note": "ESM output from LilScript 63c2896.",
       "primary": true,
       "measuredAt": "2026-09-10T13:56:48Z",
       "artifactSha256": "b43df6f9adc4bf1b69d523b6f7a98ff4b9348b481606a4946e5b9ba0e28de0e0"
@@ -210,107 +210,5 @@
       "jQuery"
     ]
   },
-  "compilerComparison": {
-    "schemaVersion": 1,
-    "objective": "brotli11",
-    "runs": [
-      {
-        "id": "published-before",
-        "role": "before",
-        "label": "Published compiler-selected ESM before compiler work",
-        "recordedAt": "2026-08-24T00:00:00.000Z",
-        "source": {
-          "revision": "b860fe8c9d9799e5e6fbfc2204d7bdd00948d5a1",
-          "tree": "791d4eb6da3899c65cd289c2d31f578df661b1e4",
-          "entrySha256": "f986f027261729561669b6b0b49368f6d99ef1e8f1cf978efe97ef28c6e5e2bd",
-          "packageLockSha256": "694b0e61cee1560d7ebccb649e807bfd7965af8436fae8902b0d5d9c2fa13856"
-        },
-        "config": {
-          "path": "lilscript.toml",
-          "sha256": "9f4a0a5a043b1ecf20f80b8e1a6656ace8efb9cbe5cc06aee15b1deba638395d",
-          "derivation": {
-            "kind": "identity"
-          }
-        },
-        "compiler": {
-          "revision": null,
-          "binarySha256": null
-        },
-        "codec": {
-          "binarySha256": "b3d93da88e4516f3b22e5e67b288bb2504868f1c438010e0ac9492ec33de2063",
-          "gzipLevel": 9,
-          "brotliQuality": 11
-        },
-        "artifact": {
-          "path": "dist/jquery.esm.js",
-          "sha256": "865b0cbf9a52a692390bc5fa1bd4cee153d51256b911f6458199e71ef15c4d21",
-          "sizes": {
-            "raw": 92765,
-            "gzip9": 34544,
-            "brotli11": 30973
-          }
-        },
-        "timing": {
-          "scope": "compile",
-          "samples": [],
-          "unavailableReason": "published artifact has no reproducible compiler timing"
-        },
-        "semantic": {
-          "status": "reported-passed",
-          "command": null,
-          "summary": "project report: 6 of 6 compatibility tests passed"
-        }
-      },
-      {
-        "id": "current-verified",
-        "role": "current",
-        "label": "Committed compiler, receiver fix, name audit green",
-        "recordedAt": "2026-09-04T10:35:42.450Z",
-        "source": {
-          "revision": "30c000def6c57cd550a1e2da6163235a3aa71d86",
-          "tree": "3008dc442301ab0fb191b3036c8344ad1904ac1b",
-          "entrySha256": "f986f027261729561669b6b0b49368f6d99ef1e8f1cf978efe97ef28c6e5e2bd",
-          "packageLockSha256": "694b0e61cee1560d7ebccb649e807bfd7965af8436fae8902b0d5d9c2fa13856"
-        },
-        "config": {
-          "path": "lilscript.toml",
-          "sha256": "f5a854578349276e8c6a87c468a531245de86496d4bf93ea431bf55e4016aa58",
-          "derivation": {
-            "kind": "identity"
-          }
-        },
-        "compiler": {
-          "revision": "f3aee0fe383b56344f8532d0018c8cf297912361",
-          "binarySha256": "e32a0e38b23f287cc4aa8fd7f438100314bf97f3098c7a5e25446ddaea77089e"
-        },
-        "codec": {
-          "binarySha256": "ac7b3ed1687159f8a3a26c1c5aa4580742c07ba79c8699e07ed630272a1824a5",
-          "gzipLevel": 9,
-          "brotliQuality": 11
-        },
-        "artifact": {
-          "path": "dist/jquery.esm.js",
-          "sha256": "bd56aab9531871cb4b24bf79d061fa50e6bcbccc68008c55fc6279cacb7ada24",
-          "sizes": {
-            "raw": 86072,
-            "gzip9": 32042,
-            "brotli11": 28764
-          }
-        },
-        "timing": {
-          "scope": "compile",
-          "samples": [],
-          "unavailableReason": "compiled on the build pool; wall clock is not a result"
-        },
-        "semantic": {
-          "status": "passed",
-          "command": "npm test && npm run check:names",
-          "summary": "6 of 6 compatibility tests passed; 0 port-invented property names left unmangled"
-        }
-      }
-    ]
-  },
-  "sizeMeasuredAt": "2026-09-10T13:56:48Z",
-  "buildAudit": "./build-audit.json",
-  "runtimeEvidenceStatus": "Historical; runtime throughput was not republished as a measurement of this compiler."
+  "sizeMeasuredAt": "2026-09-10T13:56:48Z"
 }

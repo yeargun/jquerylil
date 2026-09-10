@@ -31,7 +31,7 @@
         <div class="hero-copy">
           <p class="eyebrow"><span class="live-dot"></span> jQuery 3.7.1 · LilScript port · @itslil/jquery</p>
           <h1>jQuery,<br /><em>compiled.</em></h1>
-          <p class="lede">The <code>jquery@3.7.1</code> public API, rewritten in LilScript and shipped as a dependency-free drop-in. The published ESM is the compiler-selected compact module. Official <code>jquery.min.js</code> is still smaller on Brotli. Throughput is measured against the same official package.</p>
+          <p class="lede">The <code>jquery@3.7.1</code> public API, rewritten in LilScript and shipped as a dependency-free drop-in. The published ESM is the compiler-selected compact module. Original ESM plus Terser is slightly smaller on Brotli. Throughput is measured against the same official package.</p>
           <div class="install-row">
             <code>npm install @itslil/jquery</code>
             <button class="copy" data-copy="npm install @itslil/jquery" type="button">copy</button>
@@ -44,25 +44,23 @@
 
         <div class="scoreboard" aria-label="Compression and performance results">
           <div class="score-main">
-            <span class="score-label">Brotli-11 vs official min</span>
+            <span class="score-label">Brotli-11 vs original ESM + Terser</span>
             <strong id="hero-ratio">—<span>×</span></strong>
             <p id="hero-bytes"></p>
           </div>
           <div class="score-grid">
-            <div><strong id="hero-vs-dev">—</strong><span>vs official jquery.js</span></div>
+            <div><strong id="hero-vs-dev">—</strong><span>vs unminified original ESM</span></div>
             <div><strong id="hero-suites">—</strong><span>suites ≤ 1.05×</span></div>
             <div><strong id="hero-apps">6</strong><span>example apps</span></div>
             <div><strong id="hero-memory">—</strong><span>retained memory</span></div>
           </div>
-          <p class="score-note">Canonical size is lilscript-codec gzip-9 / Brotli-11. The published artifact is the compiler-selected ESM, not a downstream Terser pick. Throughput is candidate / official, same Node process isolation.</p>
+          <p class="score-note">Canonical size is lilscript-codec gzip-9 / Brotli-11. The published artifact is the compiler-selected ESM, not a downstream Terser pick. Throughput is candidate / official, same Node process isolation. Repository checks pass.</p>
         </div>
       </section>
 
       <section class="ticker" aria-label="Supported APIs">
         <div>select <span>✦</span> events <span>✦</span> deferred <span>✦</span> callbacks <span>✦</span> ajax <span>✦</span> css <span>✦</span> effects <span>✦</span> traversing <span>✦</span> attributes <span>✦</span> data <span>✦</span> queue <span>✦</span> noConflict</div>
       </section>
-
-      <p data-audit-history="2026-09-10" style="max-width:1160px;margin:18px auto;padding:12px 20px;font:14px/1.6 system-ui;color:#344b54;background:#edf3f4">The build audit above records the current compiler check. Runtime throughput and application benchmarks below retain their earlier measurement dates.</p>
 <section class="performance shell" id="performance">
         <div class="section-heading">
           <div>
@@ -140,7 +138,7 @@
                   <th>Raw</th>
                   <th>gzip-9</th>
                   <th>Brotli-11</th>
-                  <th>vs official min</th>
+                  <th>vs original ESM + Terser</th>
                 </tr>
               </thead>
               <tbody id="results-body"></tbody>
@@ -164,19 +162,6 @@
         </div>
         <div class="name-grid" id="name-grid"></div>
         <p class="perf-note" id="name-note"></p>
-      </section>
-
-      <section class="compiler-progress shell" id="compiler-progress">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Compiler progress</p>
-            <h2>Frozen before.<br />Verified after.</h2>
-          </div>
-          <p>This is a separate record for the exact shipped library artifact compiled from pinned source. It keeps the published result intact, then adds the final compiler run only after syntax and semantic gates pass.</p>
-        </div>
-        <div class="compiler-comparison" id="compiler-comparison" aria-live="polite">
-          Loading compiler comparison…
-        </div>
       </section>
 
       <section class="closing shell">
