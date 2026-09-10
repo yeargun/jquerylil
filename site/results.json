@@ -11,33 +11,33 @@
     {
       "id": "officialDev",
       "name": "Original \u00b7 ESM",
-      "raw": 246361,
-      "gzip9": 53452,
-      "brotli11": 45217,
+      "raw": 246365,
+      "gzip9": 53457,
+      "brotli11": 45238,
       "note": "ESM comparison with matching external dependencies.",
-      "measuredAt": "2026-09-10T13:56:48Z",
-      "artifactSha256": "b337895e5aa893964987af06232f13b56e267ce6f4ac5d7133d846bcd455c18b"
+      "measuredAt": "2026-09-10T20:37:53Z",
+      "artifactSha256": "5413f4b708de85622cb70ccbc5d12d52a154b86d4221e1023839dc7095e90a31"
     },
     {
       "id": "officialMin",
       "name": "Original \u00b7 ESM + Terser",
-      "raw": 87488,
-      "gzip9": 30506,
-      "brotli11": 27670,
+      "raw": 87468,
+      "gzip9": 30497,
+      "brotli11": 27675,
       "note": "ESM comparison with matching external dependencies.",
-      "measuredAt": "2026-09-10T13:56:48Z",
-      "artifactSha256": "f3795f4fc676e45ee889d6934523f708ee56a28f2ceb4d7bb572176079e5b7ca"
+      "measuredAt": "2026-09-10T20:37:53Z",
+      "artifactSha256": "0b1e49c4d55136ef2a851edeb12f2dd4bd866c73c404f38531951d09596a95c5"
     },
     {
       "id": "itslil",
       "name": "@itslil/jquery",
-      "raw": 81828,
-      "gzip9": 31260,
-      "brotli11": 27898,
-      "note": "ESM output from LilScript 63c2896.",
+      "raw": 81827,
+      "gzip9": 31257,
+      "brotli11": 27901,
+      "note": "ESM output from LilScript 4dc4e33.",
       "primary": true,
-      "measuredAt": "2026-09-10T13:56:48Z",
-      "artifactSha256": "b43df6f9adc4bf1b69d523b6f7a98ff4b9348b481606a4946e5b9ba0e28de0e0"
+      "measuredAt": "2026-09-10T20:37:53Z",
+      "artifactSha256": "326714febeab523e83721d2b2201fcdd5f4b7d98d6a7ae84d4f4e48202a7c4ef"
     }
   ],
   "apps": [
@@ -210,5 +210,5 @@
       "jQuery"
     ]
   },
-  "sizeMeasuredAt": "2026-09-10T13:56:48Z"
+  "sizeMeasuredAt": "2026-09-10T20:37:53Z"
 }

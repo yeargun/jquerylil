@@ -1,0 +1,65 @@
+{
+  "source": {
+    "repository": "https://github.com/jquery/jquery.git",
+    "commit": "f79d5f1a337528940ab7029d4f8bbba72326f269",
+    "package": "jquery",
+    "version": "3.7.1",
+    "directory": "."
+  },
+  "entry": "dist/jquery.js",
+  "scope": "jquery@3.7.1 public ESM runtime graph; dependency installation excluded; this is a comparison bundle build, not the upstream vendor release pipeline",
+  "external": [],
+  "samples": [
+    {
+      "bundleSeconds": 0.014693645999999994,
+      "wallSeconds": 0.7002486800000001
+    },
+    {
+      "bundleSeconds": 0.012136830999999916,
+      "wallSeconds": 0.595806358
+    },
+    {
+      "bundleSeconds": 0.010862663999999996,
+      "wallSeconds": 0.5563189320000002
+    }
+  ],
+  "medianSeconds": 0.595806358,
+  "toolchain": {
+    "esbuild": "0.28.1",
+    "terser": "5.51.2"
+  },
+  "artifacts": [
+    {
+      "path": "original.esm.js",
+      "raw": 87468,
+      "gzip9": 30497,
+      "brotli11": 27675,
+      "sha256": "0b1e49c4d55136ef2a851edeb12f2dd4bd866c73c404f38531951d09596a95c5"
+    },
+    {
+      "path": "original.unminified.js",
+      "raw": 246365,
+      "gzip9": 53457,
+      "brotli11": 45238,
+      "sha256": "5413f4b708de85622cb70ccbc5d12d52a154b86d4221e1023839dc7095e90a31"
+    },
+    {
+      "path": "original.terser-nomangle.js",
+      "raw": 134340,
+      "gzip9": 38968,
+      "brotli11": 34704,
+      "sha256": "ebaf5c9663612ab9284929f3a40ea4d5cb00842711dadd488f1705fbfb1e9828"
+    },
+    {
+      "path": "original.esbuild.js",
+      "raw": 88320,
+      "gzip9": 31538,
+      "brotli11": 28665,
+      "sha256": "af88451e5582fe624fccd7399c94e2c20de780a8ed6e09c879ab93fd0c5f1d59"
+    }
+  ],
+  "inputs": [
+    "dist/jquery.js",
+    "public-esm-entry.mjs"
+  ]
+}

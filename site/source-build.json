@@ -1,0 +1,624 @@
+{
+  "schemaVersion": 1,
+  "name": "jquerylil",
+  "startedAt": "2026-09-10T20:23:43Z",
+  "machine": {
+    "provider": "Azure",
+    "instanceClass": "Standard_D16als_v7",
+    "cpu": "AMD EPYC 9V45 96-Core Processor",
+    "logicalCpus": 16,
+    "memoryBytes": 33648435200,
+    "os": "Ubuntu 24.04.4 LTS",
+    "kernel": "6.17.0-1022-azure",
+    "node": "v24.11.1",
+    "rayonThreads": 8,
+    "loadAtStart": [
+      0.548828125,
+      1.61328125,
+      1.76513671875
+    ],
+    "loadAtEnd": [
+      1.86962890625,
+      3.6591796875,
+      3.23583984375
+    ]
+  },
+  "compiler": {
+    "commit": "4dc4e3337d9ffd758d65e3852682d6e13d9331c1",
+    "sha256": "0616048498eb9eb2e4bd75b39e8e6a083733ada647e16108edfee30ad183beeb"
+  },
+  "source": {
+    "repository": "https://github.com/jquery/jquery.git",
+    "commit": "f79d5f1a337528940ab7029d4f8bbba72326f269",
+    "package": "jquery",
+    "version": "3.7.1",
+    "directory": "."
+  },
+  "portSource": {
+    "commit": "36fabe84aa41aa630b504c7e84d3758a63fb0375"
+  },
+  "steps": {
+    "original-install": {
+      "command": [
+        "npm",
+        "install",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "upstream",
+      "wallSeconds": 17.089657687,
+      "cpuSeconds": 6.128575,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "original-install.log",
+      "logSha256": "830317474520822d3a9c98cf05def8a24f71b23476a60feb76dc1a1d54d40457",
+      "tail": "arn deprecated formatio@1.2.0: This package is unmaintained. Use @sinonjs/formatio instead\nnpm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported\nnpm warn deprecated samsam@1.3.0: This package has been deprecated in favour of @sinonjs/samsam\nnpm warn deprecated formatio@1.1.1: This package is unmaintained. Use @sinonjs/formatio instead\nnpm warn deprecated q@1.5.1: You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.\nnpm warn deprecated\nnpm warn deprecated (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)\nnpm warn deprecated glob@5.0.15: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me\nnpm warn deprecated samsam@1.1.2: This package has been deprecated in favour of @sinonjs/samsam\nnpm warn deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.\nnpm warn deprecated domexception@4.0.0: Use your platform's native DOMException instead\nnpm warn deprecated minimatch@0.3.0: Please update to minimatch 3.0.2 or higher to avoid a RegExp DoS issue\nnpm warn deprecated uuid@3.4.0: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).\nnpm warn deprecated mkdirp@0.3.0: Legacy versions of mkdirp are no longer supported. Please update to mkdirp 1.x. (Note that the API surface has changed to use Promises in 1.x.)\nnpm warn deprecated text-encoding@0.6.4: no longer maintained\nnpm warn deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142\nnpm warn deprecated mkdirp@0.5.1: Legacy versions of mkdirp are no longer supported. Please update to mkdirp 1.x. (Note that the API surface has changed to use Promises in 1.x.)\nnpm warn deprecated glob@3.2.11: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me\nnpm warn deprecated jade@0.26.3: Jade has been renamed to pug, please install the latest version of pug instead of jade\nnpm warn deprecated sinon@1.17.7: 16.1.1\nnpm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).\nnpm warn deprecated sinon@2.3.7: 16.1.1\nnpm warn deprecated eslint@6.8.0: This version is no longer supported. Please see https://eslint.org/version-support for other options.\nnpm warn deprecated core-js@2.6.5: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.\n\nadded 638 packages in 17s\n"
+    },
+    "lilscript-install": {
+      "command": [
+        "npm",
+        "ci",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "port",
+      "wallSeconds": 0.8150973520000662,
+      "cpuSeconds": 0.8318379999999996,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "lilscript-install.log",
+      "logSha256": "357d960a84febcdad654a7c85e7b416861b6b04bc17addf2a73e9b912d565c2d",
+      "tail": "npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation\n\nadded 56 packages in 749ms\n"
+    },
+    "original-build-1": {
+      "command": [
+        "npm",
+        "run",
+        "build-all-variants"
+      ],
+      "cwd": "upstream",
+      "wallSeconds": 1.7166505559998768,
+      "cpuSeconds": 2.792360999999999,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "original-build-1.log",
+      "logSha256": "9a98f571030f46eb24edc427a5da619f7e5d4e9802a9db06921c9f8f96162209",
+      "tail": "\n> jquery@3.7.1 build-all-variants\n> grunt custom:slim --filename=jquery.slim.js && grunt custom\n\nRunning \"custom:slim\" (custom) task\nCreating custom build...\n\n\nRunning \"build:all:*:-ajax:-effects\" (build) task\n-ajax\n-ajax/jsonp\n-ajax/load\n-ajax/script\n-ajax/var/location\n-ajax/var/nonce\n-ajax/var/rquery\n-ajax/xhr\n-manipulation/_evalUrl\n-deprecated/ajax-event-alias\n-effects\n-effects/Tween\n-effects/animatedSelector\n>> File 'dist/jquery.slim.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 231.81 kB \u2192 70.1 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\nRunning \"custom\" task\nCreating custom build...\n\n\nRunning \"build:all:*\" (build) task\n>> File 'dist/jquery.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 285.31 kB \u2192 87.57 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\n"
+    },
+    "lilscript-build-1": {
+      "command": [
+        "bash",
+        "-c",
+        "node scripts/build.mjs --compile --force"
+      ],
+      "cwd": "port",
+      "wallSeconds": 274.483675767,
+      "cpuSeconds": 1191.764301,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "lilscript-build-1.log",
+      "logSha256": "db3b06f85b0fcc38ac229ec83ceae5612b7a1a695d4034e242b6783d13e2bfc0",
+      "tail": "wrote dist/jquery.esm.js, dist/jquery.cjs, dist/jquery.umd.js from compiler raw\n",
+      "invocations": [
+        {
+          "args": [
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/src/entry.lil",
+            "--target",
+            "js-module",
+            "--config",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/lilscript.toml",
+            "-o",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js"
+          ],
+          "startedAt": 1789071843.5629754,
+          "wallSeconds": 274.3807258605957,
+          "exitCode": 0,
+          "output": "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "4d80c7a957983b0b5d8ce33c95d10712027f2cad52ab8cd9390c0bb818afd769"
+        }
+      ]
+    },
+    "lilscript-build-2": {
+      "command": [
+        "bash",
+        "-c",
+        "node scripts/build.mjs --compile --force"
+      ],
+      "cwd": "port",
+      "wallSeconds": 273.93155338099996,
+      "cpuSeconds": 1182.9355050000004,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "lilscript-build-2.log",
+      "logSha256": "db3b06f85b0fcc38ac229ec83ceae5612b7a1a695d4034e242b6783d13e2bfc0",
+      "tail": "wrote dist/jquery.esm.js, dist/jquery.cjs, dist/jquery.umd.js from compiler raw\n",
+      "invocations": [
+        {
+          "args": [
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/src/entry.lil",
+            "--target",
+            "js-module",
+            "--config",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/lilscript.toml",
+            "-o",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js"
+          ],
+          "startedAt": 1789072118.0484931,
+          "wallSeconds": 273.8731436729431,
+          "exitCode": 0,
+          "output": "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "4d80c7a957983b0b5d8ce33c95d10712027f2cad52ab8cd9390c0bb818afd769"
+        }
+      ]
+    },
+    "original-build-2": {
+      "command": [
+        "npm",
+        "run",
+        "build-all-variants"
+      ],
+      "cwd": "upstream",
+      "wallSeconds": 1.6170904380001048,
+      "cpuSeconds": 2.5967159999996827,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "original-build-2.log",
+      "logSha256": "9a98f571030f46eb24edc427a5da619f7e5d4e9802a9db06921c9f8f96162209",
+      "tail": "\n> jquery@3.7.1 build-all-variants\n> grunt custom:slim --filename=jquery.slim.js && grunt custom\n\nRunning \"custom:slim\" (custom) task\nCreating custom build...\n\n\nRunning \"build:all:*:-ajax:-effects\" (build) task\n-ajax\n-ajax/jsonp\n-ajax/load\n-ajax/script\n-ajax/var/location\n-ajax/var/nonce\n-ajax/var/rquery\n-ajax/xhr\n-manipulation/_evalUrl\n-deprecated/ajax-event-alias\n-effects\n-effects/Tween\n-effects/animatedSelector\n>> File 'dist/jquery.slim.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 231.81 kB \u2192 70.1 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\nRunning \"custom\" task\nCreating custom build...\n\n\nRunning \"build:all:*\" (build) task\n>> File 'dist/jquery.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 285.31 kB \u2192 87.57 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\n"
+    },
+    "original-build-3": {
+      "command": [
+        "npm",
+        "run",
+        "build-all-variants"
+      ],
+      "cwd": "upstream",
+      "wallSeconds": 1.6168044940000073,
+      "cpuSeconds": 2.597697000000208,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "original-build-3.log",
+      "logSha256": "9a98f571030f46eb24edc427a5da619f7e5d4e9802a9db06921c9f8f96162209",
+      "tail": "\n> jquery@3.7.1 build-all-variants\n> grunt custom:slim --filename=jquery.slim.js && grunt custom\n\nRunning \"custom:slim\" (custom) task\nCreating custom build...\n\n\nRunning \"build:all:*:-ajax:-effects\" (build) task\n-ajax\n-ajax/jsonp\n-ajax/load\n-ajax/script\n-ajax/var/location\n-ajax/var/nonce\n-ajax/var/rquery\n-ajax/xhr\n-manipulation/_evalUrl\n-deprecated/ajax-event-alias\n-effects\n-effects/Tween\n-effects/animatedSelector\n>> File 'dist/jquery.slim.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 231.81 kB \u2192 70.1 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\nRunning \"custom\" task\nCreating custom build...\n\n\nRunning \"build:all:*\" (build) task\n>> File 'dist/jquery.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 285.31 kB \u2192 87.57 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\n"
+    },
+    "lilscript-build-3": {
+      "command": [
+        "bash",
+        "-c",
+        "node scripts/build.mjs --compile --force"
+      ],
+      "cwd": "port",
+      "wallSeconds": 274.69273940499943,
+      "cpuSeconds": 1189.7490770000002,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "lilscript-build-3.log",
+      "logSha256": "db3b06f85b0fcc38ac229ec83ceae5612b7a1a695d4034e242b6783d13e2bfc0",
+      "tail": "wrote dist/jquery.esm.js, dist/jquery.cjs, dist/jquery.umd.js from compiler raw\n",
+      "invocations": [
+        {
+          "args": [
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/src/entry.lil",
+            "--target",
+            "js-module",
+            "--config",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/lilscript.toml",
+            "-o",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js"
+          ],
+          "startedAt": 1789072395.2163723,
+          "wallSeconds": 274.6135575771332,
+          "exitCode": 0,
+          "output": "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "4d80c7a957983b0b5d8ce33c95d10712027f2cad52ab8cd9390c0bb818afd769"
+        }
+      ]
+    },
+    "original-esm": {
+      "command": [
+        "node",
+        "/home/lilfarm/source-perf-20260910/tools/source-esm.mjs",
+        "/home/lilfarm/source-perf-20260910",
+        "jquerylil"
+      ],
+      "cwd": "upstream",
+      "wallSeconds": 3.019613389999904,
+      "cpuSeconds": 4.4508149999999205,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "original-esm.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": ""
+    },
+    "lilscript-tests": {
+      "command": [
+        "bash",
+        "-c",
+        "node --test test/compat.test.mjs"
+      ],
+      "cwd": "port",
+      "wallSeconds": 0.31414111300000513,
+      "cpuSeconds": 0.35596599999999334,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "lilscript-tests.log",
+      "logSha256": "3bfb8934c054c9af8e39c37c7740d1a52502f1ee327a4ac4f1659e90a20ca79c",
+      "tail": "\u25b6 @itslil/jquery vs jquery@3.7.1\n  \u2714 exports the 3.7.1 surface (0.352243ms)\n  \u2714 matches core utilities (0.844066ms)\n  \u2714 matches Deferred resolve/reject (0.345582ms)\n  \u2714 ships the compiler-selected compact ESM, not a pretty-printed wrapper (1.121286ms)\n  \u2714 loads from CommonJS (5.188085ms)\n  \u2714 selects, classes, and events (3.548736ms)\n\u2714 @itslil/jquery vs jquery@3.7.1 (11.995297ms)\n\u2139 tests 6\n\u2139 suites 1\n\u2139 pass 6\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 272.8026\n"
+    }
+  },
+  "nativeBuilds": [
+    {
+      "command": [
+        "npm",
+        "run",
+        "build-all-variants"
+      ],
+      "cwd": "upstream",
+      "wallSeconds": 1.7166505559998768,
+      "cpuSeconds": 2.792360999999999,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "original-build-1.log",
+      "logSha256": "9a98f571030f46eb24edc427a5da619f7e5d4e9802a9db06921c9f8f96162209",
+      "tail": "\n> jquery@3.7.1 build-all-variants\n> grunt custom:slim --filename=jquery.slim.js && grunt custom\n\nRunning \"custom:slim\" (custom) task\nCreating custom build...\n\n\nRunning \"build:all:*:-ajax:-effects\" (build) task\n-ajax\n-ajax/jsonp\n-ajax/load\n-ajax/script\n-ajax/var/location\n-ajax/var/nonce\n-ajax/var/rquery\n-ajax/xhr\n-manipulation/_evalUrl\n-deprecated/ajax-event-alias\n-effects\n-effects/Tween\n-effects/animatedSelector\n>> File 'dist/jquery.slim.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 231.81 kB \u2192 70.1 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\nRunning \"custom\" task\nCreating custom build...\n\n\nRunning \"build:all:*\" (build) task\n>> File 'dist/jquery.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 285.31 kB \u2192 87.57 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\n"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "build-all-variants"
+      ],
+      "cwd": "upstream",
+      "wallSeconds": 1.6170904380001048,
+      "cpuSeconds": 2.5967159999996827,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "original-build-2.log",
+      "logSha256": "9a98f571030f46eb24edc427a5da619f7e5d4e9802a9db06921c9f8f96162209",
+      "tail": "\n> jquery@3.7.1 build-all-variants\n> grunt custom:slim --filename=jquery.slim.js && grunt custom\n\nRunning \"custom:slim\" (custom) task\nCreating custom build...\n\n\nRunning \"build:all:*:-ajax:-effects\" (build) task\n-ajax\n-ajax/jsonp\n-ajax/load\n-ajax/script\n-ajax/var/location\n-ajax/var/nonce\n-ajax/var/rquery\n-ajax/xhr\n-manipulation/_evalUrl\n-deprecated/ajax-event-alias\n-effects\n-effects/Tween\n-effects/animatedSelector\n>> File 'dist/jquery.slim.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 231.81 kB \u2192 70.1 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\nRunning \"custom\" task\nCreating custom build...\n\n\nRunning \"build:all:*\" (build) task\n>> File 'dist/jquery.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 285.31 kB \u2192 87.57 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\n"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "build-all-variants"
+      ],
+      "cwd": "upstream",
+      "wallSeconds": 1.6168044940000073,
+      "cpuSeconds": 2.597697000000208,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "original-build-3.log",
+      "logSha256": "9a98f571030f46eb24edc427a5da619f7e5d4e9802a9db06921c9f8f96162209",
+      "tail": "\n> jquery@3.7.1 build-all-variants\n> grunt custom:slim --filename=jquery.slim.js && grunt custom\n\nRunning \"custom:slim\" (custom) task\nCreating custom build...\n\n\nRunning \"build:all:*:-ajax:-effects\" (build) task\n-ajax\n-ajax/jsonp\n-ajax/load\n-ajax/script\n-ajax/var/location\n-ajax/var/nonce\n-ajax/var/rquery\n-ajax/xhr\n-manipulation/_evalUrl\n-deprecated/ajax-event-alias\n-effects\n-effects/Tween\n-effects/animatedSelector\n>> File 'dist/jquery.slim.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 231.81 kB \u2192 70.1 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\nRunning \"custom\" task\nCreating custom build...\n\n\nRunning \"build:all:*\" (build) task\n>> File 'dist/jquery.js' created.\n\nRunning \"uglify:all\" (uglify) task\n>> 1 sourcemap created.\n>> 1 file created 285.31 kB \u2192 87.57 kB\n\nRunning \"remove_map_comment\" task\n\nRunning \"dist\" task\n\nDone.\n"
+    }
+  ],
+  "lilscriptBuilds": [
+    {
+      "command": [
+        "bash",
+        "-c",
+        "node scripts/build.mjs --compile --force"
+      ],
+      "cwd": "port",
+      "wallSeconds": 274.483675767,
+      "cpuSeconds": 1191.764301,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "lilscript-build-1.log",
+      "logSha256": "db3b06f85b0fcc38ac229ec83ceae5612b7a1a695d4034e242b6783d13e2bfc0",
+      "tail": "wrote dist/jquery.esm.js, dist/jquery.cjs, dist/jquery.umd.js from compiler raw\n",
+      "invocations": [
+        {
+          "args": [
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/src/entry.lil",
+            "--target",
+            "js-module",
+            "--config",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/lilscript.toml",
+            "-o",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js"
+          ],
+          "startedAt": 1789071843.5629754,
+          "wallSeconds": 274.3807258605957,
+          "exitCode": 0,
+          "output": "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "4d80c7a957983b0b5d8ce33c95d10712027f2cad52ab8cd9390c0bb818afd769"
+        }
+      ]
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "node scripts/build.mjs --compile --force"
+      ],
+      "cwd": "port",
+      "wallSeconds": 273.93155338099996,
+      "cpuSeconds": 1182.9355050000004,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "lilscript-build-2.log",
+      "logSha256": "db3b06f85b0fcc38ac229ec83ceae5612b7a1a695d4034e242b6783d13e2bfc0",
+      "tail": "wrote dist/jquery.esm.js, dist/jquery.cjs, dist/jquery.umd.js from compiler raw\n",
+      "invocations": [
+        {
+          "args": [
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/src/entry.lil",
+            "--target",
+            "js-module",
+            "--config",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/lilscript.toml",
+            "-o",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js"
+          ],
+          "startedAt": 1789072118.0484931,
+          "wallSeconds": 273.8731436729431,
+          "exitCode": 0,
+          "output": "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "4d80c7a957983b0b5d8ce33c95d10712027f2cad52ab8cd9390c0bb818afd769"
+        }
+      ]
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "node scripts/build.mjs --compile --force"
+      ],
+      "cwd": "port",
+      "wallSeconds": 274.69273940499943,
+      "cpuSeconds": 1189.7490770000002,
+      "exitCode": 0,
+      "timedOut": false,
+      "log": "lilscript-build-3.log",
+      "logSha256": "db3b06f85b0fcc38ac229ec83ceae5612b7a1a695d4034e242b6783d13e2bfc0",
+      "tail": "wrote dist/jquery.esm.js, dist/jquery.cjs, dist/jquery.umd.js from compiler raw\n",
+      "invocations": [
+        {
+          "args": [
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/src/entry.lil",
+            "--target",
+            "js-module",
+            "--config",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/lilscript.toml",
+            "-o",
+            "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js"
+          ],
+          "startedAt": 1789072395.2163723,
+          "wallSeconds": 274.6135575771332,
+          "exitCode": 0,
+          "output": "/home/lilfarm/source-perf-20260910/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "4d80c7a957983b0b5d8ce33c95d10712027f2cad52ab8cd9390c0bb818afd769"
+        }
+      ]
+    }
+  ],
+  "protocol": {
+    "repetitions": 3,
+    "cleanOutputs": true,
+    "dependencyInstallationTimedSeparately": true,
+    "sourceArchives": "Pinned Git checkouts; original repository package build commands, followed by production ESM assembly.",
+    "workerUse": "Both implementations use the same machine and Node version. This shared build pool also runs unrelated jobs; timings are contextual wall times, with CPU time recorded separately."
+  },
+  "esm": {
+    "source": {
+      "repository": "https://github.com/jquery/jquery.git",
+      "commit": "f79d5f1a337528940ab7029d4f8bbba72326f269",
+      "package": "jquery",
+      "version": "3.7.1",
+      "directory": "."
+    },
+    "entry": "dist/jquery.js",
+    "scope": "jquery@3.7.1 public ESM runtime graph; dependency installation excluded; this is a comparison bundle build, not the upstream vendor release pipeline",
+    "external": [],
+    "samples": [
+      {
+        "bundleSeconds": 0.014693645999999994,
+        "wallSeconds": 0.7002486800000001
+      },
+      {
+        "bundleSeconds": 0.012136830999999916,
+        "wallSeconds": 0.595806358
+      },
+      {
+        "bundleSeconds": 0.010862663999999996,
+        "wallSeconds": 0.5563189320000002
+      }
+    ],
+    "medianSeconds": 0.595806358,
+    "toolchain": {
+      "esbuild": "0.28.1",
+      "terser": "5.51.2"
+    },
+    "artifacts": [
+      {
+        "path": "original.esm.js",
+        "raw": 87468,
+        "gzip9": 30497,
+        "brotli11": 27675,
+        "sha256": "0b1e49c4d55136ef2a851edeb12f2dd4bd866c73c404f38531951d09596a95c5"
+      },
+      {
+        "path": "original.unminified.js",
+        "raw": 246365,
+        "gzip9": 53457,
+        "brotli11": 45238,
+        "sha256": "5413f4b708de85622cb70ccbc5d12d52a154b86d4221e1023839dc7095e90a31"
+      },
+      {
+        "path": "original.terser-nomangle.js",
+        "raw": 134340,
+        "gzip9": 38968,
+        "brotli11": 34704,
+        "sha256": "ebaf5c9663612ab9284929f3a40ea4d5cb00842711dadd488f1705fbfb1e9828"
+      },
+      {
+        "path": "original.esbuild.js",
+        "raw": 88320,
+        "gzip9": 31538,
+        "brotli11": 28665,
+        "sha256": "af88451e5582fe624fccd7399c94e2c20de780a8ed6e09c879ab93fd0c5f1d59"
+      }
+    ],
+    "inputs": [
+      "dist/jquery.js",
+      "public-esm-entry.mjs"
+    ]
+  },
+  "lilscriptArtifacts": [
+    {
+      "path": "dist/jquery.umd.js",
+      "raw": 81783,
+      "gzip9": 31234,
+      "brotli11": 27879,
+      "sha256": "e7b8b36e7b7784770eaf4ab4c8e615f5405cc6f841a5b1ade00e427bdbedc584"
+    },
+    {
+      "path": "dist/jquery.cjs",
+      "raw": 81881,
+      "gzip9": 31265,
+      "brotli11": 27959,
+      "sha256": "c5d709137ad5d621489ba5e2067e3cace7903c10043fa87266d32204068054c5"
+    },
+    {
+      "path": "dist/jquery.impl.js",
+      "raw": 81730,
+      "gzip9": 31198,
+      "brotli11": 27852,
+      "sha256": "4d80c7a957983b0b5d8ce33c95d10712027f2cad52ab8cd9390c0bb818afd769"
+    },
+    {
+      "path": "dist/jquery.esm.js",
+      "raw": 81827,
+      "gzip9": 31257,
+      "brotli11": 27901,
+      "sha256": "326714febeab523e83721d2b2201fcdd5f4b7d98d6a7ae84d4f4e48202a7c4ef"
+    },
+    {
+      "path": "dist/jquery.raw.js",
+      "raw": 81730,
+      "gzip9": 31198,
+      "brotli11": 27852,
+      "sha256": "4d80c7a957983b0b5d8ce33c95d10712027f2cad52ab8cd9390c0bb818afd769"
+    }
+  ],
+  "nativeBuildsSummary": {
+    "samples": 3,
+    "successful": 3,
+    "medianSeconds": 1.6170904380001048,
+    "minimumSeconds": 1.6168044940000073,
+    "maximumSeconds": 1.7166505559998768
+  },
+  "lilscriptBuildsSummary": {
+    "samples": 3,
+    "successful": 3,
+    "medianSeconds": 274.483675767,
+    "minimumSeconds": 273.93155338099996,
+    "maximumSeconds": 274.69273940499943
+  },
+  "status": "complete",
+  "finishedAt": "2026-09-10T20:37:53Z",
+  "sourceBuild": {
+    "original": {
+      "complete": true,
+      "medianSeconds": 1.6170904380001048,
+      "minimumSeconds": 1.6168044940000073,
+      "maximumSeconds": 1.7166505559998768,
+      "samples": [
+        {
+          "command": [
+            "npm",
+            "run",
+            "build-all-variants"
+          ],
+          "wallSeconds": 1.7166505559998768,
+          "cpuSeconds": 2.792360999999999,
+          "exitCode": 0,
+          "timedOut": false,
+          "log": "original-build-1.log",
+          "logSha256": "9a98f571030f46eb24edc427a5da619f7e5d4e9802a9db06921c9f8f96162209"
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "build-all-variants"
+          ],
+          "wallSeconds": 1.6170904380001048,
+          "cpuSeconds": 2.5967159999996827,
+          "exitCode": 0,
+          "timedOut": false,
+          "log": "original-build-2.log",
+          "logSha256": "9a98f571030f46eb24edc427a5da619f7e5d4e9802a9db06921c9f8f96162209"
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "build-all-variants"
+          ],
+          "wallSeconds": 1.6168044940000073,
+          "cpuSeconds": 2.597697000000208,
+          "exitCode": 0,
+          "timedOut": false,
+          "log": "original-build-3.log",
+          "logSha256": "9a98f571030f46eb24edc427a5da619f7e5d4e9802a9db06921c9f8f96162209"
+        }
+      ]
+    },
+    "lilscript": {
+      "complete": true,
+      "medianSeconds": 274.483675767,
+      "minimumSeconds": 273.93155338099996,
+      "maximumSeconds": 274.69273940499943,
+      "samples": [
+        {
+          "command": [
+            "bash",
+            "-c",
+            "node scripts/build.mjs --compile --force"
+          ],
+          "wallSeconds": 274.483675767,
+          "cpuSeconds": 1191.764301,
+          "exitCode": 0,
+          "timedOut": false,
+          "log": "lilscript-build-1.log",
+          "logSha256": "db3b06f85b0fcc38ac229ec83ceae5612b7a1a695d4034e242b6783d13e2bfc0"
+        },
+        {
+          "command": [
+            "bash",
+            "-c",
+            "node scripts/build.mjs --compile --force"
+          ],
+          "wallSeconds": 273.93155338099996,
+          "cpuSeconds": 1182.9355050000004,
+          "exitCode": 0,
+          "timedOut": false,
+          "log": "lilscript-build-2.log",
+          "logSha256": "db3b06f85b0fcc38ac229ec83ceae5612b7a1a695d4034e242b6783d13e2bfc0"
+        },
+        {
+          "command": [
+            "bash",
+            "-c",
+            "node scripts/build.mjs --compile --force"
+          ],
+          "wallSeconds": 274.69273940499943,
+          "cpuSeconds": 1189.7490770000002,
+          "exitCode": 0,
+          "timedOut": false,
+          "log": "lilscript-build-3.log",
+          "logSha256": "db3b06f85b0fcc38ac229ec83ceae5612b7a1a695d4034e242b6783d13e2bfc0"
+        }
+      ]
+    },
+    "scopeNote": "Both timings cover each repository\u2019s package build command; their output formats and build checks can differ.",
+    "cleanOutputs": true,
+    "installationExcluded": true
+  },
+  "prerequisiteAdjustments": null,
+  "recordRepository": "https://github.com/yeargun/jquerylil/tree/main/comparison/source-build"
+}

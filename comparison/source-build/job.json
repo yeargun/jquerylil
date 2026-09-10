@@ -1,0 +1,35 @@
+{
+  "source": {
+    "repository": "https://github.com/jquery/jquery.git",
+    "commit": "f79d5f1a337528940ab7029d4f8bbba72326f269",
+    "package": "jquery",
+    "version": "3.7.1",
+    "directory": "."
+  },
+  "portSource": {
+    "commit": "36fabe84aa41aa630b504c7e84d3758a63fb0375"
+  },
+  "compilerCommit": "4dc4e3337d9ffd758d65e3852682d6e13d9331c1",
+  "install": [
+    "npm",
+    "install",
+    "--ignore-scripts",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "setup": [],
+  "build": [
+    "npm",
+    "run",
+    "build-all-variants"
+  ],
+  "clean": [
+    "dist"
+  ],
+  "entry": "dist/jquery.js",
+  "defaultExport": true,
+  "external": [],
+  "esmScope": "jquery@3.7.1 public ESM runtime graph; dependency installation excluded; this is a comparison bundle build, not the upstream vendor release pipeline",
+  "lilscriptBuild": "node scripts/build.mjs --compile --force",
+  "test": "node --test test/compat.test.mjs"
+}
