@@ -10,28 +10,34 @@
   "size": [
     {
       "id": "officialDev",
-      "name": "Official jquery.js",
-      "raw": 285314,
-      "gzip9": 83619,
-      "brotli11": 69545,
-      "note": "published development artifact"
+      "name": "Original \u00b7 unminified ESM graph",
+      "raw": 246361,
+      "gzip9": 53452,
+      "brotli11": 45217,
+      "note": "Fresh pinned upstream comparison graph; the build audit states its external dependencies.",
+      "measuredAt": "2026-09-10T13:56:48Z",
+      "artifactSha256": "b337895e5aa893964987af06232f13b56e267ce6f4ac5d7133d846bcd455c18b"
     },
     {
       "id": "officialMin",
-      "name": "Official jquery.min.js",
-      "raw": 87533,
-      "gzip9": 30336,
-      "brotli11": 27445,
-      "note": "published minified artifact"
+      "name": "Original \u00b7 esbuild + Terser ESM",
+      "raw": 87488,
+      "gzip9": 30506,
+      "brotli11": 27670,
+      "note": "Fresh pinned upstream comparison graph; the build audit states its external dependencies.",
+      "measuredAt": "2026-09-10T13:56:48Z",
+      "artifactSha256": "f3795f4fc676e45ee889d6934523f708ee56a28f2ceb4d7bb572176079e5b7ca"
     },
     {
       "id": "itslil",
       "name": "@itslil/jquery",
-      "raw": 86072,
-      "gzip9": 32042,
-      "brotli11": 28764,
-      "note": "LilScript compiler-selected ESM",
-      "primary": true
+      "raw": 81828,
+      "gzip9": 31260,
+      "brotli11": 27898,
+      "note": "Fresh packaged ESM, rebuilt with compiler 63c2896a71.",
+      "primary": true,
+      "measuredAt": "2026-09-10T13:56:48Z",
+      "artifactSha256": "b43df6f9adc4bf1b69d523b6f7a98ff4b9348b481606a4946e5b9ba0e28de0e0"
     }
   ],
   "apps": [
@@ -303,5 +309,8 @@
         }
       }
     ]
-  }
+  },
+  "sizeMeasuredAt": "2026-09-10T13:56:48Z",
+  "buildAudit": "./build-audit.json",
+  "runtimeEvidenceStatus": "Historical; runtime throughput was not republished as a measurement of this compiler."
 }

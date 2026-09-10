@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "name": "jquerylil",
+  "measuredAt": "2026-09-10T13:56:48Z",
+  "status": "verified",
+  "buildPassed": true,
+  "summary": "The fresh artifact was checked against the repository test command.",
+  "sourceCommit": "36fabe84aa41aa630b504c7e84d3758a63fb0375",
+  "previousPublicCommit": "20ff1645c3fd04ff32b52999ba41c32f998f543c",
+  "compiler": {
+    "commit": "63c2896a71e60cbcca7870fe979f9d6ecaff3452",
+    "sha256": "2319462ef7d858c8e2a5a767260aa4f80d325e0045afa0cc86cc122d1299b059",
+    "profile": "release",
+    "dirty": false
+  },
+  "machine": {
+    "cpu": "AMD EPYC 9V45 96-Core Processor",
+    "logicalCpus": 16,
+    "affinityCpus": 16,
+    "memoryBytes": 33648435200,
+    "os": "Ubuntu 24.04.4 LTS",
+    "kernel": "6.17.0-1022-azure",
+    "architecture": "x86_64",
+    "node": "v22.23.2",
+    "rayonThreads": 16,
+    "provider": "Azure",
+    "instanceClass": "Standard_D16als_v7",
+    "parallelPortBuildsOnMachine": 1,
+    "loadAtStart": [
+      6.75341796875,
+      3.27978515625,
+      1.5576171875
+    ],
+    "loadAtEnd": [
+      3.74560546875,
+      6.22509765625,
+      3.58349609375
+    ],
+    "concurrencyNote": "The audit scheduled one port per worker, but this is a shared pool. Outside compiler jobs were observed during the run; timings are contextual wall times, not controlled speedup benchmarks."
+  },
+  "upstream": {
+    "name": "jquerylil",
+    "package": "jquery",
+    "pinned": "3.7.1",
+    "latest": "4.0.0",
+    "source": "https://www.npmjs.com/package/jquery"
+  },
+  "comparisonScope": "jquery@3.7.1 public ESM runtime graph; dependency installation excluded; this is a comparison bundle build, not the upstream vendor release pipeline Sizes use canonical zlib 1.3.1 gzip-9 and Google Brotli 1.1.0 quality 11.",
+  "sizes": {
+    "previous": {
+      "id": "itslil",
+      "name": "@itslil/jquery",
+      "raw": 86072,
+      "gzip9": 32042,
+      "brotli11": 28764,
+      "note": "LilScript compiler-selected ESM",
+      "primary": true
+    },
+    "current": {
+      "path": "dist/jquery.esm.js",
+      "raw": 81828,
+      "gzip9": 31260,
+      "brotli11": 27898,
+      "sha256": "b43df6f9adc4bf1b69d523b6f7a98ff4b9348b481606a4946e5b9ba0e28de0e0"
+    },
+    "upstream": {
+      "path": ".page-audit/upstream/official.esm.js",
+      "raw": 87488,
+      "gzip9": 30506,
+      "brotli11": 27670,
+      "sha256": "f3795f4fc676e45ee889d6934523f708ee56a28f2ceb4d7bb572176079e5b7ca"
+    }
+  },
+  "officialArtifacts": [
+    {
+      "path": ".page-audit/upstream/official.terser-nomangle.js",
+      "raw": 134327,
+      "gzip9": 38967,
+      "brotli11": 34690,
+      "sha256": "b9eef1c96e3bc759bec1b1ab87aa514b98e7b5b1e98e9c712b95115f9224d5f5"
+    },
+    {
+      "path": ".page-audit/upstream/official.esm.js",
+      "raw": 87488,
+      "gzip9": 30506,
+      "brotli11": 27670,
+      "sha256": "f3795f4fc676e45ee889d6934523f708ee56a28f2ceb4d7bb572176079e5b7ca"
+    },
+    {
+      "path": ".page-audit/upstream/official.unminified.js",
+      "raw": 246361,
+      "gzip9": 53452,
+      "brotli11": 45217,
+      "sha256": "b337895e5aa893964987af06232f13b56e267ce6f4ac5d7133d846bcd455c18b"
+    },
+    {
+      "path": ".page-audit/upstream/official.esbuild.js",
+      "raw": 88340,
+      "gzip9": 31547,
+      "brotli11": 28681,
+      "sha256": "724a6757bca94b4a59f47dc8f708ddb00436a6d61999374f390d5d8d5e07e476"
+    }
+  ],
+  "candidateArtifacts": [
+    {
+      "path": "dist/jquery.umd.js",
+      "raw": 81784,
+      "gzip9": 31237,
+      "brotli11": 27881,
+      "sha256": "b7483aa3c4e5ee1a7e1984670a7f24bbbff491420728fd6bc6ce78324d692574"
+    },
+    {
+      "path": "dist/jquery.cjs",
+      "raw": 81882,
+      "gzip9": 31267,
+      "brotli11": 27914,
+      "sha256": "322590bb5a5e29ce3f4e2edfc358b7093732e6a7f93cf1a53a875bd8a5a5ec7f"
+    },
+    {
+      "path": "dist/jquery.impl.js",
+      "raw": 81731,
+      "gzip9": 31201,
+      "brotli11": 27854,
+      "sha256": "95971036f327da9ae7bc457720935bcd92e2a9f13091a628af60742c282346d4"
+    },
+    {
+      "path": "dist/jquery.esm.js",
+      "raw": 81828,
+      "gzip9": 31260,
+      "brotli11": 27898,
+      "sha256": "b43df6f9adc4bf1b69d523b6f7a98ff4b9348b481606a4946e5b9ba0e28de0e0"
+    },
+    {
+      "path": "dist/jquery.raw.js",
+      "raw": 81731,
+      "gzip9": 31201,
+      "brotli11": 27854,
+      "sha256": "95971036f327da9ae7bc457720935bcd92e2a9f13091a628af60742c282346d4"
+    },
+    {
+      "path": ".page-audit/upstream/official.esbuild.js",
+      "raw": 88340,
+      "gzip9": 31547,
+      "brotli11": 28681,
+      "sha256": "724a6757bca94b4a59f47dc8f708ddb00436a6d61999374f390d5d8d5e07e476"
+    },
+    {
+      "path": ".page-audit/upstream/official.terser-nomangle.js",
+      "raw": 134327,
+      "gzip9": 38967,
+      "brotli11": 34690,
+      "sha256": "b9eef1c96e3bc759bec1b1ab87aa514b98e7b5b1e98e9c712b95115f9224d5f5"
+    },
+    {
+      "path": ".page-audit/upstream/official.unminified.js",
+      "raw": 246361,
+      "gzip9": 53452,
+      "brotli11": 45217,
+      "sha256": "b337895e5aa893964987af06232f13b56e267ce6f4ac5d7133d846bcd455c18b"
+    },
+    {
+      "path": ".page-audit/upstream/official.esm.js",
+      "raw": 87488,
+      "gzip9": 30506,
+      "brotli11": 27670,
+      "sha256": "f3795f4fc676e45ee889d6934523f708ee56a28f2ceb4d7bb572176079e5b7ca"
+    }
+  ],
+  "timing": {
+    "primaryCompilerSeconds": 285.2065873146057,
+    "primaryScope": "One real compiler process, including code generation and codec-guided search; excludes subsequent package wrapping.",
+    "packageSeconds": 285.2757872300001,
+    "packageScope": "node scripts/build.mjs --compile --force; 1 successful compiler invocations plus package generation.",
+    "upstreamSeconds": 0.7405788400000002,
+    "upstreamScope": "jquery@3.7.1 public ESM runtime graph; dependency installation excluded; this is a comparison bundle build, not the upstream vendor release pipeline",
+    "protocol": "Same shared worker for both lanes; one fresh LilScript package build; median of three sequential upstream ESM builds (PlayCanvas records one native reference build). Outside compiler jobs were observed in the pool, so contention is not excluded. Dependencies, tests and compression measurement are outside these build times.",
+    "upstreamSamples": [
+      {
+        "bundleSeconds": 0.013587293000000002,
+        "wallSeconds": 0.9999342150000001
+      },
+      {
+        "bundleSeconds": 0.01595266700000002,
+        "wallSeconds": 0.7405788400000002
+      },
+      {
+        "bundleSeconds": 0.013352292999999918,
+        "wallSeconds": 0.6107265510000002
+      }
+    ]
+  },
+  "behavior": {
+    "command": "node --test test/compat.test.mjs",
+    "summary": "Repository test command passed (exit 0). # tests 6 \u00b7 # pass 6 \u00b7 # fail 0",
+    "before": {
+      "exitCode": 0,
+      "failures": [],
+      "logSha256": "442a0b51aaa5aaadfa5c9fda53a66f0734a7d5483ddd5614ad4bcfafd590a942"
+    },
+    "after": {
+      "exitCode": 0,
+      "failures": [],
+      "tail": "TAP version 13\n# Subtest: @itslil/jquery vs jquery@3.7.1\n    # Subtest: exports the 3.7.1 surface\n    ok 1 - exports the 3.7.1 surface\n      ---\n      duration_ms: 0.428319\n      type: 'test'\n      ...\n    # Subtest: matches core utilities\n    ok 2 - matches core utilities\n      ---\n      duration_ms: 0.557001\n      type: 'test'\n      ...\n    # Subtest: matches Deferred resolve/reject\n    ok 3 - matches Deferred resolve/reject\n      ---\n      duration_ms: 0.427327\n      type: 'test'\n      ...\n    # Subtest: ships the compiler-selected compact ESM, not a pretty-printed wrapper\n    ok 4 - ships the compiler-selected compact ESM, not a pretty-printed wrapper\n      ---\n      duration_ms: 0.688307\n      type: 'test'\n      ...\n    # Subtest: loads from CommonJS\n    ok 5 - loads from CommonJS\n      ---\n      duration_ms: 5.610321\n      type: 'test'\n      ...\n    # Subtest: selects, classes, and events\n    ok 6 - selects, classes, and events\n      ---\n      duration_ms: 3.69917\n      type: 'test'\n      ...\n    1..6\nok 1 - @itslil/jquery vs jquery@3.7.1\n  ---\n  duration_ms: 12.064051\n  type: 'suite'\n  ...\n1..1\n# tests 6\n# suites 1\n# pass 6\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 256.417563\n",
+      "logSha256": "e7eeb3c911c91d0661b7c46d6abf09132483eebd93b47ee8014660fd308cfc2c"
+    }
+  },
+  "findings": [
+    "4 committed port changes were absent from GitHub at the start of the audit.",
+    "Published-to-fresh Brotli drift: -866 bytes (-3.01%). This includes port source/config changes and compiler changes.",
+    "The root checkout compiler (54e1948) rejects config field name_ordering; today's migration/target-tree compiler is required.",
+    "Upstream version gap: pinned 3.7.1; npm latest was 4.0.0 at the audit. No compatibility upgrade is implied."
+  ],
+  "primaryArtifact": "dist/jquery.esm.js",
+  "beforePage": {
+    "url": "https://yeargun.github.io/jquerylil/",
+    "status": 200,
+    "sha256": "4c43d5dad03cc4e3e86647656f61c55cd4b748392ea1033edd6b8fd598411ab8",
+    "lastModified": "Fri, 04 Sep 2026 10:39:56 GMT"
+  },
+  "codecSha256": "9257fd055728895c11b9c4b0d882895d7d11bb3dd3495f560123879ca2bc3cd6",
+  "publicationArtifacts": [
+    {
+      "path": "dist/jquery.umd.js",
+      "sha256": "b7483aa3c4e5ee1a7e1984670a7f24bbbff491420728fd6bc6ce78324d692574"
+    },
+    {
+      "path": "dist/jquery.cjs",
+      "sha256": "322590bb5a5e29ce3f4e2edfc358b7093732e6a7f93cf1a53a875bd8a5a5ec7f"
+    },
+    {
+      "path": "dist/jquery.impl.js",
+      "sha256": "95971036f327da9ae7bc457720935bcd92e2a9f13091a628af60742c282346d4"
+    },
+    {
+      "path": "dist/jquery.esm.js",
+      "sha256": "b43df6f9adc4bf1b69d523b6f7a98ff4b9348b481606a4946e5b9ba0e28de0e0"
+    },
+    {
+      "path": "dist/jquery.raw.js",
+      "sha256": "95971036f327da9ae7bc457720935bcd92e2a9f13091a628af60742c282346d4"
+    }
+  ],
+  "publicationPolicy": "Promote freshly tested distribution",
+  "publicationBase": "36fabe84aa41aa630b504c7e84d3758a63fb0375",
+  "publicationSourceFingerprint": "bc62f8dba18ce7fd129b14e2fd5c708cb10597dba66faadfe5aa18e35f929475"
+}
