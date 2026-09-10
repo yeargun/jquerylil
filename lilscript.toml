@@ -3,6 +3,10 @@
 # size, so a large module exhausts the beam before it reaches the naming and
 # class-shape families. Measured on this port with `lilscript-codec`:
 [javascript]
+# 8.62: the naming that reuses one spelling for one token shape. A per-port
+# option, not a default: measured across ten ports it is +552 as a default and
+# -341 on the five it wins, which is 8.15's rule for a shape that splits.
+name_ordering = "idiom-converged"
 priority = "size-first"
 optimization_level = 15
 cost_model = "brotli"
