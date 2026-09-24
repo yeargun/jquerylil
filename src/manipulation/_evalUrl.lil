@@ -1,6 +1,6 @@
 import { jQuery, globalEval } from "../core";
 import { ajax } from "../ajax";
-import { createEmptyObject, setProp, noop, jsUndefined, stringify } from "../js-host.lil";
+import { noop } from "../js-host.lil";
 
 struct EvalUrlSettings {
   string url;
@@ -14,9 +14,6 @@ struct EvalUrlSettings {
 }
 
 JsValue evalUrl(string url, JsValue options, JsValue doc) {
-  JsValue converters = JS.object();
-  converters["text script"] = noop;
-
   return ajax(EvalUrlSettings{
     url,
     "GET",
@@ -24,17 +21,11 @@ JsValue evalUrl(string url, JsValue options, JsValue doc) {
     true,
     false,
     false,
-    converters,
+    JS.object("text script", noop),
     (JsValue response) => {
-    string code = "";
-    if (response is string) {
-      code = response;
-    } else {
-      code = JS.string(response);
+      globalEval(JS.assume(response), options, doc);
+      return JS.undefined();
     }
-    globalEval(code, options, doc);
-    return JS.undefined();
-  }
   }, JS.undefined());
 }
 

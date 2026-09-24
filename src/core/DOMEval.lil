@@ -1,21 +1,9 @@
 import { document } from "../var/document";
 
-struct PreservedScriptAttributes {
-  bool type;
-  bool src;
-  bool nonce;
-  bool noModule;
-}
+JsValue preservedScriptAttributes = JS.object("type", true, "src", true, "nonce", true, "noModule", true);
 
-JsValue preservedScriptAttributes = PreservedScriptAttributes{
-  true,
-  true,
-  true,
-  true
-};
-
-export void DOMEval(JsValue code, JsValue node, JsValue docArg = null) {
-  JsValue doc = JS.or(docArg, document);
+export void DOMEval(JsValue code, JsValue node, JsValue doc = JS.undefined()) {
+  doc = JS.or(doc, document);
   JsValue script = JS.invoke(doc, "createElement", "script");
   script["text"] = code;
 

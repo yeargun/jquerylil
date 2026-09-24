@@ -58,9 +58,14 @@ function compileIfRequested() {
   ])
 }
 
+// The trailing export clause names jQuery's local binding, aliased or not.
 function jqueryLocalName(source) {
-  const match = source.match(/export\s*\{\s*(\w+)\s+as\s+jQuery/)
-  return match?.[1] ?? "e"
+  const clause = source.match(/export\s*\{([^}]*)\}\s*;?\s*$/)
+  for (const entry of clause?.[1].split(",") ?? []) {
+    const [local, exported = local] = entry.trim().split(/\s+as\s+/)
+    if (exported === "jQuery") return local
+  }
+  return "e"
 }
 
 function stripNamedExport(source) {

@@ -2,12 +2,10 @@ import {
   dateNow
 } from "../../js-host.lil";
 
-struct NonceBag {
-  float guid;
-}
+// Upstream's `nonce` is a private `{ guid: Date.now() }` bag that only ajax.js
+// and jsonp.js read, always as `nonce.guid++`; a counter says the same thing.
+float guid = dateNow();
 
-JsValue makeNonce() {
-  return NonceBag{dateNow()};
+export float nextGuid() {
+  return guid++;
 }
-
-export JsValue nonce = makeNonce();

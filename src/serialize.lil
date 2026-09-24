@@ -1,128 +1,100 @@
+extern JsValue this;
 import { jQuery, isPlainObject, makeArray, each, map, wrap } from "./core";
 import { toType } from "./core/toType";
 import { rcheckableType } from "./var/rcheckableType";
 import { isFunction } from "./var/isFunction";
 import { prop } from "./attributes/prop";
-import { encodeURIComponentValue } from "./js-host.lil";
-
-
-struct NameValue {
-  string name;
-  string value;
-}
 
 Regex rbracket = new Regex("\\[\\]$");
 Regex rCRLF = new Regex("\\r?\\n", "g");
 Regex rsubmitterTypes = new Regex("^(?:submit|button|image|reset|file)$", "i");
 Regex rsubmittable = new Regex("^(?:input|select|textarea|keygen)", "i");
 
-void buildParams(string prefix, JsValue obj, bool traditional, func(string, JsValue)->void add) {
+void buildParams(JsValue prefix, JsValue obj, JsValue traditional, JsValue add) {
   if (JS.isArray(obj)) {
-    int len = obj.length.toInt();
-    for (int i = 0; i < len; i++) {
-      JsValue v = obj[i];
-      if (traditional || JS.regexTest(rbracket, prefix)) {
+    each(obj, (JsValue i, JsValue v) => {
+      if (traditional.truthy() || JS.invoke(rbracket, "test", prefix).truthy()) {
         add(prefix, v);
       } else {
-        string indexPart = "";
-        if (JS.typeOf(v) == "object" && !JS.isNullish(v)) {
-          indexPart = JS.string(i);
-        }
-        buildParams(prefix + "[" + indexPart + "]", v, traditional, add);
+        buildParams(
+          JS.add(JS.add(JS.add(prefix, "["), if (JS.typeOf(v) == "object" && !JS.isNullish(v)) { i } else { "" }), "]"),
+          v,
+          traditional,
+          add
+        );
       }
-    }
-  } else if (!traditional && toType(obj) == "object") {
+      return JS.undefined();
+    });
+  } else if (!traditional.truthy() && toType(obj) == "object") {
     for (string name in obj) {
-      buildParams(prefix + "[" + name + "]", obj[name], traditional, add);
+      buildParams(JS.add(JS.add(JS.add(prefix, "["), name), "]"), obj[name], traditional, add);
     }
   } else {
     add(prefix, obj);
   }
 }
 
-export string param(JsValue aArg, bool traditional = false) {
-  if (JS.isNullish(aArg)) {
+export JsValue param(JsValue a, JsValue traditional) {
+  string[] s = [];
+  JsValue add = (JsValue key, JsValue valueOrFunction) => {
+    JsValue value = if (isFunction(valueOrFunction)) { valueOrFunction() } else { valueOrFunction };
+    s.push(JS.encodeURIComponent(JS.assume(key)) + "=" + JS.encodeURIComponent(JS.assume(if (JS.isNullish(value)) { "" } else { value })));
+    return JS.undefined();
+  };
+
+  if (JS.isNullish(a)) {
     return "";
   }
 
-  JsValue[] s = [];
-
-  func(string, JsValue)->void add = (string key, JsValue valueOrFunction) => {
-    JsValue value = valueOrFunction;
-    if (isFunction(valueOrFunction)) {
-      value = valueOrFunction();
-    }
-    string valueStr = "";
-    if (!JS.isNullish(value)) {
-      valueStr = JS.string(value);
-    }
-    s.push(encodeURIComponentValue(key) + "=" + encodeURIComponentValue(valueStr));
-  };
-
-  bool isFormElementsArray = JS.isArray(aArg);
-  if (!isFormElementsArray) {
-    JsValue jqueryFlag = aArg["jquery"];
-    if (jqueryFlag.truthy() && !isPlainObject(aArg)) {
-      isFormElementsArray = true;
-    }
-  }
-
-  if (isFormElementsArray) {
-    each(aArg, JS.method0((JsValue elem) => {
-      add(JS.string(elem["name"]), elem["value"]);
+  if (JS.isArray(a) || (a["jquery"].truthy() && !isPlainObject(a))) {
+    each(a, (JsValue _i, JsValue elem) => {
+      add(elem["name"], elem["value"]);
       return JS.undefined();
-    }));
+    });
   } else {
-    for (string prefix in aArg) {
-      buildParams(prefix, aArg[prefix], traditional, add);
+    for (string prefix in a) {
+      buildParams(prefix, a[prefix], traditional, add);
     }
   }
 
-  return JS.join(s, "&");
+  return s.join("&");
 }
 
 jQuery["param"] = param;
 
-JsValue fnSerializeArray() {
-  JsValue mapped = JS.invoke(this, "map", JS.method0((JsValue elem) => {
-    JsValue elementsProp = prop(elem, "elements", JS.undefined());
-    if (elementsProp.truthy()) {
-      return makeArray(elementsProp);
-    }
-    return elem;
-  }));
-
-  JsValue filtered = JS.invoke(mapped, "filter", JS.method0((JsValue elem) => {
-    JsValue typeRaw = elem["type"];
-    string typeStr = JS.string(JS.or(typeRaw, ""));
-    return elem["name"].truthy()
-      && !JS.invoke(wrap(elem), "is", ":disabled").truthy()
-      && JS.regexTest(rsubmittable, JS.string(elem["nodeName"]))
-      && !JS.regexTest(rsubmitterTypes, typeStr)
-      && (elem["checked"].truthy() || !JS.regexTest(rcheckableType, typeStr));
-  }));
-
-  JsValue results = JS.invoke(filtered, "map", JS.method0((JsValue elem) => {
-    JsValue val = JS.invoke(wrap(elem), "val");
-    if (JS.isNullish(val)) {
-      return null;
-    }
-
-    string elemName = JS.string(elem["name"]);
-    if (JS.isArray(val)) {
-      return map(val, (JsValue item) => {
-        return NameValue{elemName, JS.stringReplace(JS.string(item), rCRLF, "\r\n")};
-      });
-    }
-
-    return NameValue{elemName, JS.stringReplace(JS.string(val), rCRLF, "\r\n")};
-  }));
-
-  return JS.invoke(results, "get");
+JsValue fnSerialize() {
+  return param(JS.invoke(this, "serializeArray"), JS.undefined());
 }
 
-JsValue fnSerialize() {
-  return param(JS.invoke(this, "serializeArray"), false);
+JsValue serializeValue = (JsValue _i, JsValue elem) => {
+  JsValue val = JS.invoke(wrap(elem), "val");
+  if (JS.isNullish(val)) {
+    return null;
+  }
+  if (JS.isArray(val)) {
+    return map(val, (JsValue v, JsValue _j, JsValue _arg) => object { name: elem["name"], value: JS.invoke(v, "replace", rCRLF, "\r\n") });
+  }
+  return object { name: elem["name"], value: JS.invoke(val, "replace", rCRLF, "\r\n") };
+};
+
+JsValue fnSerializeArray() {
+  JsValue elems = JS.invoke(JS.invoke(this, "map", (JsValue _i, JsValue elem) => {
+    JsValue elements = prop(elem, "elements", JS.undefined());
+    return if (elements.truthy()) { makeArray(elements) } else { elem };
+  }), "filter", (JsValue _i, JsValue elem) => {
+    JsValue type = elem["type"];
+    return JS.and(
+      JS.and(
+        JS.and(
+          JS.and(elem["name"], !JS.invoke(wrap(elem), "is", ":disabled").truthy()),
+          JS.invoke(rsubmittable, "test", elem["nodeName"])
+        ),
+        !JS.invoke(rsubmitterTypes, "test", type).truthy()
+      ),
+      JS.or(elem["checked"], !JS.invoke(rcheckableType, "test", type).truthy())
+    );
+  });
+  return JS.invoke(JS.invoke(elems, "map", serializeValue), "get");
 }
 
 JsValue fn = jQuery["fn"];

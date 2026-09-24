@@ -1,8 +1,11 @@
-import { jQuery, isEmptyObject, each } from "./core";
+extern JsValue this;
+import { jQuery, isEmptyObject, each, makeArray } from "./core";
+import { document } from "./var/document";
 import { documentElement } from "./var/documentElement";
 import { rnothtmlwhite } from "./var/rnothtmlwhite";
 import { rcheckableType } from "./var/rcheckableType";
 import { isFunction } from "./var/isFunction";
+import { isWindow } from "./var/isWindow";
 import { acceptData } from "./data/var/acceptData";
 import {
   get as dataPrivGet,
@@ -14,169 +17,25 @@ import { nodeName } from "./core/nodeName";
 import { needsContextPattern, findImpl, matchesSelectorImpl } from "./selector";
 import { containsImpl } from "./selector/contains";
 import {
-  createEmptyObject,
-  createNullProtoObject,
   objectCreate,
-  hasProp,
-  deleteProp,
-  isUndefined,
-  isFalse,
-  typeOf,
-  stringify,
-  stringMatch,
-  stringSplit,
-  arraySort,
-  arraySlice,
-  arraySplice,
-  arrayJoin,
+  createNullProtoObject,
   dateNow,
   newRegexp,
-  regexTest,
-  regexExec,
-  jsUndefined,
-  call0,
-  call1,
-  call2,
-  call3,
-  apply,
-  addEventListener,
-  removeEventListener
+  windowSelf,
+  objectHasOwn
 } from "./js-host.lil";
 
 /*
- * Full port of upstream event.js. `add`/`remove`/`dispatch`/`handlers` are
- * faithful to the source. Two upstream mechanisms are intentionally
- * simplified because their prerequisites are not ported yet:
- * - `addProp` normally installs lazy getters on `jQuery.Event.prototype`;
- *   since events here are plain closures (no shared prototype), the same
- *   properties are copied eagerly from the native event inside `Event()`.
- * - Delegated-handler matching for `needsContext` selectors normally goes
- *   through `jQuery(sel, this).index(cur)`; that requires the `traversing`/
- *   `core/init` modules, which are not ported yet, so delegation always
- *   uses the seed-based `find()` match instead (correct for plain
- *   selectors, an approximation for leading-combinator ones).
- * - `document.documentMode` (IE) branches are dropped; only the modern
- *   evergreen-browser path is kept.
+ * Port of upstream event.js and event/trigger.js, written in upstream's shape: the
+ * handleObj, the handler queue entries, and jQuery.Event are plain objects, and the
+ * public jQuery.event functions take upstream's arguments. `document.documentMode`
+ * (IE) branches are dropped; only the evergreen-browser path is kept. Event
+ * properties (altKey, which, ...) are copied from the native event when the
+ * jQuery.Event is created rather than installed as lazy prototype getters.
  */
 
 Regex rtypenamespace = new Regex("^([^.]*)(?:\\.(.+)|)");
-
-struct TypeNamespace {
-  string type;
-  string[] namespaces;
-  string namespaceText;
-}
-
-class HandleObj {
-  string type;
-  string origType;
-  JsValue data;
-  JsValue handler;
-  JsValue guid;
-  JsValue selector;
-  bool needsContext;
-  JsValue namespace;
-
-  init(
-    string type,
-    string origType,
-    JsValue data,
-    JsValue handler,
-    JsValue guid,
-    JsValue selector,
-    bool needsContext,
-    JsValue namespace
-  ) {
-    this.type = type;
-    this.origType = origType;
-    this.data = data;
-    this.handler = handler;
-    this.guid = guid;
-    this.selector = selector;
-    this.needsContext = needsContext;
-    this.namespace = namespace;
-  }
-}
-
-HandleObj[]? asHandlerArray(JsValue value) {
-  if (JS.isArray(value)) {
-    HandleObj[] handlers = JS.assume(value);
-    return handlers;
-  }
-  return null;
-}
-
-HandleObj[] createHandlerArray() {
-  HandleObj[] handlers = [];
-  JsValue bag = JS.assume(handlers);
-  bag["delegateCount"] = 0.0;
-  return handlers;
-}
-
-float handlerDelegateCount(HandleObj[] handlers) {
-  JsValue bag = JS.assume(handlers);
-  return JS.assume(bag["delegateCount"]);
-}
-
-void setHandlerDelegateCount(HandleObj[] handlers, float count) {
-  JsValue bag = JS.assume(handlers);
-  bag["delegateCount"] = count;
-}
-
-class HandlerQueueEntry {
-  JsValue elem;
-  HandleObj[] handlers;
-
-  init(JsValue elem, HandleObj[] handlers) {
-    this.elem = elem;
-    this.handlers = handlers;
-  }
-}
-
-struct LoadSpecial {
-  bool noBubble;
-}
-
-struct ClickSpecial {
-  JsValue setup;
-  JsValue trigger;
-  JsValue _default;
-}
-
-struct BeforeUnloadSpecial {
-  JsValue postDispatch;
-}
-
-struct FocusBaseSpecial {
-  JsValue setup;
-  JsValue trigger;
-  JsValue teardown;
-  JsValue _default;
-  string delegateType;
-}
-
-struct FocusDelegateSpecial {
-  JsValue setup;
-  JsValue teardown;
-}
-
-struct EnterLeaveSpecial {
-  string delegateType;
-  string bindType;
-  JsValue handle;
-}
-
-struct EventApi {
-  JsValue global;
-  JsValue special;
-  JsValue handlers;
-  JsValue dispatch;
-  JsValue add;
-  JsValue remove;
-  JsValue fix;
-}
-
-JsValue emptySpecial = JS.object();
+Regex rfocusMorph = new Regex("^(?:focusinfocus|focusoutblur)$");
 
 JsValue returnTrue() {
   return true;
@@ -186,622 +45,344 @@ JsValue returnFalse() {
   return false;
 }
 
-JsValue eventApi = JS.undefined();
 JsValue global = JS.object();
-JsValue special = JS.object();
 
-JsValue expandoKey() {
-  return jQuery["expando"];
+JsValue checkableInput(JsValue el) {
+  return JS.and(JS.and(JS.invoke(rcheckableType, "test", el["type"]), el["click"]), nodeName(el, "input"));
 }
 
-float nextGuid() {
-  float current = JS.number(jQuery["guid"]);
-  jQuery["guid"] = current + 1.0;
-  return current;
+// Utilize native event to ensure correct state for checkable inputs. The unused `data`
+// keeps upstream's arity (setup.length and trigger.length are 1).
+JsValue clickSetup(JsValue data) {
+  // Claim the first handler
+  if (checkableInput(this).truthy()) {
+    leverageNative(this, "click", true);
+  }
+  // Return false to allow normal processing in the caller
+  return false;
 }
 
-TypeNamespace splitTypeNamespace(string typeText) {
-  JsValue m = JS.regexExec(rtypenamespace, typeText);
-  string typePart = "";
-  string nsPart = "";
-  if (m.truthy()) {
-    JsValue g1 = m[1];
-    JsValue g2 = m[2];
-    if (g1.truthy()) {
-      typePart = JS.assume(g1);
+JsValue clickTrigger(JsValue data) {
+  // Force setup before triggering a click
+  if (checkableInput(this).truthy()) {
+    leverageNative(this, "click", false);
+  }
+  // Return non-false to allow normal event-path propagation
+  return true;
+}
+
+JsValue specialEvents = object {
+  load: object {
+    // Prevent triggered image.load events from bubbling to window.load
+    noBubble: true
+  },
+  click: object {
+    setup: clickSetup,
+    trigger: clickTrigger,
+    // For cross-browser consistency, suppress native .click() on links
+    // Also prevent it if we're currently inside a leveraged native-event stack
+    _default: (JsValue event) => {
+      JsValue target = event["target"];
+      return JS.or(JS.and(checkableInput(target), dataPrivGet(target, "click")), nodeName(target, "a"));
     }
-    if (g2.truthy()) {
-      nsPart = JS.assume(g2);
+  },
+  beforeunload: object {
+    postDispatch: (JsValue event) => {
+      // Support: Firefox 20+
+      // Firefox doesn't alert if the returnValue field is not set.
+      if (!JS.isUndefined(event["result"]) && event["originalEvent"].truthy()) {
+        event["originalEvent"]["returnValue"] = event["result"];
+      }
+      return JS.undefined();
     }
   }
-  string[] namespaces = JS.stringSplit(nsPart, ".");
-  JS.sort(namespaces);
-  return TypeNamespace{ typePart, namespaces, JS.join(namespaces, ".") };
-}
-
-HandleObj[]? typedHandlers(JsValue elem, JsValue type) {
-  if (!dataPrivHasData(elem)) {
-    return null;
-  }
-  JsValue elemData = dataPrivGet(elem);
-  JsValue events = elemData["events"];
-  if (!events.truthy()) {
-    return null;
-  }
-  return asHandlerArray(events[type]);
-}
-
-// View of one jQuery.event.special entry: the port allocates the entries it ships
-// (Load/Click/Focus/EnterLeave structs) and user entries are plain objects with the same
-// optional keys, so reads are typed field reads (finer/hypotheses/042).
-export struct SpecialView {
-  JsValue bindType;
-  JsValue delegateType;
-  JsValue setup;
-  JsValue add;
-  JsValue remove;
-  JsValue teardown;
-  JsValue preDispatch;
-  JsValue postDispatch;
-  JsValue handle;
-  JsValue trigger;
-  JsValue noBubble;
-  JsValue _default;
-}
-
-SpecialView specialFor(JsValue type) {
-  JsValue specialForType = special[type];
-  if (specialForType.truthy()) {
-    return JS.assume(specialForType);
-  }
-  return JS.assume(emptySpecial);
-}
-
-void mergeHandleObjIn(HandleObj handleObj, JsValue handleObjIn) {
-  JsValue typeValue = handleObjIn["type"];
-  if (typeValue.truthy()) {
-    handleObj.type = JS.assume(typeValue);
-  }
-  JsValue origTypeValue = handleObjIn["origType"];
-  if (origTypeValue.truthy()) {
-    handleObj.origType = JS.assume(origTypeValue);
-  }
-  if (!JS.isUndefined(handleObjIn["data"])) {
-    handleObj.data = handleObjIn["data"];
-  }
-  if (!JS.isUndefined(handleObjIn["handler"])) {
-    handleObj.handler = handleObjIn["handler"];
-  }
-  if (!JS.isUndefined(handleObjIn["guid"])) {
-    handleObj.guid = handleObjIn["guid"];
-  }
-  if (!JS.isUndefined(handleObjIn["selector"])) {
-    handleObj.selector = handleObjIn["selector"];
-  }
-  if (!JS.isUndefined(handleObjIn["needsContext"])) {
-    handleObj.needsContext = JS.assume(handleObjIn["needsContext"]);
-  }
-  if (!JS.isUndefined(handleObjIn["namespace"])) {
-    handleObj.namespace = handleObjIn["namespace"];
-  }
-}
-
-string[] eventPropNames = [
-  "altKey", "bubbles", "cancelable", "changedTouches", "ctrlKey", "detail",
-  "eventPhase", "metaKey", "pageX", "pageY", "shiftKey", "view", "char",
-  "code", "charCode", "key", "keyCode", "button", "buttons", "clientX",
-  "clientY", "offsetX", "offsetY", "pointerId", "pointerType", "screenX",
-  "screenY", "targetTouches", "toElement", "touches", "which"
-];
-
-JsValue preventDefaultImpl() {
-  this["isDefaultPrevented"] = returnTrue;
-  JsValue original = this["originalEvent"];
-  if (original.truthy() && !this["isSimulated"].truthy()) {
-    JS.invoke(original, "preventDefault");
-  }
-  return JS.undefined();
-}
-
-JsValue stopPropagationImpl() {
-  this["isPropagationStopped"] = returnTrue;
-  JsValue original = this["originalEvent"];
-  if (original.truthy() && !this["isSimulated"].truthy()) {
-    JS.invoke(original, "stopPropagation");
-  }
-  return JS.undefined();
-}
-
-JsValue stopImmediatePropagationImpl() {
-  this["isImmediatePropagationStopped"] = returnTrue;
-  JsValue original = this["originalEvent"];
-  if (original.truthy() && !this["isSimulated"].truthy()) {
-    JS.invoke(original, "stopImmediatePropagation");
-  }
-  return JS.invoke(this, "stopPropagation");
-}
-
-struct EventProto {
-  JsValue isDefaultPrevented;
-  JsValue isPropagationStopped;
-  JsValue isImmediatePropagationStopped;
-  bool isSimulated;
-  JsValue preventDefault;
-  JsValue stopPropagation;
-  JsValue stopImmediatePropagation;
-}
-
-struct LeverageHandle {
-  bool namespace;
-  JsValue handler;
-}
-
-JsValue eventPrototype = EventProto{
-  returnFalse,
-  returnFalse,
-  returnFalse,
-  false,
-  preventDefaultImpl,
-  stopPropagationImpl,
-  stopImmediatePropagationImpl
 };
 
-export JsValue Event(JsValue src, JsValue props = null) {
-  JsValue self = objectCreate(eventPrototype);
+// Make sure that the handler has a unique ID, used to find/remove it later
+JsValue guidOf(JsValue handler) {
+  if (!handler["guid"].truthy()) {
+    float guid = JS.assume(jQuery["guid"]);
+    jQuery["guid"] = guid + 1.0;
+    handler["guid"] = guid;
+  }
+  return handler["guid"];
+}
 
-  if (src.truthy() && !JS.isUndefined(src["type"])) {
-    self["originalEvent"] = src;
-    self["type"] = src["type"];
-
-    JsValue defaultPreventedValue = src["defaultPrevented"];
-    if (defaultPreventedValue.truthy() || (JS.isUndefined(defaultPreventedValue) && src["returnValue"] == false)) {
-      self["isDefaultPrevented"] = returnTrue;
+JsValue on(JsValue elem, JsValue types, JsValue selector, JsValue data, JsValue fn, JsValue one = JS.undefined()) {
+  // Types can be a map of types/handlers
+  if (JS.typeOf(types) == "object") {
+    // ( types-Object, selector, data )
+    if (JS.typeOf(selector) != "string") {
+      // ( types-Object, data )
+      data = JS.or(data, selector);
+      selector = JS.undefined();
     }
+    for (string type in types) {
+      on(elem, type, selector, data, types[type], one);
+    }
+    return elem;
+  }
 
-    JsValue targetValue = src["target"];
-    if (JS.and(targetValue, targetValue["nodeType"]) == 3.0) {
-      self["target"] = targetValue["parentNode"];
+  if (JS.isNullish(data) && JS.isNullish(fn)) {
+    // ( types, fn )
+    fn = selector;
+    data = JS.undefined();
+    selector = JS.undefined();
+  } else if (JS.isNullish(fn)) {
+    fn = data;
+    if (JS.typeOf(selector) == "string") {
+      // ( types, selector, fn )
+      data = JS.undefined();
     } else {
-      self["target"] = targetValue;
-    }
-
-    self["currentTarget"] = src["currentTarget"];
-    self["relatedTarget"] = src["relatedTarget"];
-
-    int i = 0;
-    int len = eventPropNames.length;
-    for (; i < len; i++) {
-      string propName = eventPropNames[i];
-        if (JS.in(propName, src)) {
-        self[propName] = src[propName];
-      }
-    }
-  } else {
-    self["type"] = src;
-  }
-
-  if (props.truthy()) {
-    for (string key in props) {
-      self[key] = props[key];
+      // ( types, data, fn )
+      data = selector;
+      selector = JS.undefined();
     }
   }
-
-  JsValue timeStampValue = null;
-  if (src.truthy()) {
-    timeStampValue = src["timeStamp"];
-  }
-  if (timeStampValue.truthy()) {
-    self["timeStamp"] = timeStampValue;
-  } else {
-    self["timeStamp"] = dateNow();
+  if (JS.isFalse(fn)) {
+    fn = returnFalse;
+  } else if (!fn.truthy()) {
+    return elem;
   }
 
-  self[expandoKey()] = true;
-  return self;
-}
-
-JsValue fix(JsValue originalEvent) {
-  if (originalEvent[expandoKey()].truthy()) {
-    return originalEvent;
+  if (one.truthy()) {
+    JsValue origFn = fn;
+    fn = JS.methodRest((JsValue self, JsValue args) => {
+      // Can use an empty set, since event contains the info
+      JS.invoke(jQuery(), "off", args[0]);
+      return JS.apply(origFn, self, args);
+    });
+    // Use same guid so caller can remove using origFn
+    fn["guid"] = guidOf(origFn);
   }
-  return Event(originalEvent, null);
-}
-
-void leverageNative(JsValue el, string type, bool isSetup = false) {
-  if (!isSetup) {
-    if (JS.isUndefined(dataPrivGet(el, type))) {
-      add(el, type, returnTrue, null, null);
-    }
-    return;
-  }
-
-  dataPrivSet(el, type, false);
-
-  add(el, type, LeverageHandle{
-    false,
-    JS.methodRest((JsValue thisArg, JsValue args) => {
-    JsValue event = args[0];
-    JsValue saved = dataPrivGet(thisArg, type);
-
-    JsValue isTriggerValue = event["isTrigger"];
-    bool isTriggerNative = (JS.number(isTriggerValue).toInt() & 1) != 0;
-
-    if (isTriggerNative && thisArg[type].truthy()) {
-      if (!saved.truthy()) {
-        saved = JS.slice(args);
-        dataPrivSet(thisArg, type, saved);
-        JS.invoke(thisArg, type);
-        JsValue result = dataPrivGet(thisArg, type);
-        dataPrivSet(thisArg, type, false);
-        if (saved != result) {
-          JS.invoke(event, "stopImmediatePropagation");
-          JS.invoke(event, "preventDefault");
-          return result;
-        }
-      } else {
-        JsValue delegateOf = special[type];
-        if (delegateOf.truthy() && delegateOf["delegateType"].truthy()) {
-          JS.invoke(event, "stopPropagation");
-        }
-      }
-    } else if (saved.truthy()) {
-      JsValue savedTail = JS.slice(saved, 1.0);
-      dataPrivSet(thisArg, type, JS.invoke(eventApi, "trigger", saved[0], savedTail, thisArg));
-      JS.invoke(event, "stopPropagation");
-      event["isImmediatePropagationStopped"] = returnTrue;
-    }
+  return each(elem, JS.method0((JsValue el) => {
+    add(el, types, fn, data, selector);
     return JS.undefined();
-  })
-  }, null, null);
+  }));
 }
 
-JsValue stringMatchOrDefault(string typesText) {
-  return JS.or(JS.stringMatch(typesText, rnothtmlwhite), [""]);
-}
-
-export void add(JsValue elem, JsValue typesValue, JsValue handlerValue, JsValue data = null, JsValue selector = null, bool one = false) {
+export void add(JsValue elem, JsValue types, JsValue handler, JsValue data = JS.undefined(), JsValue selector = JS.undefined()) {
+  // Only attach events to objects that accept data
   if (!acceptData(elem)) {
     return;
   }
+  JsValue elemData = dataPrivGet(elem);
 
-  JsValue handleObjIn = null;
-  JsValue handler = handlerValue;
-  if (handler.truthy() && handler["handler"].truthy()) {
+  // Caller can pass in an object of custom data in lieu of the handler
+  JsValue handleObjIn = JS.undefined();
+  if (handler["handler"].truthy()) {
     handleObjIn = handler;
     handler = handleObjIn["handler"];
     selector = handleObjIn["selector"];
   }
 
-  bool hasSelector = selector.truthy();
-  if (hasSelector) {
+  // Ensure that invalid selectors throw exceptions at attach time
+  if (selector.truthy()) {
     matchesSelectorImpl(documentElement, JS.assume(selector));
   }
 
-  if (!handler["guid"].truthy()) {
-    handler["guid"] = nextGuid();
-  }
+  guidOf(handler);
 
-  JsValue elemData = dataPrivGet(elem);
+  // Init the element's event structure and main handler, if this is the first
   JsValue events = elemData["events"];
   if (!events.truthy()) {
     events = createNullProtoObject();
     elemData["events"] = events;
   }
-  if (!elemData["handle"].truthy()) {
-    elemData["handle"] = JS.methodRest(dispatchGate);
-  }
   JsValue eventHandle = elemData["handle"];
+  if (!eventHandle.truthy()) {
+    eventHandle = JS.methodRest((JsValue self, JsValue args) => {
+      // Discard the second event of a jQuery.event.trigger()
+      return if (JS.strictEqual(jQuery["event"]["triggered"], args[0]["type"])) { JS.undefined() } else { dispatch(elem, args) };
+    });
+    elemData["handle"] = eventHandle;
+  }
 
-  string typesText = JS.string(JS.or(typesValue, ""));
-  JsValue types = stringMatchOrDefault(typesText);
+  // Handle multiple events separated by a space
+  types = JS.or(JS.invoke(JS.or(types, ""), "match", rnothtmlwhite), [""]);
   float t = types.length;
   while (t > 0.0) {
     t = t - 1.0;
-    TypeNamespace parts = splitTypeNamespace(JS.string(types[t]));
-    string type = parts.type;
-    string origType = type;
-    string[] namespacesArray = parts.namespaces;
-    string namespaceText = parts.namespaceText;
+    JsValue tmp = JS.invoke(rtypenamespace, "exec", types[t]);
+    JsValue type = tmp[1];
+    JsValue origType = type;
+    JsValue namespaces = JS.invoke(JS.invoke(JS.or(tmp[2], ""), "split", "."), "sort");
 
-    if (type == "") {
+    // There *must* be a type, no attaching namespace-only handlers
+    if (!type.truthy()) {
       continue;
     }
 
-    SpecialView specialForType = specialFor(type);
-    JsValue mappedType = specialForType.bindType;
-    if (hasSelector) {
-      mappedType = specialForType.delegateType;
-    }
-    type = JS.assume(JS.or(mappedType, type));
+    // If event changes its type, use the special event handlers for the changed type
+    JsValue special = JS.or(specialEvents[type], JS.object());
 
-    specialForType = specialFor(type);
+    // If selector defined, determine special event api type, otherwise given type
+    type = JS.or(if (selector.truthy()) { special["delegateType"] } else { special["bindType"] }, type);
 
-    bool needsContext = false;
-    if (hasSelector) {
-      needsContext = JS.regexTest(needsContextPattern, JS.assume(selector));
-    }
-    JsValue selectorValue = null;
-    if (hasSelector) {
-      selectorValue = selector;
-    }
-    HandleObj handleObj = new HandleObj(
-      type,
-      origType,
-      data,
-      handler,
-      handler["guid"],
-      selectorValue,
-      needsContext,
-      namespaceText
-    );
-    if (handleObjIn.truthy()) {
-      mergeHandleObjIn(handleObj, handleObjIn);
-    }
-    if (one) {
-      JsValue handleBag = handleObj;
-      handleBag["one"] = true;
-    }
+    // Update special based on newly reset type
+    special = JS.or(specialEvents[type], JS.object());
 
-    HandleObj[]? existingHandlers = asHandlerArray(events[type]);
-    HandleObj[] handlers = createHandlerArray();
-    if (existingHandlers != null) {
-      handlers = existingHandlers;
-    } else {
+    // handleObj is passed to all event handlers
+    JsValue handleObj = JS.invoke(jQuery, "extend", object {
+      type: type,
+      origType: origType,
+      data: data,
+      handler: handler,
+      guid: handler["guid"],
+      selector: selector,
+      needsContext: JS.and(selector, JS.invoke(needsContextPattern, "test", selector)),
+      namespace: JS.invoke(namespaces, "join", ".")
+    }, handleObjIn);
+
+    // Init the event handler queue if we're the first
+    JsValue handlers = events[type];
+    if (!handlers.truthy()) {
+      handlers = JS.array();
       events[type] = handlers;
+      handlers["delegateCount"] = 0.0;
 
-      JsValue setup = specialForType.setup;
-      if (!setup.truthy() || JS.isFalse(JS.call(setup, elem, data, namespacesArray, eventHandle))) {
+      // Only use addEventListener if the special events handler returns false
+      if (!special["setup"].truthy() || JS.isFalse(JS.call(special["setup"], elem, data, namespaces, eventHandle))) {
         if (elem["addEventListener"].truthy()) {
-          addEventListener(elem, type, eventHandle);
+          JS.invoke(elem, "addEventListener", type, eventHandle);
         }
       }
     }
 
-    if (specialForType.add.truthy()) {
-      JS.call(specialForType.add, elem, handleObj);
-      if (!handleObj.handler["guid"].truthy()) {
-        handleObj.handler["guid"] = handler["guid"];
+    if (special["add"].truthy()) {
+      JS.call(special["add"], elem, handleObj);
+      if (!handleObj["handler"]["guid"].truthy()) {
+        handleObj["handler"]["guid"] = handler["guid"];
       }
     }
 
-    if (hasSelector) {
-      float delegateCount = handlerDelegateCount(handlers);
-      JS.splice(handlers, delegateCount, 0.0, handleObj);
-      setHandlerDelegateCount(handlers, delegateCount + 1.0);
+    // Add to the element's handler list, delegates in front
+    if (selector.truthy()) {
+      float delegateCount = JS.assume(handlers["delegateCount"]);
+      handlers["delegateCount"] = delegateCount + 1.0;
+      JS.invoke(handlers, "splice", delegateCount, 0.0, handleObj);
     } else {
-      handlers.push(handleObj);
+      JS.invoke(handlers, "push", handleObj);
     }
 
+    // Keep track of which events have ever been used, for event optimization
     global[type] = true;
   }
 }
 
-export void remove(JsValue elem, JsValue typesValue, JsValue handler = null, JsValue selector = null, bool mappedTypes = false) {
+// Detach an event or set of events from an element
+export void remove(JsValue elem, JsValue types, JsValue handler = JS.undefined(), JsValue selector = JS.undefined(), JsValue mappedTypes = JS.undefined()) {
   if (!dataPrivHasData(elem)) {
     return;
   }
   JsValue elemData = dataPrivGet(elem);
-  JsValue events = JS.and(elemData, elemData["events"]);
+  JsValue events = elemData["events"];
   if (!events.truthy()) {
     return;
   }
-  string typesText = JS.string(JS.or(typesValue, ""));
-  JsValue types = stringMatchOrDefault(typesText);
+
+  // Once for each type.namespace in types; type may be omitted
+  types = JS.or(JS.invoke(JS.or(types, ""), "match", rnothtmlwhite), [""]);
   float t = types.length;
   while (t > 0.0) {
     t = t - 1.0;
-    string rawType = JS.string(types[t]);
-    TypeNamespace parts = splitTypeNamespace(rawType);
-    string type = parts.type;
-    string origType = type;
-    string[] namespacesArray = parts.namespaces;
-    string namespaceText = parts.namespaceText;
+    JsValue tmp = JS.invoke(rtypenamespace, "exec", types[t]);
+    JsValue type = tmp[1];
+    JsValue origType = type;
+    JsValue namespaces = JS.invoke(JS.invoke(JS.or(tmp[2], ""), "split", "."), "sort");
 
-    if (type == "") {
+    // Unbind all events (on this namespace, if provided) for the element
+    if (!type.truthy()) {
       for (string eventType in events) {
-        remove(elem, eventType + rawType, handler, selector, true);
+        remove(elem, JS.add(eventType, types[t]), handler, selector, true);
       }
       continue;
     }
 
-    SpecialView specialForType = specialFor(type);
-    JsValue mappedType = specialForType.bindType;
-    if (selector.truthy()) {
-      mappedType = specialForType.delegateType;
+    JsValue special = JS.or(specialEvents[type], JS.object());
+    type = JS.or(if (selector.truthy()) { special["delegateType"] } else { special["bindType"] }, type);
+    JsValue handlers = JS.or(events[type], JS.array());
+    JsValue namespaceMatcher = JS.and(tmp[2], newRegexp("(^|\\.)" + JS.string(JS.invoke(namespaces, "join", "\\.(?:.*\\.|)")) + "(\\.|$)"));
+
+    // Remove matching events
+    float origCount = handlers.length;
+    float j = origCount;
+    while (j > 0.0) {
+      j = j - 1.0;
+      JsValue handleObj = handlers[j];
+
+      if ((mappedTypes.truthy() || origType == handleObj["origType"]) &&
+        (!handler.truthy() || handler["guid"] == handleObj["guid"]) &&
+        (!namespaceMatcher.truthy() || JS.invoke(namespaceMatcher, "test", handleObj["namespace"]).truthy()) &&
+        (!selector.truthy() || selector == handleObj["selector"] ||
+          selector == "**" && handleObj["selector"].truthy())) {
+        JS.invoke(handlers, "splice", j, 1.0);
+
+        if (handleObj["selector"].truthy()) {
+          float delegateCount = JS.assume(handlers["delegateCount"]);
+          handlers["delegateCount"] = delegateCount - 1.0;
+        }
+        if (special["remove"].truthy()) {
+          JS.call(special["remove"], elem, handleObj);
+        }
+      }
     }
-    type = JS.assume(JS.or(mappedType, type));
 
-    HandleObj[]? existingHandlers = asHandlerArray(events[type]);
-    if (existingHandlers != null) {
-      HandleObj[] handlers = existingHandlers;
-
-      Regex? namespaceMatcher = null;
-      if (namespaceText != "") {
-        namespaceMatcher = newRegexp("(^|\\.)" + JS.join(namespacesArray, "\\.(?:.*\\.|)") + "(\\.|$)");
+    // Remove generic event handler if we removed something and no more handlers exist
+    // (avoids potential for endless recursion during removal of special event handlers)
+    if (origCount > 0.0 && handlers.length == 0.0) {
+      if (!special["teardown"].truthy() || JS.isFalse(JS.call(special["teardown"], elem, namespaces, elemData["handle"]))) {
+        removeEvent(elem, type, elemData["handle"]);
       }
-
-      int origCount = handlers.length;
-      int j = origCount;
-      while (j > 0) {
-        j = j - 1;
-        HandleObj handleObj = handlers[j];
-
-        bool typeOk = mappedTypes || origType == handleObj.origType;
-        bool handlerOk = !handler.truthy() || handler["guid"] == handleObj.guid;
-        bool namespaceOk = true;
-        if (namespaceMatcher != null) {
-          namespaceOk = JS.regexTest(namespaceMatcher, JS.string(handleObj.namespace));
-        }
-        bool selectorOk = !selector.truthy() || selector == handleObj.selector || (selector == "**" && handleObj.selector.truthy());
-
-        if (typeOk && handlerOk && namespaceOk && selectorOk) {
-          handlers.splice(j, 1);
-          if (handleObj.selector.truthy()) {
-            setHandlerDelegateCount(handlers, handlerDelegateCount(handlers) - 1.0);
-          }
-          if (specialForType.remove.truthy()) {
-            JS.call(specialForType.remove, elem, handleObj);
-          }
-        }
-      }
-
-      if (origCount > 0 && handlers.length == 0) {
-        JsValue teardown = specialForType.teardown;
-        if (!teardown.truthy() || JS.isFalse(JS.call(teardown, elem, namespacesArray, elemData["handle"]))) {
-          removeEvent(elem, type, elemData["handle"]);
-        }
-        JS.delete(events, type);
-      }
+      JS.delete(events, type);
     }
   }
 
+  // Remove data and the expando if it's no longer used
   if (isEmptyObject(events)) {
     dataPrivRemove(elem, "handle events");
   }
 }
 
-HandlerQueueEntry[] handlersFor(JsValue thisArg, JsValue event, HandleObj[] handlers) {
-  HandlerQueueEntry[] handlerQueue = [];
-  float delegateCount = handlerDelegateCount(handlers);
-  int delegateCountInt = delegateCount.toInt();
-  JsValue cur = event["target"];
+JsValue dispatch(JsValue self, JsValue args) {
+  // Make a writable jQuery.Event from the native event object
+  JsValue event = fix(args[0]);
+  JsValue handlers = JS.or(JS.or(dataPrivGet(self, "events"), JS.object())[event["type"]], JS.array());
+  JsValue special = JS.or(specialEvents[event["type"]], JS.object());
 
-  bool isClick = event["type"] == "click";
-  JsValue buttonValue = event["button"];
-  bool suppressClick = isClick && JS.greaterThanOrEqual(buttonValue, 1.0);
+  // Use the fix-ed jQuery.Event rather than the (read-only) native event
+  args[0] = event;
+  event["delegateTarget"] = self;
 
-  if (delegateCount > 0.0 && JS.and(cur, cur["nodeType"]).truthy() && !suppressClick) {
-    Map<string, bool> matchedSelectors = new Map<string, bool>();
-    while (cur != thisArg) {
-      bool curIsElement = JS.and(cur, cur["nodeType"]) == 1.0;
-      bool clickDisabled = isClick && cur["disabled"] == true;
-      if (curIsElement && !clickDisabled) {
-        HandleObj[] matchedHandlers = [];
-        int i = 0;
-        for (; i < delegateCountInt; i++) {
-          HandleObj handleObj = handlers[i];
-          string sel = JS.string(handleObj.selector) + " ";
-          bool? existingOpt = matchedSelectors.get(sel);
-          bool matched = false;
-          if (existingOpt == null) {
-            JsValue[] seed = [];
-            seed.push(cur);
-            matched = findImpl(handleObj.selector, thisArg, null, seed).length > 0.0;
-            matchedSelectors.set(sel, matched);
-          } else {
-            matched = existingOpt;
-          }
-          if (matched) {
-            matchedHandlers.push(handleObj);
-          }
-        }
-        if (matchedHandlers.length > 0) {
-          handlerQueue.push(new HandlerQueueEntry(cur, matchedHandlers));
-        }
-      }
-      JsValue parent = cur["parentNode"];
-      if (parent.truthy()) {
-        cur = parent;
-      } else {
-        cur = thisArg;
-      }
-    }
-  }
-
-  cur = thisArg;
-  if (delegateCountInt < handlers.length) {
-    handlerQueue.push(new HandlerQueueEntry(cur, handlers.slice(delegateCountInt)));
-  }
-
-  return handlerQueue;
-}
-
-JsValue handlersForPublic(JsValue thisArg, JsValue event, JsValue handlersValue) {
-  HandleObj[]? typed = typedHandlers(thisArg, event["type"]);
-  HandleObj[] handlers = [];
-  if (typed != null) {
-    handlers = typed;
-  } else if (handlersValue.truthy()) {
-    HandleObj[]? supplied = asHandlerArray(handlersValue);
-    if (supplied != null) {
-      handlers = supplied;
-    }
-  }
-
-  HandlerQueueEntry[] queue = handlersFor(thisArg, event, handlers);
-  JsValue[] out = [];
-  int qi = 0;
-  while (qi < queue.length) {
-    out.push(queue[qi]);
-    qi = qi + 1;
-  }
-  return out;
-}
-
-JsValue dispatchGate(JsValue thisArg, JsValue args) {
-  JsValue nativeEvent = args[0];
-  JsValue triggered = jQuery["event"]["triggered"];
-  if (!JS.isUndefined(triggered) && JS.strictEqual(triggered, nativeEvent["type"])) {
+  // Call the preDispatch hook for the mapped type, and let it bail if desired
+  if (special["preDispatch"].truthy() && JS.isFalse(JS.call(special["preDispatch"], self, event))) {
     return JS.undefined();
   }
-  return dispatch(thisArg, args);
-}
 
-JsValue dispatch(JsValue thisArg, JsValue args) {
-  JsValue nativeEvent = args[0];
-  JsValue event = fix(nativeEvent);
-  args[0] = event;
+  // Determine handlers
+  JsValue handlerQueue = handlersImpl(self, event, handlers);
 
-  JsValue eventType = event["type"];
-  HandleObj[]? typed = typedHandlers(thisArg, eventType);
-  HandleObj[] handlers = [];
-  if (typed != null) {
-    handlers = typed;
-  }
-  SpecialView specialForType = specialFor(eventType);
+  // Run delegates first; they may want to stop propagation beneath us
+  for (float i = 0.0; i < handlerQueue.length && !JS.invoke(event, "isPropagationStopped").truthy(); i++) {
+    JsValue matched = handlerQueue[i];
+    event["currentTarget"] = matched["elem"];
 
-  event["delegateTarget"] = thisArg;
+    for (float j = 0.0; j < matched["handlers"].length && !JS.invoke(event, "isImmediatePropagationStopped").truthy(); j++) {
+      JsValue handleObj = matched["handlers"][j];
 
-  if (specialForType.preDispatch.truthy()) {
-    if (JS.call(specialForType.preDispatch, thisArg, event) == false) {
-      return JS.undefined();
-    }
-  }
-
-  HandlerQueueEntry[] handlerQueue = handlersFor(thisArg, event, handlers);
-
-  int i = 0;
-  while (i < handlerQueue.length && !JS.invoke(event, "isPropagationStopped").truthy()) {
-    HandlerQueueEntry matched = handlerQueue[i];
-    i = i + 1;
-    event["currentTarget"] = matched.elem;
-
-    int j = 0;
-    HandleObj[] matchedHandlers = matched.handlers;
-    while (j < matchedHandlers.length && !JS.invoke(event, "isImmediatePropagationStopped").truthy()) {
-      HandleObj handleObj = matchedHandlers[j];
-      j = j + 1;
-
-      JsValue rnamespaceValue = event["rnamespace"];
-      bool namespaceOk = true;
-      if (rnamespaceValue.truthy() && !JS.isFalse(handleObj.namespace)) {
-        namespaceOk = JS.invoke(rnamespaceValue, "test", JS.string(handleObj.namespace)).truthy();
-      }
-      if (namespaceOk) {
+      // If the event is namespaced, then each handler is only invoked if it is
+      // specially universal or its namespaces are a superset of the event's.
+      if (!event["rnamespace"].truthy() || JS.isFalse(handleObj["namespace"]) ||
+        JS.invoke(event["rnamespace"], "test", handleObj["namespace"]).truthy()) {
         event["handleObj"] = handleObj;
-        event["data"] = handleObj.data;
-        JsValue handleBag = handleObj;
-        if (handleBag["one"].truthy()) {
-          offFromEvent(event);
-        }
+        event["data"] = handleObj["data"];
 
-        JsValue originHandler = handleObj.handler;
-        JsValue originSpecial = special[handleObj.origType];
-        if (originSpecial.truthy() && originSpecial["handle"].truthy()) {
-          originHandler = originSpecial["handle"];
-        }
+        JsValue ret = JS.apply(
+          JS.or(JS.or(specialEvents[handleObj["origType"]], JS.object())["handle"], handleObj["handler"]),
+          matched["elem"],
+          args
+        );
 
-        JsValue ret = JS.apply(originHandler, matched.elem, args);
         if (!JS.isUndefined(ret)) {
           event["result"] = ret;
           if (JS.isFalse(ret)) {
@@ -813,289 +394,556 @@ JsValue dispatch(JsValue thisArg, JsValue args) {
     }
   }
 
-  if (specialForType.postDispatch.truthy()) {
-    JS.call(specialForType.postDispatch, thisArg, event);
+  // Call the postDispatch hook for the mapped type
+  if (special["postDispatch"].truthy()) {
+    JS.call(special["postDispatch"], self, event);
   }
 
   return event["result"];
 }
 
-eventApi = EventApi{
-  global,
-  special,
-  handlersForPublic,
-  JS.methodRest(dispatchGate),
-  add,
-  remove,
-  fix
+JsValue handlersImpl(JsValue self, JsValue event, JsValue handlers) {
+  JsValue handlerQueue = JS.array();
+  JsValue delegateCount = handlers["delegateCount"];
+  JsValue cur = event["target"];
+
+  // Find delegate handlers
+  if (delegateCount.truthy() && cur["nodeType"].truthy() &&
+    !(event["type"] == "click" && JS.greaterThanOrEqual(event["button"], 1.0))) {
+    for (; cur != self; cur = JS.or(cur["parentNode"], self)) {
+      // Don't check non-elements (trac-13208)
+      // Don't process clicks on disabled elements (trac-6911, trac-8165, trac-11382, trac-11764)
+      if (cur["nodeType"] == 1.0 && !(event["type"] == "click" && cur["disabled"] == true)) {
+        JsValue matchedHandlers = JS.array();
+        JsValue matchedSelectors = JS.object();
+        for (float i = 0.0; JS.lessThan(i, delegateCount); i++) {
+          JsValue handleObj = handlers[i];
+
+          // Don't conflict with Object.prototype properties (trac-13203)
+          JsValue sel = JS.add(handleObj["selector"], " ");
+
+          if (JS.isUndefined(matchedSelectors[sel])) {
+            matchedSelectors[sel] = if (handleObj["needsContext"].truthy()) {
+              JS.greaterThan(JS.invoke(jQuery(sel, self), "index", cur), -1.0)
+            } else {
+              findImpl(sel, self, null, [cur])["length"]
+            };
+          }
+          if (matchedSelectors[sel].truthy()) {
+            JS.invoke(matchedHandlers, "push", handleObj);
+          }
+        }
+        if (matchedHandlers.length > 0.0) {
+          JS.invoke(handlerQueue, "push", object { elem: cur, handlers: matchedHandlers });
+        }
+      }
+    }
+  }
+
+  // Add the remaining (directly-bound) handlers
+  cur = self;
+  if (JS.lessThan(delegateCount, handlers.length)) {
+    JS.invoke(handlerQueue, "push", object { elem: cur, handlers: JS.invoke(handlers, "slice", delegateCount) });
+  }
+
+  return handlerQueue;
+}
+
+JsValue fix(JsValue originalEvent) {
+  return if (originalEvent[jQuery["expando"]].truthy()) { originalEvent } else { Event(originalEvent, JS.undefined()) };
+}
+
+// Ensure the presence of an event listener that handles manually-triggered
+// synthetic events by interrupting progress until reinvoked in response to
+// *native* events that it fires directly, ensuring that state changes have
+// already occurred before other listeners are invoked.
+void leverageNative(JsValue el, string type, bool isSetup) {
+  // Missing `isSetup` indicates a trigger call, which must force setup through jQuery.event.add
+  if (!isSetup) {
+    if (JS.isUndefined(dataPrivGet(el, type))) {
+      add(el, type, returnTrue);
+    }
+    return;
+  }
+
+  // Register the controller as a special universal handler for all event namespaces
+  dataPrivSet(el, type, false);
+  add(el, type, object {
+    namespace: false,
+    handler: JS.methodRest((JsValue self, JsValue args) => {
+      JsValue event = args[0];
+      JsValue saved = dataPrivGet(self, type);
+      // Upstream tests `event.isTrigger & 1`: isTrigger is 3 for .trigger() and 2 for
+      // .triggerHandler() (undefined for native events), so `% 2` is the same test.
+      if (JS.mod(event["isTrigger"], 2.0).truthy() && self[type].truthy()) {
+        // Interrupt processing of the outer synthetic .trigger()ed event
+        if (!saved.truthy()) {
+          // Store arguments for use when handling the inner native event
+          saved = makeArray(args);
+          dataPrivSet(self, type, saved);
+
+          // Trigger the native event and capture its result
+          JS.invoke(self, type);
+          JsValue result = dataPrivGet(self, type);
+          dataPrivSet(self, type, false);
+
+          if (saved != result) {
+            // Cancel the outer synthetic event
+            JS.invoke(event, "stopImmediatePropagation");
+            JS.invoke(event, "preventDefault");
+            return result;
+          }
+
+        // If this is an inner synthetic event for an event with a bubbling surrogate
+        // (focus or blur), assume that the surrogate already propagated from triggering
+        // the native event and prevent that from happening again here.
+        } else if (JS.or(specialEvents[type], JS.object())["delegateType"].truthy()) {
+          JS.invoke(event, "stopPropagation");
+        }
+
+      // If this is a native event triggered above, everything is now in order
+      // Fire an inner synthetic event with the original arguments
+      } else if (saved.truthy()) {
+        // ...and capture the result
+        dataPrivSet(self, type, trigger(saved[0], JS.invoke(saved, "slice", 1.0), self));
+
+        // Abort handling of the native event by all jQuery handlers while allowing
+        // native handlers on the same element to run.
+        JS.invoke(event, "stopPropagation");
+        event["isImmediatePropagationStopped"] = returnTrue;
+      }
+      return JS.undefined();
+    })
+  });
+}
+
+export void removeEvent(JsValue elem, JsValue type, JsValue handle) {
+  // This "if" is needed for plain objects
+  if (elem["removeEventListener"].truthy()) {
+    JS.invoke(elem, "removeEventListener", type, handle);
+  }
+}
+
+JsValue preventDefault() {
+  JsValue e = this["originalEvent"];
+  this["isDefaultPrevented"] = returnTrue;
+  if (e.truthy() && !this["isSimulated"].truthy()) {
+    JS.invoke(e, "preventDefault");
+  }
+  return JS.undefined();
+}
+
+JsValue stopPropagation() {
+  JsValue e = this["originalEvent"];
+  this["isPropagationStopped"] = returnTrue;
+  if (e.truthy() && !this["isSimulated"].truthy()) {
+    JS.invoke(e, "stopPropagation");
+  }
+  return JS.undefined();
+}
+
+JsValue stopImmediatePropagation() {
+  JsValue e = this["originalEvent"];
+  this["isImmediatePropagationStopped"] = returnTrue;
+  if (e.truthy() && !this["isSimulated"].truthy()) {
+    JS.invoke(e, "stopImmediatePropagation");
+  }
+  JS.invoke(this, "stopPropagation");
+  return JS.undefined();
+}
+
+// jQuery.Event is based on DOM3 Events as specified by the ECMAScript Language Binding
+JsValue eventPrototype = object {
+  constructor: Event,
+  isDefaultPrevented: returnFalse,
+  isPropagationStopped: returnFalse,
+  isImmediatePropagationStopped: returnFalse,
+  isSimulated: false,
+  preventDefault: preventDefault,
+  stopPropagation: stopPropagation,
+  stopImmediatePropagation: stopImmediatePropagation
 };
 
-export void removeEvent(JsValue elem, string type, JsValue handle) {
-  if (elem["removeEventListener"].truthy()) {
-    removeEventListener(elem, type, handle);
-  }
-}
+// Includes all common event props including KeyEvent and MouseEvent specific props
+JsValue eventProps = JS.invoke(
+  "altKey bubbles cancelable changedTouches ctrlKey detail eventPhase metaKey pageX pageY " +
+  "shiftKey view char code charCode key keyCode button buttons clientX clientY offsetX " +
+  "offsetY pointerId pointerType screenX screenY targetTouches toElement touches which",
+  "split",
+  " "
+);
 
-void offFromEvent(JsValue event) {
-  JsValue handleObj = event["handleObj"];
-  string namespaceStr = JS.string(handleObj["namespace"]);
-  string typesArg = JS.string(handleObj["origType"]);
-  if (namespaceStr != "") {
-    typesArg = typesArg + "." + namespaceStr;
-  }
-  remove(event["delegateTarget"], typesArg, handleObj["handler"], handleObj["selector"], false);
-}
+// Allow instantiation without the 'new' keyword: the instance is created from the
+// shared prototype either way.
+export JsValue Event(JsValue src, JsValue props) {
+  JsValue self = objectCreate(eventPrototype);
 
-JsValue on(JsValue elem, JsValue typesValue, JsValue selectorValue, JsValue dataValue, JsValue fnValue, float one) {
-  if (JS.typeOf(typesValue) == "object") {
-    JsValue mapSelector = selectorValue;
-    JsValue mapData = dataValue;
-    if (JS.typeOf(mapSelector) != "string") {
-      if (!mapData.truthy()) {
-        mapData = mapSelector;
+  // Event object
+  if (JS.and(src, src["type"]).truthy()) {
+    self["originalEvent"] = src;
+    self["type"] = src["type"];
+
+    // Events bubbling up the document may have been marked as prevented
+    // by a handler lower down the tree; reflect the correct value.
+    self["isDefaultPrevented"] = if (src["defaultPrevented"].truthy() ||
+      JS.isUndefined(src["defaultPrevented"]) && JS.isFalse(src["returnValue"])) {
+      returnTrue
+    } else {
+      returnFalse
+    };
+
+    // Target should not be a text node (trac-504, trac-13143)
+    self["target"] = if (JS.and(src["target"], src["target"]["nodeType"]) == 3.0) {
+      src["target"]["parentNode"]
+    } else {
+      src["target"]
+    };
+
+    self["currentTarget"] = src["currentTarget"];
+    self["relatedTarget"] = src["relatedTarget"];
+
+    for (float i = 0.0; i < eventProps.length; i++) {
+      string name = JS.assume(eventProps[i]);
+      if (JS.in(name, src)) {
+        self[name] = src[name];
       }
-      mapSelector = JS.undefined();
     }
-    for (string type in typesValue) {
-      on(elem, type, mapSelector, mapData, typesValue[type], one);
-    }
-    return elem;
+
+  // Event type
+  } else {
+    self["type"] = src;
   }
 
-  JsValue selector3 = selectorValue;
-  JsValue data3 = dataValue;
-  JsValue fn3 = fnValue;
-  bool normalized = false;
-  if (JS.isUndefined(dataValue) && JS.isUndefined(fnValue)) {
-    selector3 = JS.undefined();
-    data3 = JS.undefined();
-    fn3 = selectorValue;
-    normalized = true;
-  }
-  if (!normalized && JS.isUndefined(fnValue) && JS.typeOf(selectorValue) == "string") {
-    data3 = JS.undefined();
-    fn3 = dataValue;
-    normalized = true;
-  }
-  if (!normalized && JS.isUndefined(fnValue)) {
-    selector3 = JS.undefined();
-    data3 = selectorValue;
-    fn3 = dataValue;
+  // Put explicitly provided properties onto the event object
+  if (props.truthy()) {
+    JS.invoke(jQuery, "extend", self, props);
   }
 
-  if (JS.isFalse(fn3)) {
-    fn3 = returnFalse;
-  } else if (!fn3.truthy()) {
-    return elem;
-  }
+  // Create a timestamp if incoming event doesn't have one
+  self["timeStamp"] = JS.or(JS.and(src, src["timeStamp"]), dateNow());
 
-  float i = 0.0;
-  float len = elem.length;
-  for (; i < len; i++) {
-    add(elem[i], typesValue, fn3, data3, selector3, one == 1.0);
-  }
-  return elem;
+  // Mark it as fixed
+  self[jQuery["expando"]] = true;
+  return self;
 }
 
-JsValue off(JsValue elem, JsValue typesValue, JsValue selectorValue, JsValue fnValue) {
-  if (typesValue.truthy() && typesValue["preventDefault"].truthy() && typesValue["handleObj"].truthy()) {
-    offFromEvent(typesValue);
-    return elem;
-  }
-  if (JS.typeOf(typesValue) == "object") {
-    for (string type in typesValue) {
-      off(elem, type, selectorValue, typesValue[type]);
-    }
-    return elem;
-  }
+JsValue stopPropagationCallback(JsValue e) {
+  JS.invoke(e, "stopPropagation");
+  return JS.undefined();
+}
 
-  JsValue selector2 = selectorValue;
-  JsValue fn2 = fnValue;
-  if (JS.isFalse(selectorValue) || isFunction(selectorValue)) {
-    fn2 = selectorValue;
-    selector2 = JS.undefined();
-  }
-  if (JS.isFalse(fn2)) {
-    fn2 = returnFalse;
-  }
+export JsValue trigger(JsValue event, JsValue data = JS.undefined(), JsValue elem = JS.undefined(), JsValue onlyHandlers = JS.undefined()) {
+  elem = JS.or(elem, document);
+  JsValue eventPath = [elem];
+  JsValue type = if (objectHasOwn(event, "type")) { event["type"] } else { event };
+  JsValue namespaces = if (objectHasOwn(event, "namespace")) { JS.invoke(event["namespace"], "split", ".") } else { JS.array() };
+  JsValue cur = elem;
+  JsValue lastElement = elem;
+  JsValue tmp = elem;
 
-  return each(elem, JS.method0((JsValue el) => {
-    remove(el, typesValue, fn2, selector2, false);
+  // Don't do events on text and comment nodes
+  if (elem["nodeType"] == 3.0 || elem["nodeType"] == 8.0) {
     return JS.undefined();
-  }));
-}
-
-export JsValue fnOn(JsValue self, JsValue args) {
-  return on(self, args[0], args[1], args[2], args[3], 0.0);
-}
-
-JsValue fnOne(JsValue self, JsValue args) {
-  return on(self, args[0], args[1], args[2], args[3], 1.0);
-}
-
-JsValue fnOff(JsValue self, JsValue args) {
-  return off(self, args[0], args[1], args[2]);
-}
-
-JsValue ownerDocOf(JsValue node) {
-  return JS.or(JS.or(node["ownerDocument"], node["document"]), node);
-}
-
-JsValue clickSetupImpl(JsValue thisArg) {
-  if (JS.regexTest(rcheckableType, thisArg["type"]) && thisArg["click"].truthy() && nodeName(thisArg, "input")) {
-    leverageNative(thisArg, "click", true);
   }
-  return false;
-}
 
-JsValue clickTriggerImpl(JsValue thisArg) {
-  if (JS.regexTest(rcheckableType, thisArg["type"]) && thisArg["click"].truthy() && nodeName(thisArg, "input")) {
-    leverageNative(thisArg, "click", false);
+  // focus/blur morphs to focusin/out; ensure we're not firing them right now
+  if (JS.invoke(rfocusMorph, "test", JS.add(type, jQuery["event"]["triggered"])).truthy()) {
+    return JS.undefined();
   }
-  return true;
-}
 
-JsValue clickDefaultImpl(JsValue event) {
-  JsValue target = event["target"];
-  JsValue saved = dataPrivGet(target, "click");
-  if (JS.regexTest(rcheckableType, target["type"]) && target["click"].truthy() && nodeName(target, "input") && saved.truthy()) {
-    return saved;
+  if (JS.greaterThan(JS.invoke(type, "indexOf", "."), -1.0)) {
+    // Namespaced trigger; create a regexp to match event type in handle()
+    namespaces = JS.invoke(type, "split", ".");
+    type = JS.invoke(namespaces, "shift");
+    JS.invoke(namespaces, "sort");
   }
-  return nodeName(target, "a");
-}
+  JsValue ontype = JS.and(JS.lessThan(JS.invoke(type, "indexOf", ":"), 0.0), JS.add("on", type));
 
-void registerClickSpecial() {
-  JsValue clickSpecial = ClickSpecial{
-    JS.method0(clickSetupImpl),
-    JS.method0(clickTriggerImpl),
-    clickDefaultImpl
+  // Caller can pass in a jQuery.Event object, Object, or just an event type string
+  if (!event[jQuery["expando"]].truthy()) {
+    event = Event(type, JS.and(JS.typeOf(event) == "object", event));
+  }
+
+  // Trigger bitmask: & 1 for native handlers; & 2 for jQuery (always true)
+  event["isTrigger"] = if (onlyHandlers.truthy()) { 2.0 } else { 3.0 };
+  event["namespace"] = JS.invoke(namespaces, "join", ".");
+  event["rnamespace"] = if (event["namespace"].truthy()) {
+    newRegexp("(^|\\.)" + JS.string(JS.invoke(namespaces, "join", "\\.(?:.*\\.|)")) + "(\\.|$)")
+  } else {
+    null
   };
-  special["click"] = clickSpecial;
+
+  // Clean up the event in case it is being reused
+  event["result"] = JS.undefined();
+  if (!event["target"].truthy()) {
+    event["target"] = elem;
+  }
+
+  // Clone any incoming data and prepend the event, creating the handler arg list
+  data = if (JS.isNullish(data)) { [event] } else { makeArray(data, [event]) };
+
+  // Allow special events to draw outside the lines
+  JsValue special = JS.or(specialEvents[type], JS.object());
+  if (!onlyHandlers.truthy() && special["trigger"].truthy() && JS.isFalse(JS.apply(special["trigger"], elem, data))) {
+    return JS.undefined();
+  }
+
+  // Determine event propagation path in advance, per W3C events spec (trac-9951)
+  // Bubble up to document, then to window; watch for a global ownerDocument var (trac-9724)
+  JsValue bubbleType = JS.undefined();
+  if (!onlyHandlers.truthy() && !special["noBubble"].truthy() && !isWindow(elem)) {
+    bubbleType = JS.or(special["delegateType"], type);
+    if (!JS.invoke(rfocusMorph, "test", JS.add(bubbleType, type)).truthy()) {
+      cur = cur["parentNode"];
+    }
+    for (; cur.truthy(); cur = cur["parentNode"]) {
+      JS.invoke(eventPath, "push", cur);
+      tmp = cur;
+    }
+
+    // Only add window if we got to document (e.g., not plain obj or detached DOM)
+    if (tmp == JS.or(elem["ownerDocument"], document)) {
+      JS.invoke(eventPath, "push", JS.or(JS.or(tmp["defaultView"], tmp["parentWindow"]), windowSelf()));
+    }
+  }
+
+  // Fire handlers on the event path
+  for (float i = 0.0; i < eventPath.length && !JS.invoke(event, "isPropagationStopped").truthy(); i++) {
+    cur = eventPath[i];
+    lastElement = cur;
+    event["type"] = if (i > 0.0) { bubbleType } else { JS.or(special["bindType"], type) };
+
+    // jQuery handler
+    JsValue handle = JS.and(JS.or(dataPrivGet(cur, "events"), JS.object())[event["type"]], dataPrivGet(cur, "handle"));
+    if (handle.truthy()) {
+      JS.apply(handle, cur, data);
+    }
+
+    // Native handler
+    handle = JS.and(ontype, cur[ontype]);
+    if (handle.truthy() && handle["apply"].truthy() && acceptData(cur)) {
+      event["result"] = JS.apply(handle, cur, data);
+      if (JS.isFalse(event["result"])) {
+        JS.invoke(event, "preventDefault");
+      }
+    }
+  }
+  event["type"] = type;
+
+  // If nobody prevented the default action, do it now
+  if (!onlyHandlers.truthy() && !JS.invoke(event, "isDefaultPrevented").truthy()) {
+    if ((!special["_default"].truthy() || JS.isFalse(JS.apply(special["_default"], JS.invoke(eventPath, "pop"), data))) &&
+      acceptData(elem)) {
+      // Call a native DOM method on the target with the same name as the event.
+      // Don't do default actions on window, that's where global variables be (trac-6170)
+      if (ontype.truthy() && isFunction(elem[type]) && !isWindow(elem)) {
+        // Don't re-trigger an onFOO event when we call its FOO() method
+        tmp = elem[ontype];
+        if (tmp.truthy()) {
+          elem[ontype] = null;
+        }
+
+        // Prevent re-triggering of the same event, since we already bubbled it above
+        jQuery["event"]["triggered"] = type;
+        if (JS.invoke(event, "isPropagationStopped").truthy()) {
+          JS.invoke(lastElement, "addEventListener", type, stopPropagationCallback);
+        }
+        JS.invoke(elem, JS.assume(type));
+        if (JS.invoke(event, "isPropagationStopped").truthy()) {
+          JS.invoke(lastElement, "removeEventListener", type, stopPropagationCallback);
+        }
+        jQuery["event"]["triggered"] = JS.undefined();
+
+        if (tmp.truthy()) {
+          elem[ontype] = tmp;
+        }
+      }
+    }
+  }
+
+  return event["result"];
 }
 
-void registerBeforeunloadSpecial() {
-  JsValue beforeunloadSpecial = BeforeUnloadSpecial{
-    JS.method1((JsValue thisArg, JsValue event) => {
-      JsValue resultValue = event["result"];
-      JsValue originalEvent = event["originalEvent"];
-      if (!JS.isUndefined(resultValue) && originalEvent.truthy()) {
-        originalEvent["returnValue"] = resultValue;
+// Piggyback on a donor event to simulate a different one
+// Used only for `focus(in | out)` events
+JsValue simulate(JsValue type, JsValue elem, JsValue event) {
+  trigger(JS.invoke(jQuery, "extend", Event(JS.undefined(), JS.undefined()), event, object {
+    type: type,
+    isSimulated: true
+  }), null, elem);
+  return JS.undefined();
+}
+
+jQuery["event"] = object {
+  global: global,
+  add: add,
+  remove: remove,
+  dispatch: JS.methodRest(dispatch),
+  handlers: JS.method2(handlersImpl),
+  fix: fix,
+  special: specialEvents,
+  trigger: trigger,
+  simulate: simulate
+};
+jQuery["removeEvent"] = removeEvent;
+jQuery["Event"] = Event;
+JsValue eventConstructor = Event;
+eventConstructor["prototype"] = eventPrototype;
+
+void focusBlur(string type, string delegateType) {
+  // For non-IE browsers, a single capturing handler on the document while someone
+  // wants focusin/focusout
+  JsValue focusMappedHandler = (JsValue nativeEvent) => {
+    return simulate(delegateType, nativeEvent["target"], fix(nativeEvent));
+  };
+
+  specialEvents[type] = object {
+    // Utilize native event if possible so blur/focus sequence is correct
+    setup: JS.method0((JsValue self) => {
+      // Claim the first handler
+      leverageNative(self, type, true);
+      // Return false to allow normal processing in the caller
+      return false;
+    }),
+    trigger: JS.method0((JsValue self) => {
+      // Force setup before trigger
+      leverageNative(self, type, false);
+      // Return non-false to allow normal event-path propagation
+      return true;
+    }),
+    // Return false to indicate standard teardown should be applied
+    teardown: returnFalse,
+    // Suppress native focus or blur if we're currently inside
+    // a leveraged native-event stack
+    _default: (JsValue event) => {
+      return dataPrivGet(event["target"], type);
+    },
+    delegateType: delegateType
+  };
+
+  specialEvents[delegateType] = object {
+    setup: JS.method0((JsValue self) => {
+      // Handle: regular nodes (via `this.ownerDocument`), window
+      // (via `this.document`) & document (via `this`).
+      JsValue doc = JS.or(JS.or(self["ownerDocument"], self["document"]), self);
+      JsValue attaches = dataPrivGet(doc, delegateType);
+      if (!attaches.truthy()) {
+        JS.invoke(doc, "addEventListener", type, focusMappedHandler, true);
+      }
+      dataPrivSet(doc, delegateType, JS.add(JS.or(attaches, 0.0), 1.0));
+      return JS.undefined();
+    }),
+    teardown: JS.method0((JsValue self) => {
+      JsValue doc = JS.or(JS.or(self["ownerDocument"], self["document"]), self);
+      JsValue attaches = JS.number(dataPrivGet(doc, delegateType)) - 1.0;
+      if (!attaches.truthy()) {
+        JS.invoke(doc, "removeEventListener", type, focusMappedHandler, true);
+        dataPrivRemove(doc, delegateType);
+      } else {
+        dataPrivSet(doc, delegateType, attaches);
       }
       return JS.undefined();
     })
   };
-  special["beforeunload"] = beforeunloadSpecial;
 }
 
-JsValue focusMappedHandler = JS.method1((JsValue thisArg, JsValue nativeEvent) => {
-  JsValue simulated = "focusout";
-  if (nativeEvent["type"] == "focus") {
-    simulated = "focusin";
+focusBlur("focus", "focusin");
+focusBlur("blur", "focusout");
+
+// Create mouseenter/leave events using mouseover/out and event-time checks
+// so that event delegation works in jQuery.
+// Do the same for pointerenter/pointerleave and pointerover/pointerout
+void enterLeave(JsValue orig, JsValue fix) {
+  specialEvents[orig] = object {
+    delegateType: fix,
+    bindType: fix,
+    handle: JS.methodRest((JsValue self, JsValue args) => {
+      JsValue event = args[0];
+      JsValue related = event["relatedTarget"];
+      JsValue handleObj = event["handleObj"];
+      JsValue ret = JS.undefined();
+
+      // For mouseenter/leave call the handler if related is outside the target.
+      // NB: No relatedTarget if the mouse left/entered the browser window
+      if (!related.truthy() || (related != self && !containsImpl(self, related))) {
+        event["type"] = handleObj["origType"];
+        ret = JS.apply(handleObj["handler"], self, args);
+        event["type"] = fix;
+      }
+      return ret;
+    })
+  };
+}
+
+enterLeave("mouseenter", "mouseover");
+enterLeave("mouseleave", "mouseout");
+enterLeave("pointerenter", "pointerover");
+enterLeave("pointerleave", "pointerout");
+
+JsValue fnOn(JsValue types, JsValue selector, JsValue data, JsValue fn) {
+  return on(this, types, selector, data, fn);
+}
+
+JsValue fnOne(JsValue types, JsValue selector, JsValue data, JsValue fn) {
+  return on(this, types, selector, data, fn, 1.0);
+}
+
+JsValue fnOff(JsValue types, JsValue selector, JsValue fn) {
+  if (types.truthy() && types["preventDefault"].truthy() && types["handleObj"].truthy()) {
+    // ( event )  dispatched jQuery.Event
+    JsValue handleObj = types["handleObj"];
+    JS.invoke(jQuery(types["delegateTarget"]), "off",
+      if (handleObj["namespace"].truthy()) {
+        JS.add(JS.add(handleObj["origType"], "."), handleObj["namespace"])
+      } else {
+        handleObj["origType"]
+      },
+      handleObj["selector"],
+      handleObj["handler"]
+    );
+    return this;
   }
-  JS.invoke(eventApi, "simulate", simulated, nativeEvent["target"], fix(nativeEvent));
+  if (JS.typeOf(types) == "object") {
+    // ( types-object [, selector] )
+    for (string type in types) {
+      JS.invoke(this, "off", type, selector, types[type]);
+    }
+    return this;
+  }
+  if (JS.isFalse(selector) || JS.typeOf(selector) == "function") {
+    // ( types [, fn] )
+    fn = selector;
+    selector = JS.undefined();
+  }
+  if (JS.isFalse(fn)) {
+    fn = returnFalse;
+  }
+  return each(this, JS.method0((JsValue el) => {
+    remove(el, types, fn, selector);
+    return JS.undefined();
+  }));
+}
+
+JsValue fnTrigger(JsValue type, JsValue data) {
+  return each(this, JS.method0((JsValue el) => {
+    trigger(type, data, el);
+    return JS.undefined();
+  }));
+}
+
+JsValue fnTriggerHandler(JsValue type, JsValue data) {
+  JsValue elem = this[0];
+  if (elem.truthy()) {
+    return trigger(type, data, elem, true);
+  }
   return JS.undefined();
-});
-
-void registerFocusBlur(string type, string delegateType) {
-
-  JsValue setupFn = JS.method0((JsValue thisArg) => {
-    leverageNative(thisArg, type, true);
-    return false;
-  });
-  JsValue triggerFn = JS.method0((JsValue thisArg) => {
-    leverageNative(thisArg, type, false);
-    return true;
-  });
-  JsValue teardownFalse = JS.method0((JsValue thisArg) => {
-    return false;
-  });
-
-  JsValue baseSpecial = FocusBaseSpecial{
-    setupFn,
-    triggerFn,
-    teardownFalse,
-    (JsValue event) => {
-      return dataPrivGet(event["target"], type);
-    },
-    delegateType
-  };
-  special[type] = baseSpecial;
-
-  JsValue delegateSetup = JS.method0((JsValue thisArg) => {
-    JsValue doc = ownerDocOf(thisArg);
-    JsValue attachesValue = dataPrivGet(doc, delegateType);
-    float attaches = JS.number(attachesValue);
-    if (attaches == 0.0) {
-      addEventListener(doc, type, focusMappedHandler, true);
-    }
-    dataPrivSet(doc, delegateType, attaches + 1.0);
-    return JS.undefined();
-  });
-  JsValue delegateTeardown = JS.method0((JsValue thisArg) => {
-    JsValue doc = ownerDocOf(thisArg);
-    JsValue attachesValue = dataPrivGet(doc, delegateType);
-    float attaches = JS.number(attachesValue) - 1.0;
-    if (attaches <= 0.0) {
-      removeEventListener(doc, type, focusMappedHandler, true);
-      dataPrivRemove(doc, delegateType);
-    } else {
-      dataPrivSet(doc, delegateType, attaches);
-    }
-    return JS.undefined();
-  });
-
-  JsValue delegateSpecial = FocusDelegateSpecial{
-    delegateSetup,
-    delegateTeardown
-  };
-  special[delegateType] = delegateSpecial;
 }
 
-JsValue enterLeaveHandle = JS.methodRest((JsValue thisArg, JsValue args) => {
-  JsValue event = args[0];
-  JsValue related = event["relatedTarget"];
-  JsValue handleObj = event["handleObj"];
-  JsValue ret = JS.undefined();
-  bool outside = !related.truthy() || (related != thisArg && !containsImpl(thisArg, related));
-  if (outside) {
-    event["type"] = handleObj["origType"];
-    ret = JS.apply(handleObj["handler"], thisArg, args);
-    event["type"] = handleObj["type"];
-  }
-  return ret;
-});
-
-void registerEnterLeave(string orig, string fixType) {
-  special[orig] = EnterLeaveSpecial{
-    fixType,
-    fixType,
-    enterLeaveHandle
-  };
-}
-
-void install() {
-  jQuery["event"] = eventApi;
-  jQuery["Event"] = Event;
-  eventPrototype["constructor"] = Event;
-  jQuery["removeEvent"] = removeEvent;
-
-  jQuery["fn"]["on"] = JS.methodRest(fnOn);
-  jQuery["fn"]["one"] = JS.methodRest(fnOne);
-  jQuery["fn"]["off"] = JS.methodRest(fnOff);
-
-  JsValue loadSpecial = LoadSpecial{true};
-  special["load"] = loadSpecial;
-
-  registerClickSpecial();
-  registerBeforeunloadSpecial();
-  registerFocusBlur("focus", "focusin");
-  registerFocusBlur("blur", "focusout");
-  registerEnterLeave("mouseenter", "mouseover");
-  registerEnterLeave("mouseleave", "mouseout");
-  registerEnterLeave("pointerenter", "pointerover");
-  registerEnterLeave("pointerleave", "pointerout");
-}
-
-install();
+export JsValue fn = jQuery["fn"];
+fn["on"] = fnOn;
+fn["one"] = fnOne;
+fn["off"] = fnOff;
+fn["trigger"] = fnTrigger;
+fn["triggerHandler"] = fnTriggerHandler;
 
 export { jQuery };

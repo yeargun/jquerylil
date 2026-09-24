@@ -1,27 +1,17 @@
 import { emptyArray } from "../alloc.lil";
 import { merge } from "../core";
 import { nodeName } from "../core/nodeName";
-import {
-  hasProp,
-  call1,
-  isNullish
-} from "../js-host.lil";
 
-export JsValue getAll(JsValue context, JsValue tagArg = null) {
-  JsValue tag = JS.or(tagArg, "*");
-
+export JsValue getAll(JsValue context, JsValue tag = null) {
   JsValue ret = emptyArray();
   if (context["getElementsByTagName"].truthy()) {
-    ret = JS.invoke(context, "getElementsByTagName", tag);
+    ret = JS.invoke(context, "getElementsByTagName", JS.or(tag, "*"));
   } else if (context["querySelectorAll"].truthy()) {
-    ret = JS.invoke(context, "querySelectorAll", tag);
+    ret = JS.invoke(context, "querySelectorAll", JS.or(tag, "*"));
   }
 
-  if (JS.isNullish(tagArg) || (tagArg.truthy() && nodeName(context, JS.assume(tagArg)))) {
-    JsValue[] single = [];
-    single.push(context);
-    return merge(single, ret);
+  if (JS.isNullish(tag) || (tag.truthy() && nodeName(context, JS.assume(tag)))) {
+    return merge(JS.array(context), ret);
   }
-
   return ret;
 }

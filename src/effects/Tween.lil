@@ -1,8 +1,8 @@
+extern JsValue this;
 import { jQuery } from "../core";
 import { css, style } from "../css";
 import { finalPropName } from "../css/finalPropName";
 import {
-  objectCreate,
   mathCos,
   mathPI
 } from "../js-host.lil";
@@ -10,7 +10,7 @@ import {
 // View of the merged animation options bag effects.lil allocates (`jQuery.speed()` output
 // deep-extended over the {specialEasing, easing} seed by jQuery.extend, which copies data
 // values only), so reads are typed field reads (finer/hypotheses/042).
-export struct AnimOptsView {
+export extern class AnimOptsView {
   JsValue duration;
   JsValue easing;
   JsValue queue;
@@ -26,10 +26,9 @@ export struct AnimOptsView {
   JsValue old;
 }
 
-// View of a jQuery.Tween instance: createTween / Tween.prototype.init allocate it
-// (Object.create(Tween.prototype) or new) and write every field; propHooks and step
-// callbacks receive the same object, so reads are typed field reads (finer/hypotheses/042).
-export struct TweenView {
+// View of a jQuery.Tween instance: Tween.prototype.init writes every field; propHooks
+// and step callbacks receive the same object, so reads are typed field reads.
+export extern class TweenView {
   JsValue elem;
   JsValue prop;
   JsValue options;
@@ -39,174 +38,6 @@ export struct TweenView {
   JsValue unit;
   JsValue start;
   JsValue now;
-}
-
-JsValue tweenPrototype = JS.undefined();
-JsValue tweenPropHooks = JS.undefined();
-
-JsValue tweenDefaultGet(TweenView tween) {
-  JsValue elem = tween.elem;
-  JsValue prop = tween.prop;
-
-  bool useElemDirect = JS.and(elem, elem["nodeType"]) != 1.0;
-  if (!useElemDirect) {
-    useElemDirect = !JS.isNullish(elem[prop]) && JS.isNullish(elem["style"][prop]);
-  }
-  if (useElemDirect) {
-    return elem[prop];
-  }
-
-  JsValue result = css(elem, JS.string(prop), "");
-  if (!result.truthy() || result == "auto") {
-    return 0.0;
-  }
-  return result;
-}
-
-void tweenDefaultSet(TweenView tween) {
-  JsValue prop = tween.prop;
-  JsValue elem = tween.elem;
-  JsValue fxStep = jQuery["fx"]["step"][prop];
-  if (fxStep.truthy()) {
-    JS.call(fxStep, jQuery["fx"]["step"], tween);
-    return;
-  }
-
-  bool useStyle = JS.and(elem, elem["nodeType"]) == 1.0 &&
-    (jQuery["cssHooks"][prop].truthy() || !JS.isNullish(elem["style"][finalPropName(JS.string(prop))]));
-  if (useStyle) {
-    style(elem, JS.string(prop), JS.add(tween.now, tween.unit));
-  } else {
-    elem[prop] = tween.now;
-  }
-}
-
-void tweenScrollSet(TweenView tween) {
-  JsValue elem = tween.elem;
-  if (JS.and(elem, elem["nodeType"]).truthy() && elem["parentNode"].truthy()) {
-    elem[tween.prop] = tween.now;
-  }
-}
-
-export JsValue tweenCur(TweenView tween) {
-  JsValue prop = tween.prop;
-  JsValue hooks = tweenPropHooks[prop];
-  if (!hooks.truthy()) {
-    hooks = tweenPropHooks["_default"];
-  }
-  if (hooks["get"].truthy()) {
-    return JS.invoke(hooks, "get", tween);
-  }
-  return 0.0;
-}
-
-void initializeTween(
-  TweenView tween,
-  JsValue elem,
-  JsValue options,
-  JsValue propArg,
-  JsValue endArg,
-  JsValue easingArg,
-  JsValue unitArg
-) {
-  tween.elem = elem;
-  tween.prop = propArg;
-  tween.options = options;
-  tween.end = endArg;
-  tween.pos = 0.0;
-
-  JsValue easing = easingArg;
-  if (!easing.truthy()) {
-    easing = jQuery["easing"]["_default"];
-  }
-  tween.easing = easing;
-
-  JsValue unit = "";
-  if (unitArg.truthy()) {
-    unit = unitArg;
-  } else if (!jQuery["cssNumber"][propArg].truthy()) {
-    unit = "px";
-  }
-  tween.unit = unit;
-
-  JsValue current = tweenCur(tween);
-  tween.start = current;
-  tween.now = current;
-}
-
-export JsValue createTween(
-  JsValue elem,
-  JsValue options,
-  JsValue prop,
-  JsValue end,
-  JsValue easingArg = null,
-  JsValue unitArg = null
-) {
-  TweenView tween = JS.assume(objectCreate(tweenPrototype));
-  initializeTween(tween, elem, options, prop, end, easingArg, unitArg);
-  return tween;
-}
-
-export JsValue tweenRun(TweenView tween, float percent) {
-  float eased = percent;
-  AnimOptsView options = JS.assume(tween.options);
-  JsValue durationRaw = options.duration;
-  if (durationRaw.truthy()) {
-    float duration = JS.number(durationRaw);
-    JsValue easingFn = jQuery["easing"][tween.easing];
-    eased = JS.number(easingFn(percent, duration * percent, 0.0, 1.0, duration));
-  }
-  tween.pos = eased;
-  float start = JS.number(tween.start);
-  float end = JS.number(tween.end);
-  float now = (end - start) * eased + start;
-  tween.now = now;
-
-  JsValue step = options.step;
-  if (step.truthy()) {
-    JS.call(step, tween.elem, now, tween);
-  }
-
-  JsValue prop = tween.prop;
-  JsValue hooks = tweenPropHooks[prop];
-  if (!hooks.truthy()) {
-    hooks = tweenPropHooks["_default"];
-  }
-  if (hooks["set"].truthy()) {
-    JS.invoke(hooks, "set", tween);
-  }
-  return tween;
-}
-
-JsValue TweenInit(
-  JsValue elem,
-  JsValue options,
-  JsValue prop,
-  JsValue end,
-  JsValue easingArg = null,
-  JsValue unitArg = null
-) {
-  JsValue self = this;
-  initializeTween(JS.assume(self), elem, options, prop, end, easingArg, unitArg);
-  return self;
-}
-
-JsValue TweenCurMethod() {
-  JsValue self = this;
-  return tweenCur(JS.assume(self));
-}
-
-JsValue TweenRunMethod(JsValue percent) {
-  JsValue self = this;
-  return tweenRun(JS.assume(self), JS.number(percent));
-}
-
-float easingLinear(float p) {
-  return p;
-}
-
-float easingSwing(float p) {
-  return 0.5 - mathCos(p * mathPI()) / 2.0;
 }
 
 struct TweenGetSet {
@@ -220,8 +51,8 @@ struct TweenSetOnly {
 
 struct TweenHooks {
   JsValue _default;
-  JsValue scrollTop;
   JsValue scrollLeft;
+  JsValue scrollTop;
 }
 
 struct TweenProto {
@@ -237,22 +68,126 @@ struct EasingMap {
   string _default;
 }
 
-JsValue defaultHooks = TweenGetSet{tweenDefaultGet, tweenDefaultSet};
-JsValue scrollHooks = TweenSetOnly{tweenScrollSet};
-JsValue hooks = TweenHooks{defaultHooks, scrollHooks, scrollHooks};
-tweenPropHooks = hooks;
+JsValue scrollHooks = TweenSetOnly{scrollSet};
+JsValue propHooks = TweenHooks{TweenGetSet{defaultGet, defaultSet}, scrollHooks, scrollHooks};
 
-JsValue factory = createTween;
-JsValue initFn = TweenInit;
-JsValue proto = TweenProto{factory, initFn, TweenCurMethod, TweenRunMethod};
-tweenPrototype = proto;
-factory["prototype"] = proto;
-factory["propHooks"] = hooks;
+JsValue initFn = tweenInit;
+
+JsValue Tween(JsValue elem, JsValue options, JsValue prop, JsValue end, JsValue easing) {
+  return JS.construct(tweenInit, elem, options, prop, end, easing);
+}
+
+void tweenInit(JsValue elem, JsValue options, JsValue prop, JsValue end, JsValue easing, JsValue unit) {
+  TweenView tween = JS.assume(this);
+  tween.elem = elem;
+  tween.prop = prop;
+  tween.easing = JS.or(easing, jQuery["easing"]["_default"]);
+  tween.options = options;
+  JsValue current = JS.invoke(tween, "cur");
+  tween.now = current;
+  tween.start = current;
+  tween.end = end;
+  tween.unit = JS.or(unit, if (jQuery["cssNumber"][prop].truthy()) { "" } else { "px" });
+}
+
+JsValue tweenCur() {
+  JsValue hooks = propHooks[this["prop"]];
+  return JS.invoke(if (JS.and(hooks, hooks["get"]).truthy()) { hooks } else { propHooks["_default"] }, "get", this);
+}
+
+JsValue tweenRun(float percent) {
+  TweenView tween = JS.assume(this);
+  AnimOptsView options = JS.assume(tween.options);
+  JsValue hooks = propHooks[tween.prop];
+  // Raw values typed as numbers so the arithmetic prints as upstream's own operators
+  // (`( end - start ) * eased + start` still concatenates a string start, as upstream does).
+  float duration = JS.assume(options.duration);
+  float eased = if (options.duration.truthy()) {
+    JS.assume(JS.invoke(jQuery["easing"], JS.assume(tween.easing),
+      percent, duration * percent, 0.0, 1.0, duration))
+  } else {
+    percent
+  };
+  float start = JS.assume(tween.start);
+  float end = JS.assume(tween.end);
+  tween.pos = eased;
+  tween.now = (end - start) * eased + start;
+
+  if (options.step.truthy()) {
+    JS.call(options.step, tween.elem, tween.now, this);
+  }
+
+  JS.invoke(if (JS.and(hooks, hooks["set"]).truthy()) { hooks } else { propHooks["_default"] }, "set", this);
+  return this;
+}
+
+JsValue defaultGet(TweenView tween) {
+  JsValue elem = tween.elem;
+  JsValue prop = tween.prop;
+
+  // Use a property on the element directly when it is not a DOM element,
+  // or when there is no matching style property that exists.
+  if (elem["nodeType"] != 1.0 ||
+      !JS.isNullish(elem[prop]) && JS.isNullish(elem["style"][prop])) {
+    return elem[prop];
+  }
+
+  // Passing an empty string as a 3rd parameter to .css will automatically
+  // attempt a parseFloat and fallback to a string if the parse fails.
+  // Simple values such as "10px" are parsed to Float;
+  // complex values such as "rotate(1rad)" are returned as-is.
+  JsValue result = css(elem, JS.assume(prop), "");
+
+  // Empty strings, null, undefined and "auto" are converted to 0.
+  return if (!result.truthy() || result == "auto") { 0.0 } else { result };
+}
+
+void defaultSet(TweenView tween) {
+  JsValue elem = tween.elem;
+  JsValue prop = tween.prop;
+
+  // Use step hook for back compat.
+  // Use cssHook if its there.
+  // Use .style if available and use plain properties where available.
+  if (initFn["step"][prop].truthy()) {
+    JS.invoke(initFn["step"], JS.assume(prop), tween);
+  } else if (elem["nodeType"] == 1.0 && (jQuery["cssHooks"][prop].truthy() ||
+      !JS.isNullish(elem["style"][finalPropName(JS.assume(prop))]))) {
+    style(elem, JS.assume(prop), JS.add(tween.now, tween.unit));
+  } else {
+    elem[prop] = tween.now;
+  }
+}
+
+// Support: IE <=9 only
+// Panic based approach to setting things on disconnected nodes
+void scrollSet(TweenView tween) {
+  JsValue elem = tween.elem;
+  if (elem["nodeType"].truthy() && elem["parentNode"].truthy()) {
+    elem[tween.prop] = tween.now;
+  }
+}
+
+float easingLinear(float p) {
+  return p;
+}
+
+float easingSwing(float p) {
+  return 0.5 - mathCos(p * mathPI()) / 2.0;
+}
+
+
+JsValue tweenFn = Tween;
+JsValue proto = TweenProto{tweenFn, initFn, tweenCur, tweenRun};
+tweenFn["prototype"] = proto;
 initFn["prototype"] = proto;
+tweenFn["propHooks"] = propHooks;
 
-jQuery["Tween"] = factory;
+jQuery["Tween"] = tweenFn;
 jQuery["easing"] = EasingMap{easingLinear, easingSwing, "swing"};
 jQuery["fx"] = initFn;
-jQuery["fx"]["step"] = JS.object();
 
-export { jQuery, tweenPropHooks };
+// Back compat <1.8 extension point
+initFn["step"] = JS.object();
+
+export { jQuery };

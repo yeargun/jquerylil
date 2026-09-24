@@ -1,10 +1,11 @@
+const win: any = typeof window !== "undefined" ? window : globalThis
+
 export function windowSelf(): any {
-  return typeof window !== "undefined" ? window : globalThis
+  return win
 }
 
 export function windowDocument(): any {
-  const w = windowSelf()
-  return w.document
+  return win.document
 }
 
 export function documentElementOf(doc: any): any {
@@ -19,9 +20,7 @@ export function functionToString(value: any): string {
   return Function.prototype.toString.call(value)
 }
 
-export function objectHasOwn(obj: any, key: string): boolean {
-  return Object.prototype.hasOwnProperty.call(obj, key)
-}
+export const objectHasOwn = (obj: any, key: string): boolean => Object.prototype.hasOwnProperty.call(obj, key)
 
 export function getPrototypeOf(value: any): any {
   return Object.getPrototypeOf(value)
@@ -73,16 +72,9 @@ export function arrayPop(arr: any): any {
   return Array.prototype.pop.call(arr)
 }
 
-export function arraySlice(arr: any, start?: number, end?: number): any[] {
-  if (arguments.length <= 1) return Array.prototype.slice.call(arr)
-  if (arguments.length === 2) return Array.prototype.slice.call(arr, start)
-  return Array.prototype.slice.call(arr, start, end)
-}
+export const arraySlice = (arr: any, start?: number, end?: number): any[] => Array.prototype.slice.call(arr, start, end)
 
-export function arrayIndexOf(arr: any, elem: any, fromIndex?: number): number {
-  if (fromIndex === undefined) return Array.prototype.indexOf.call(arr, elem)
-  return Array.prototype.indexOf.call(arr, elem, fromIndex)
-}
+export const arrayIndexOf = (arr: any, elem: any, fromIndex?: number): number => Array.prototype.indexOf.call(arr, elem, fromIndex)
 
 export function arraySort(arr: any, compare?: any): any {
   if (compare === undefined || compare === null) return Array.prototype.sort.call(arr)
@@ -102,10 +94,7 @@ export function arrayConcatApply(target: any, arrays: any): any[] {
 }
 
 export function arrayFlat(array: any): any[] {
-  if (typeof Array.prototype.flat === "function") {
-    return Array.prototype.flat.call(array)
-  }
-  return Array.prototype.concat.apply([], array)
+  return [].flat ? [].flat.call(array) : [].concat.apply([], array)
 }
 
 export function objectConstructor(): any {
@@ -208,9 +197,9 @@ export function hasProp(obj: any, key: string): boolean {
   return obj != null && key in Object(obj)
 }
 
-export function defineIterator(obj: any, iterator: any): void {
+export function defineIterator(obj: any, source: any): void {
   if (typeof Symbol === "function") {
-    obj[Symbol.iterator] = iterator
+    obj[Symbol.iterator] = source[Symbol.iterator]
   }
 }
 
@@ -234,19 +223,15 @@ export function jsUndefined(): any {
 
 export const UNDEFINED: any = undefined
 
-export function scheduleTimeout(fn: any): void {
-  const w = windowSelf()
-  w.setTimeout(fn, 0)
-}
+export const scheduleTimeout = (fn: any): void => win.setTimeout(fn)
 
 export function call4(fn: any, thisArg: any, a: any, b: any, c: any, d: any): any {
   return fn.call(thisArg, a, b, c, d)
 }
 
 export function consoleWarn3(a: any, b: any, c: any): void {
-  const w = windowSelf()
-  if (w.console && typeof w.console.warn === "function") {
-    w.console.warn(a, b, c)
+  if (win.console && typeof win.console.warn === "function") {
+    win.console.warn(a, b, c)
   }
 }
 
@@ -282,9 +267,7 @@ export function setLength(obj: any, length: number): void {
   obj.length = length
 }
 
-export function newRegexp(pattern: string, flags?: string): RegExp {
-  return flags === undefined ? new RegExp(pattern) : new RegExp(pattern, flags)
-}
+export const newRegexp = (pattern: string, flags?: string): RegExp => new RegExp(pattern, flags)
 
 export function defineConfigurable(obj: any, key: string, value: any): void {
   Object.defineProperty(obj, key, {
@@ -330,29 +313,19 @@ export function parseIntRadix(value: string, radix: number): number {
   return parseInt(value, radix)
 }
 
-export function stringReplaceFirst(s: string, search: string, replacement: string): string {
-  return s.replace(search, replacement)
-}
+export const stringReplaceFirst = (s: string, search: string, replacement: string): string => s.replace(search, replacement)
 
-export function addEventListener(target: any, eventName: string, handler: any, capture?: boolean): void {
-  target.addEventListener(eventName, handler, capture === true)
-}
+export const addEventListener = (target: any, eventName: string, handler: any, capture?: boolean): void => target.addEventListener(eventName, handler, capture)
 
-export function removeEventListener(target: any, eventName: string, handler: any, capture?: boolean): void {
-  target.removeEventListener(eventName, handler, capture === true)
-}
+export const removeEventListener = (target: any, eventName: string, handler: any, capture?: boolean): void => target.removeEventListener(eventName, handler, capture)
 
 export function debugLog(value: any): void {
   console.log("DEBUG:", value)
 }
 
-export function scheduleTimeoutMs(fn: any, ms: number): any {
-  return windowSelf().setTimeout(fn, ms)
-}
+export const scheduleTimeoutMs = (fn: any, ms: number): any => win.setTimeout(fn, ms)
 
-export function clearTimeoutId(id: any): void {
-  windowSelf().clearTimeout(id)
-}
+export const clearTimeoutId = (id: any): void => win.clearTimeout(id)
 
 export function throwValue(error: any): never {
   throw error
@@ -377,7 +350,7 @@ export function stringIndexOf(s: string, search: string, fromIndex?: number): nu
 }
 
 export function newDOMParser(): any {
-  return new DOMParser()
+  return new win.DOMParser()
 }
 
 export function parseHexEscape(hexDigits: string): number {
@@ -416,10 +389,9 @@ export function mathPI(): number {
   return Math.PI
 }
 
-export function requestAnimationFrameOrNull(fn: any): any {
-  const w = windowSelf()
-  if (typeof w.requestAnimationFrame === "function") {
-    return w.requestAnimationFrame(fn)
+export const requestAnimationFrameOrNull = (fn: any): any => {
+  if (typeof win.requestAnimationFrame === "function") {
+    return win.requestAnimationFrame(fn)
   }
   return undefined
 }
@@ -436,10 +408,8 @@ export function encodeURIComponentValue(value: string): string {
   return encodeURIComponent(value)
 }
 
-export function newXMLHttpRequest(): any {
+export const newXMLHttpRequest = (): any => {
   try {
-    return new (windowSelf() as any).XMLHttpRequest()
-  } catch (e) {
-    return undefined
-  }
+    return new win.XMLHttpRequest()
+  } catch {}
 }

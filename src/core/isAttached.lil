@@ -1,33 +1,11 @@
-import {
-  call1
-} from "../js-host.lil";
-
 struct ComposedRoot {
   bool composed;
 }
 
-JsValue makeComposedRoot() {
-  return ComposedRoot{true};
-}
-
-JsValue composedRoot = makeComposedRoot();
+JsValue composedRoot = ComposedRoot{true};
 
 export bool isAttached(JsValue elem) {
   JsValue doc = JS.and(elem, elem["ownerDocument"]);
-  if (doc.truthy()) {
-    if (JS.invoke(doc, "contains", elem).truthy()) {
-      return true;
-    }
-  }
-
-  if (!elem.truthy()) {
-    return false;
-  }
-
-  JsValue getRootNode = elem["getRootNode"];
-  if (getRootNode.truthy()) {
-    return JS.invoke(elem, "getRootNode", composedRoot) == doc;
-  }
-
-  return false;
+  return (doc.truthy() && JS.invoke(doc, "contains", elem).truthy()) ||
+    (elem.truthy() && elem["getRootNode"].truthy() && JS.invoke(elem, "getRootNode", composedRoot) == doc);
 }

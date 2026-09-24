@@ -1,3 +1,4 @@
+extern JsValue this;
 import { emptyArray } from "./alloc.lil";
 import { jQuery, isXMLDoc, merge, text, grep } from "./core";
 import { nodeName } from "./core/nodeName";

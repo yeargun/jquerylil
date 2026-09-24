@@ -1,120 +1,89 @@
-import { emptyArray } from "../alloc.lil";
+extern JsValue this;
 import { jQuery, each, wrap } from "../core";
 import { get as dataPrivGet, set as dataPrivSet } from "../data/var/dataPriv";
-import { css } from "../css";
+import { css, fn } from "../css";
 import { isHiddenWithinTree } from "./var/isHiddenWithinTree";
-import {
-  createEmptyObject,
-  call1,
-  call0,
-  isNullish
-} from "../js-host.lil";
-
 
 JsValue defaultDisplayMap = JS.object();
 
-string getDefaultDisplay(JsValue elem) {
-  JsValue doc = JS.and(elem, elem["ownerDocument"]);
-  string nodeNameKey = JS.string(JS.and(elem, elem["nodeName"]));
+JsValue getDefaultDisplay(JsValue elem) {
+  JsValue doc = elem["ownerDocument"];
+  string nodeName = JS.assume(elem["nodeName"]);
+  JsValue display = defaultDisplayMap[nodeName];
 
-  JsValue cached = defaultDisplayMap[nodeNameKey];
-  if (cached.truthy()) {
-    return JS.assume(cached);
+  if (display.truthy()) {
+    return display;
   }
 
-  JsValue body = doc["body"];
-  JsValue created = JS.invoke(doc, "createElement", nodeNameKey);
-  JsValue temp = JS.invoke(body, "appendChild", created);
-  JsValue displayValue = css(temp, "display");
-  JsValue parent = temp["parentNode"];
-  JS.invoke(parent, "removeChild", temp);
+  JsValue temp = JS.invoke(doc["body"], "appendChild", JS.invoke(doc, "createElement", nodeName));
+  display = css(temp, "display");
+  JS.invoke(temp["parentNode"], "removeChild", temp);
 
-  string display = "block";
-  if (!JS.strictEqual(displayValue, "none") && JS.string(displayValue).length > 0) {
-    display = JS.string(displayValue);
+  if (JS.strictEqual(display, "none")) {
+    display = "block";
   }
-
-  defaultDisplayMap[nodeNameKey] = display;
+  defaultDisplayMap[nodeName] = display;
   return display;
 }
 
 JsValue showHide(JsValue elements, bool show) {
-  int index = 0;
-  int length = elements.length.toInt();
-  JsValue values = emptyArray();
+  JsValue values = JS.array();
+  float length = elements.length;
 
-  for (; index < length; index++) {
+  for (float index = 0.0; index < length; index++) {
     JsValue elem = elements[index];
     JsValue style = elem["style"];
     if (!style.truthy()) {
       continue;
     }
 
-    string display = JS.string(style["display"]);
-
+    JsValue display = style["display"];
     if (show) {
-      if (display == "none") {
-        JsValue stored = dataPrivGet(elem, "display");
-        if (!stored.truthy()) {
-          stored = null;
-        }
-        values[index] = stored;
-        if (!stored.truthy()) {
+      if (JS.strictEqual(display, "none")) {
+        values[index] = JS.or(dataPrivGet(elem, "display"), null);
+        if (!values[index].truthy()) {
           style["display"] = "";
         }
       }
-
       if (JS.strictEqual(style["display"], "") && isHiddenWithinTree(elem)) {
         values[index] = getDefaultDisplay(elem);
       }
-    } else if (display != "none") {
+    } else if (!JS.strictEqual(display, "none")) {
       values[index] = "none";
       dataPrivSet(elem, "display", display);
     }
   }
 
-  for (index = 0; index < length; index++) {
-    JsValue val = values[index];
-    if (!JS.isNullish(val)) {
-      JsValue elem2 = elements[index];
-      JsValue style2 = elem2["style"];
-      style2["display"] = val;
+  for (float index = 0.0; index < length; index++) {
+    if (!JS.isNullish(values[index])) {
+      elements[index]["style"]["display"] = values[index];
     }
   }
 
   return elements;
 }
 
-JsValue fnShow(JsValue self) {
-  return showHide(self, true);
+JsValue fnShow() {
+  return showHide(this, true);
 }
 
-JsValue fnHide(JsValue self) {
-  return showHide(self, false);
+JsValue fnHide() {
+  return showHide(this, false);
 }
 
-JsValue fnToggle(JsValue self, JsValue state) {
+JsValue fnToggle(JsValue state) {
   if (state is bool) {
-    bool stateValue = state;
-    if (stateValue) {
-      return JS.invoke(self, "show");
-    }
-    return JS.invoke(self, "hide");
+    return JS.invoke(this, if (state) { "show" } else { "hide" });
   }
 
-  return each(self, (JsValue _i, JsValue el) => {
-    JsValue wrapped = wrap(el);
-    if (isHiddenWithinTree(el)) {
-      JS.invoke(wrapped, "show");
-    } else {
-      JS.invoke(wrapped, "hide");
-    }
+  return each(this, (JsValue _i, JsValue el) => {
+    JS.invoke(wrap(el), if (isHiddenWithinTree(el)) { "show" } else { "hide" });
     return JS.undefined();
   });
 }
 
-jQuery["fn"]["show"] = JS.method0(fnShow);
-jQuery["fn"]["hide"] = JS.method0(fnHide);
-jQuery["fn"]["toggle"] = JS.method1(fnToggle);
+fn["show"] = fnShow;
+fn["hide"] = fnHide;
+fn["toggle"] = fnToggle;
 
 export { jQuery, showHide, getDefaultDisplay };

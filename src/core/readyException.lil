@@ -1,15 +1,10 @@
 import { jQuery } from "../core";
-import {
-  scheduleTimeout,
-  throwValue
-} from "../js-host.lil";
+import { scheduleTimeout } from "../js-host.lil";
 
 jQuery["readyException"] = (JsValue error) => {
   scheduleTimeout(() => {
-    throwValue(error);
-    return JS.undefined();
+    throw error;
   });
-  return JS.undefined();
 };
 
 export { jQuery };

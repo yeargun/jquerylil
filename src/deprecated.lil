@@ -1,113 +1,75 @@
-import { emptyArray } from "./alloc.lil";
+extern JsValue arguments;
+extern JsValue this;
+extern JsValue Array;
+extern JsValue JSON;
+extern JsValue Date;
+extern bool isNaN(float value);
+extern float parseFloat(JsValue value);
 import { jQuery } from "./core";
 import { nodeName } from "./core/nodeName";
 import { camelCase } from "./core/camelCase";
 import { toType } from "./core/toType";
 import { isFunction } from "./var/isFunction";
 import { isWindow } from "./var/isWindow";
-import {
-  isNullish,
-  arrayIsArray,
-  arraySlice,
-  dateNow,
-  stringify,
-  stringReplace,
-  unaryPlus,
-  parseFloatValue,
-  isFiniteValue,
-  jsUndefined,
-  apply
-} from "./js-host.lil";
+import { arr } from "./var/arr";
 
 Regex rtrim = new Regex("^[\\s\\uFEFF\\xA0]+|([^\\s\\uFEFF\\xA0])[\\s\\uFEFF\\xA0]+$", "g");
 
-JsValue proxy(JsValue args) {
-  JsValue fnArg = args[0];
-  JsValue context = args[1];
-
+JsValue proxy(JsValue fn, JsValue context) {
   if (context is string) {
-    string key = context;
-    JsValue owner = fnArg;
-    fnArg = owner[key];
-    context = owner;
+    JsValue tmp = fn[context];
+    context = fn;
+    fn = tmp;
   }
 
-  if (!isFunction(fnArg)) {
+  if (!isFunction(fn)) {
     return JS.undefined();
   }
 
-  JsValue boundArgs = arraySlice(args, 2.0, 9007199254740991.0);
-  JsValue guidValue = fnArg["guid"];
-  if (!guidValue.truthy()) {
-    float nextGuid = JS.number(jQuery["guid"]);
-    jQuery["guid"] = nextGuid + 1.0;
-    guidValue = nextGuid;
-    fnArg["guid"] = guidValue;
-  }
-
-  JsValue boundFn = fnArg;
-  JsValue boundContext = context;
-  JsValue proxied = JS.methodRest((JsValue thisArg, JsValue callArgs) => {
-    JsValue extra = arraySlice(callArgs, 0.0, 9007199254740991.0);
-    JsValue finalArgs = JS.invoke(boundArgs, "concat", extra);
-    return JS.apply(boundFn, JS.or(boundContext, thisArg), finalArgs);
+  JsValue args = JS.invoke(arr["slice"], "call", arguments, 2.0);
+  JsValue proxied = JS.methodRest((JsValue self, JsValue callArgs) => {
+    return JS.apply(fn, JS.or(context, self), JS.invoke(args, "concat", JS.invoke(arr["slice"], "call", callArgs)));
   });
-  proxied["guid"] = guidValue;
+
+  if (!fn["guid"].truthy()) {
+    JsValue guid = jQuery["guid"];
+    jQuery["guid"] = JS.add(guid, 1.0);
+    fn["guid"] = guid;
+  }
+  proxied["guid"] = fn["guid"];
   return proxied;
 }
 
-bool isArrayValue(JsValue value) {
-  return JS.isArray(value);
-}
+jQuery["proxy"] = proxy;
 
-float nowValue() {
-  return dateNow();
-}
-
-bool isNumericValue(JsValue obj) {
-  string t = toType(obj);
-  if (t != "number" && t != "string") {
-    return false;
+jQuery["holdReady"] = (JsValue hold) => {
+  if (hold.truthy()) {
+    jQuery["readyWait"] = JS.add(jQuery["readyWait"], 1.0);
+  } else {
+    JS.invoke(jQuery, "ready", true);
   }
-  float diff = JS.number(obj) - parseFloatValue(JS.string(obj));
-  return isFiniteValue(diff);
-}
+  return JS.undefined();
+};
 
-string trimValue(JsValue text) {
+jQuery["isArray"] = Array["isArray"];
+jQuery["parseJSON"] = JSON["parse"];
+jQuery["nodeName"] = nodeName;
+jQuery["isFunction"] = isFunction;
+jQuery["isWindow"] = isWindow;
+jQuery["camelCase"] = camelCase;
+jQuery["type"] = toType;
+jQuery["now"] = Date["now"];
+
+jQuery["isNumeric"] = (JsValue obj) => {
+  string type = toType(obj);
+  return (type == "number" || type == "string") && !isNaN(JS.number(obj) - parseFloat(obj));
+};
+
+jQuery["trim"] = (JsValue text) => {
   if (JS.isNullish(text)) {
     return "";
   }
   return JS.stringReplace(JS.string(text), rtrim, "$1");
-}
-
-JsValue parseJSONValue(JsValue data) {
-  return JSON.parse(JS.string(data));
-}
-
-void install() {
-  jQuery["proxy"] = JS.staticRest(proxy);
-
-  jQuery["holdReady"] = (JsValue hold) => {
-    if (hold.truthy()) {
-      jQuery["readyWait"] = JS.number(jQuery["readyWait"]) + 1.0;
-    } else {
-      JS.invoke(jQuery, "ready", true);
-    }
-    return JS.undefined();
-  };
-
-  jQuery["isArray"] = isArrayValue;
-  jQuery["parseJSON"] = parseJSONValue;
-  jQuery["nodeName"] = nodeName;
-  jQuery["isFunction"] = isFunction;
-  jQuery["isWindow"] = isWindow;
-  jQuery["camelCase"] = camelCase;
-  jQuery["type"] = toType;
-  jQuery["now"] = nowValue;
-  jQuery["isNumeric"] = isNumericValue;
-  jQuery["trim"] = trimValue;
-}
-
-install();
+};
 
 export { jQuery };

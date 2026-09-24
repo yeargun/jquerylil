@@ -1,72 +1,42 @@
+extern JsValue Math;
 import { jQuery } from "./core";
 import { access } from "./core/access";
 import { isWindow } from "./var/isWindow";
-import { css, style } from "./css";
-import {
-  getProp,
-  isUndefined,
-  mathMax
-} from "./js-host.lil";
+import { css, style, fn } from "./css";
 
-
-float toFloat(JsValue value) {
-  return JS.number(value);
-}
-
-void installDimensionMethod(string name, string type, string defaultExtra, string funcName) {
-  jQuery["fn"][funcName] = JS.methodRest((JsValue self, JsValue args) => {
+void dimensionMethod(string name, string type, string defaultExtra, string funcName) {
+  fn[funcName] = JS.methodRest((JsValue self, JsValue args) => {
     JsValue margin = args[0];
-    JsValue value = args[1];
+    bool chainable = args.length > 0.0 && (defaultExtra != "" || !(margin is bool));
+    string extra = JS.assume(JS.or(defaultExtra, if (JS.strictEqual(margin, true) || JS.strictEqual(args[1], true)) { "margin" } else { "border" }));
 
-    bool marginIsBool = margin is bool;
-    bool chainable = args.length > 0.0 && (defaultExtra.length > 0 || !marginIsBool);
-
-    string extra = defaultExtra;
-    if (extra.length == 0) {
-      if (JS.strictEqual(margin, true) || JS.strictEqual(value, true)) {
-        extra = "margin";
-      } else {
-        extra = "border";
-      }
-    }
-
-    JsValue passedValue = null;
-    if (chainable) {
-      passedValue = margin;
-    }
-
-    return access(self, (JsValue elem, JsValue typeArg, JsValue valueArg) => {
+    return access(self, (JsValue elem, JsValue _type, JsValue value) => {
       if (isWindow(elem)) {
-        if (funcName.indexOf("outer") == 0) {
-          return elem["inner" + name];
-        }
-        return JS.get(elem, "document")["documentElement"]["client" + name];
+        return if (defaultExtra == "") { elem["inner" + name] } else { elem["document"]["documentElement"]["client" + name] };
       }
 
-      if (elem["nodeType"] == 9.0) {
+      if (JS.strictEqual(elem["nodeType"], 9.0)) {
         JsValue doc = elem["documentElement"];
-        JsValue body = elem["body"];
-        float scrollFromBody = toFloat(body["scroll" + name]);
-        float scrollFromDoc = toFloat(doc["scroll" + name]);
-        float offsetFromBody = toFloat(body["offset" + name]);
-        float offsetFromDoc = toFloat(doc["offset" + name]);
-        float clientFromDoc = toFloat(doc["client" + name]);
-        return mathMax(mathMax(mathMax(scrollFromBody, scrollFromDoc), mathMax(offsetFromBody, offsetFromDoc)), clientFromDoc);
+        return JS.invoke(Math, "max",
+          elem["body"]["scroll" + name], doc["scroll" + name],
+          elem["body"]["offset" + name], doc["offset" + name],
+          doc["client" + name]
+        );
       }
 
-      if (JS.isUndefined(valueArg)) {
-        return css(elem, type, extra);
-      }
-      return style(elem, type, valueArg, extra);
-    }, type, passedValue, chainable, null, false);
+      return if (JS.isUndefined(value)) { css(elem, type, extra) } else { style(elem, type, value, extra) };
+    }, type, if (chainable) { margin } else { JS.undefined() }, chainable, JS.undefined(), false);
   });
 }
 
-installDimensionMethod("Height", "height", "padding", "innerHeight");
-installDimensionMethod("Height", "height", "content", "height");
-installDimensionMethod("Height", "height", "", "outerHeight");
-installDimensionMethod("Width", "width", "padding", "innerWidth");
-installDimensionMethod("Width", "width", "content", "width");
-installDimensionMethod("Width", "width", "", "outerWidth");
+void dimensionMethods(string name) {
+  string type = name.toLowerCase();
+  dimensionMethod(name, type, "padding", "inner" + name);
+  dimensionMethod(name, type, "content", type);
+  dimensionMethod(name, type, "", "outer" + name);
+}
+
+dimensionMethods("Height");
+dimensionMethods("Width");
 
 export { jQuery };

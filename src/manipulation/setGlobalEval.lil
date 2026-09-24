@@ -1,14 +1,7 @@
 import { get as dataPrivGet, set as dataPrivSet } from "../data/var/dataPriv";
 
 export void setGlobalEval(JsValue elems, JsValue refElements = null) {
-  float i = 0.0;
-  float l = elems.length;
-
-  for (; i < l; i++) {
-    JsValue value = true;
-    if (refElements.truthy()) {
-      value = dataPrivGet(refElements[i], "globalEval");
-    }
-    dataPrivSet(elems[i], "globalEval", value);
+  for (float i = 0.0; i < elems.length; i++) {
+    dataPrivSet(elems[i], "globalEval", JS.or(!refElements.truthy(), dataPrivGet(refElements[i], "globalEval")));
   }
 }

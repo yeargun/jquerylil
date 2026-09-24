@@ -1,65 +1,31 @@
+extern JsValue arguments;
+extern JsValue this;
 import { jQuery, each } from "../core";
-import {
-  jsUndefined,
-  stringify,
-  stringSplit,
-  call1,
-  call2,
-  call3,
-  call4
-} from "../js-host.lil";
+import { fn } from "../event";
 
-
-JsValue fn = jQuery["fn"];
-
-JsValue fnBind() {
-  JsValue self = this;
-  JsValue args = arguments;
-  return JS.invoke(self, "on", args[0], null, args[1], args[2]);
+JsValue fnBind(JsValue types, JsValue data, JsValue fn) {
+  return JS.invoke(this, "on", types, null, data, fn);
 }
 
-JsValue fnUnbind() {
-  JsValue self = this;
-  JsValue args = arguments;
-  return JS.invoke(self, "off", args[0], null, args[1]);
+JsValue fnUnbind(JsValue types, JsValue fn) {
+  return JS.invoke(this, "off", types, null, fn);
 }
 
-JsValue fnDelegate() {
-  JsValue self = this;
-  JsValue args = arguments;
-  return JS.invoke(self, "on", args[1], args[0], args[2], args[3]);
+JsValue fnDelegate(JsValue selector, JsValue types, JsValue data, JsValue fn) {
+  return JS.invoke(this, "on", types, selector, data, fn);
 }
 
-JsValue fnUndelegate() {
-  JsValue self = this;
-  JsValue args = arguments;
-  if (args.length == 1.0) {
-    return JS.invoke(self, "off", args[0], "**");
-  }
-  JsValue selector = args[0];
-  string selectorFallback = "**";
-  if (selector is string) {
-    string selectorText = selector;
-    if (selectorText.length > 0) {
-      selectorFallback = selectorText;
-    }
-  } else if (selector.truthy()) {
-    selectorFallback = JS.string(selector);
-  }
-  return JS.invoke(self, "off", args[1], selectorFallback, args[2]);
+JsValue fnUndelegate(JsValue selector, JsValue types, JsValue fn) {
+  // ( namespace ) or ( selector, types [, fn] )
+  return if (arguments.length == 1.0) {
+    JS.invoke(this, "off", selector, "**")
+  } else {
+    JS.invoke(this, "off", types, JS.or(selector, "**"), fn)
+  };
 }
 
-JsValue fnHover() {
-  JsValue self = this;
-  JsValue args = arguments;
-  JsValue fnOver = args[0];
-  JsValue fnOut = args[1];
-  JsValue leaveHandler = fnOver;
-  if (fnOut.truthy()) {
-    leaveHandler = fnOut;
-  }
-  JsValue chained = JS.invoke(self, "on", "mouseenter", fnOver);
-  return JS.invoke(chained, "on", "mouseleave", leaveHandler);
+JsValue fnHover(JsValue fnOver, JsValue fnOut) {
+  return JS.invoke(JS.invoke(this, "on", "mouseenter", fnOver), "on", "mouseleave", JS.or(fnOut, fnOver));
 }
 
 fn["bind"] = fnBind;
@@ -68,23 +34,25 @@ fn["delegate"] = fnDelegate;
 fn["undelegate"] = fnUndelegate;
 fn["hover"] = fnHover;
 
-string[] eventShortcutNames = JS.stringSplit(
-  "blur focus focusin focusout resize scroll click dblclick " +
-  "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
-  "change select submit keydown keypress keyup contextmenu",
-  " "
+each(
+  JS.invoke(
+    "blur focus focusin focusout resize scroll click dblclick " +
+    "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
+    "change select submit keydown keypress keyup contextmenu",
+    "split",
+    " "
+  ),
+  (JsValue _i, JsValue name) => {
+    // Handle event binding
+    fn[name] = JS.methodRest((JsValue self, JsValue args) => {
+      return if (args.length > 0.0) {
+        JS.invoke(self, "on", name, null, args[0], args[1])
+      } else {
+        JS.invoke(self, "trigger", name)
+      };
+    });
+    return JS.undefined();
+  }
 );
-
-void installShortcut(JsValue _i, JsValue nameValue) {
-  string name = JS.string(nameValue);
-  fn[name] = JS.methodRest((JsValue self, JsValue args) => {
-    if (args.length > 0.0) {
-      return JS.invoke(self, "on", name, null, args[0], args[1]);
-    }
-    return JS.invoke(self, "trigger", name);
-  });
-}
-
-each(eventShortcutNames, installShortcut);
 
 export { jQuery };

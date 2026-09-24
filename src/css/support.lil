@@ -2,7 +2,6 @@ import { document } from "../var/document";
 import { documentElement } from "../var/documentElement";
 import { support } from "../var/support";
 import {
-  call1,
   windowSelf,
   parseFloatValue,
   parseIntRadix,
@@ -11,143 +10,99 @@ import {
 
 JsValue container = JS.invoke(document, "createElement", "div");
 JsValue div = JS.invoke(document, "createElement", "div");
-JsValue divStyle = div["style"];
-bool hasDiv = divStyle.truthy();
 
-bool? pixelPositionVal = null;
-bool? boxSizingReliableVal = null;
-bool? scrollboxSizeVal = null;
-bool? pixelBoxStylesVal = null;
-bool? reliableMarginLeftVal = null;
-bool? reliableTrDimensionsVal = null;
+// Each answer is written by the first test run and read only after it.
+JsValue pixelPositionVal = JS.undefined();
+JsValue boxSizingReliableVal = JS.undefined();
+JsValue scrollboxSizeVal = JS.undefined();
+JsValue pixelBoxStylesVal = JS.undefined();
+JsValue reliableMarginLeftVal = JS.undefined();
+JsValue reliableTrDimensionsVal = JS.undefined();
 
-float roundCssMeasure(JsValue measure) {
-  return mathRound(parseFloatValue(JS.string(measure)));
+float roundPixelMeasures(JsValue measure) {
+  return mathRound(parseFloatValue(JS.assume(measure)));
 }
 
 void computeStyleTests() {
-  if (!hasDiv) {
+  if (!div.truthy()) {
     return;
   }
 
-  JsValue containerStyle = container["style"];
-  containerStyle["cssText"] = "position:absolute;left:-11111px;width:60px;margin-top:1px;padding:0;border:0";
-  divStyle["cssText"] = "position:relative;display:block;box-sizing:border-box;overflow:scroll;margin:auto;border:1px;padding:1px;width:60%;top:1%";
+  container["style"]["cssText"] = "position:absolute;left:-11111px;width:60px;margin-top:1px;padding:0;border:0";
+  div["style"]["cssText"] = "position:relative;display:block;box-sizing:border-box;overflow:scroll;margin:auto;border:1px;padding:1px;width:60%;top:1%";
+  JS.invoke(JS.invoke(documentElement, "appendChild", container), "appendChild", div);
 
-  JsValue appendedContainer = JS.invoke(documentElement, "appendChild", container);
-  JS.invoke(appendedContainer, "appendChild", div);
+  JsValue divStyle = JS.invoke(windowSelf(), "getComputedStyle", div);
+  pixelPositionVal = !JS.strictEqual(divStyle["top"], "1%");
+  reliableMarginLeftVal = roundPixelMeasures(divStyle["marginLeft"]) == 12.0;
 
-  JsValue win = windowSelf();
-  JsValue computed = JS.invoke(win, "getComputedStyle", div);
+  div["style"]["right"] = "60%";
+  pixelBoxStylesVal = roundPixelMeasures(divStyle["right"]) == 36.0;
+  boxSizingReliableVal = roundPixelMeasures(divStyle["width"]) == 36.0;
 
-  pixelPositionVal = !JS.strictEqual(computed["top"], "1%");
-  reliableMarginLeftVal = roundCssMeasure(computed["marginLeft"]) == 12.0;
-
-  divStyle["right"] = "60%";
-  pixelBoxStylesVal = roundCssMeasure(computed["right"]) == 36.0;
-  boxSizingReliableVal = roundCssMeasure(computed["width"]) == 36.0;
-
-  divStyle["position"] = "absolute";
-  float offsetWidth = JS.number(div["offsetWidth"]);
-  scrollboxSizeVal = mathRound(offsetWidth / 3.0) == 12.0;
+  div["style"]["position"] = "absolute";
+  scrollboxSizeVal = mathRound(JS.number(div["offsetWidth"]) / 3.0) == 12.0;
 
   JS.invoke(documentElement, "removeChild", container);
-  hasDiv = false;
+  div = null;
 }
 
 export bool boxSizingReliable() {
   computeStyleTests();
-  if (boxSizingReliableVal == null) {
-    return false;
-  }
-  bool value = boxSizingReliableVal;
-  return value;
+  return JS.assume(boxSizingReliableVal);
 }
 
-bool pixelBoxStyles() {
+export bool pixelBoxStyles() {
   computeStyleTests();
-  if (pixelBoxStylesVal == null) {
-    return false;
-  }
-  bool value = pixelBoxStylesVal;
-  return value;
+  return JS.assume(pixelBoxStylesVal);
 }
 
 export bool pixelPosition() {
   computeStyleTests();
-  if (pixelPositionVal == null) {
-    return false;
-  }
-  bool value = pixelPositionVal;
-  return value;
+  return JS.assume(pixelPositionVal);
 }
 
 export bool reliableMarginLeft() {
   computeStyleTests();
-  if (reliableMarginLeftVal == null) {
-    return false;
-  }
-  bool value = reliableMarginLeftVal;
-  return value;
+  return JS.assume(reliableMarginLeftVal);
 }
 
 export bool scrollboxSize() {
   computeStyleTests();
-  if (scrollboxSizeVal == null) {
-    return false;
-  }
-  bool value = scrollboxSizeVal;
-  return value;
+  return JS.assume(scrollboxSizeVal);
 }
 
 export bool reliableTrDimensions() {
-  if (reliableTrDimensionsVal == null) {
+  if (JS.isNullish(reliableTrDimensionsVal)) {
     JsValue table = JS.invoke(document, "createElement", "table");
     JsValue tr = JS.invoke(document, "createElement", "tr");
     JsValue trChild = JS.invoke(document, "createElement", "div");
 
     table["style"]["cssText"] = "position:absolute;left:-11111px;border-collapse:separate";
-    JsValue trStyleDecl = tr["style"];
-    trStyleDecl["cssText"] = "box-sizing:content-box;border:1px solid";
-    trStyleDecl["height"] = "1px";
+    tr["style"]["cssText"] = "box-sizing:content-box;border:1px solid";
+    tr["style"]["height"] = "1px";
     trChild["style"]["height"] = "9px";
     trChild["style"]["display"] = "block";
 
-    JsValue appendedTable = JS.invoke(documentElement, "appendChild", table);
-    JsValue appendedTr = JS.invoke(appendedTable, "appendChild", tr);
-    JS.invoke(appendedTr, "appendChild", trChild);
+    JS.invoke(JS.invoke(JS.invoke(documentElement, "appendChild", table), "appendChild", tr), "appendChild", trChild);
 
-    JsValue win = windowSelf();
-    JsValue trStyle = JS.invoke(win, "getComputedStyle", tr);
-
-    float heightPart = parseIntRadix(JS.string(trStyle["height"]), 10.0);
-    float borderTopPart = parseIntRadix(JS.string(trStyle["borderTopWidth"]), 10.0);
-    float borderBottomPart = parseIntRadix(JS.string(trStyle["borderBottomWidth"]), 10.0);
-
-    float offsetHeight = JS.number(tr["offsetHeight"]);
-
-    reliableTrDimensionsVal = (heightPart + borderTopPart + borderBottomPart) == offsetHeight;
+    JsValue trStyle = JS.invoke(windowSelf(), "getComputedStyle", tr);
+    reliableTrDimensionsVal = JS.strictEqual(
+      parseIntRadix(JS.assume(trStyle["height"]), 10.0) +
+        parseIntRadix(JS.assume(trStyle["borderTopWidth"]), 10.0) +
+        parseIntRadix(JS.assume(trStyle["borderBottomWidth"]), 10.0),
+      tr["offsetHeight"]
+    );
 
     JS.invoke(documentElement, "removeChild", table);
   }
-
-  if (reliableTrDimensionsVal == null) {
-    return false;
-  }
-  bool value = reliableTrDimensionsVal;
-  return value;
+  return JS.assume(reliableTrDimensionsVal);
 }
 
-void initSupport() {
-  if (!hasDiv) {
-    return;
-  }
-
-  divStyle["backgroundClip"] = "content-box";
-  JsValue clonedDiv = JS.invoke(div, "cloneNode", true);
-  clonedDiv["style"]["backgroundClip"] = "";
-  bool clearCloneStyle = JS.strictEqual(divStyle["backgroundClip"], "content-box");
-  support.clearCloneStyle = clearCloneStyle;
+if (div["style"].truthy()) {
+  div["style"]["backgroundClip"] = "content-box";
+  JS.invoke(div, "cloneNode", true)["style"]["backgroundClip"] = "";
+  support.clearCloneStyle = JS.strictEqual(div["style"]["backgroundClip"], "content-box");
 
   support.boxSizingReliable = boxSizingReliable;
   support.pixelBoxStyles = pixelBoxStyles;
@@ -156,7 +111,5 @@ void initSupport() {
   support.scrollboxSize = scrollboxSize;
   support.reliableTrDimensions = reliableTrDimensions;
 }
-
-initSupport();
 
 export { support };

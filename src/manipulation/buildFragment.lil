@@ -4,113 +4,77 @@ import { toType } from "../core/toType";
 import { isAttached } from "../core/isAttached";
 import { rtagName } from "./var/rtagName";
 import { rscriptType } from "./var/rscriptType";
-import { wrapForTag } from "./wrapMap";
+import { wrapMap } from "./wrapMap";
 import { getAll } from "./getAll";
 import { setGlobalEval } from "./setGlobalEval";
-import {
-  arrayPush,
-  createEmptyObject,
-  call0,
-  call1,
-  regexTest,
-  regexExec,
-  stringify,
-  isNullish,
-  newRegexp
-} from "../js-host.lil";
 
-Regex rhtml = newRegexp("<|&#?\\w+;");
+Regex rhtml = new Regex("<|&#?\\w+;", "");
 
 export JsValue buildFragment(JsValue elems, JsValue context, JsValue scripts = false, JsValue selection = null, JsValue ignored = null) {
   JsValue fragment = JS.invoke(context, "createDocumentFragment");
   JsValue nodes = emptyArray();
-  float i = 0.0;
-  float l = elems.length;
   JsValue tmp = null;
 
-  for (; i < l; i++) {
+  for (float i = 0.0; i < elems.length; i++) {
     JsValue elem = elems[i];
 
     if (elem.truthy() || JS.strictEqual(elem, 0.0)) {
       if (toType(elem) == "object") {
-        JsValue toMerge = elem;
-        if (elem["nodeType"].truthy()) {
-          toMerge = emptyArray();
-          JS.push(toMerge, elem);
-        }
-        merge(nodes, toMerge);
+        merge(nodes, if (elem["nodeType"].truthy()) { JS.array(elem) } else { elem });
+      } else if (!JS.regexTest(rhtml, elem)) {
+        JS.invoke(nodes, "push", JS.invoke(context, "createTextNode", elem));
       } else {
-        if (!JS.regexTest(rhtml, elem)) {
-          JS.push(nodes, JS.invoke(context, "createTextNode", elem));
-        } else {
-          tmp = JS.or(
-            tmp,
-            JS.invoke(fragment, "appendChild", JS.invoke(context, "createElement", "div"))
-          );
+        tmp = JS.or(tmp, JS.invoke(fragment, "appendChild", JS.invoke(context, "createElement", "div")));
+        JsValue wrap = JS.or(wrapMap[JS.invoke(JS.or(JS.regexExec(rtagName, elem), JS.array("", ""))[1], "toLowerCase")], wrapMap["_default"]);
+        tmp["innerHTML"] = JS.add(JS.add(wrap[1], JS.invoke(jQuery, "htmlPrefilter", elem)), wrap[2]);
 
-          JsValue tagMatch = JS.or(JS.regexExec(rtagName, elem), ["", ""]);
-          string tag = JS.assume(tagMatch[1]);
-
-          auto wrap = wrapForTag(tag.toLowerCase());
-
-          string prefilteredStr = JS.assume(JS.invoke(jQuery, "htmlPrefilter", elem));
-          tmp["innerHTML"] = wrap.open + prefilteredStr + wrap.close;
-
-          float depth = wrap.depth;
-          while (depth > 0.0) {
-            depth = depth - 1.0;
-            tmp = tmp["lastChild"];
-          }
-
-          merge(nodes, tmp["childNodes"]);
-
-          tmp = fragment["firstChild"];
-          tmp["textContent"] = "";
+        float depth = JS.assume(wrap[0]);
+        while (depth > 0.0) {
+          depth--;
+          tmp = tmp["lastChild"];
         }
+
+        merge(nodes, tmp["childNodes"]);
+        tmp = fragment["firstChild"];
+        tmp["textContent"] = "";
       }
     }
   }
 
   fragment["textContent"] = "";
 
-  i = 0.0;
+  float i = 0.0;
   while (true) {
     JsValue elem = nodes[i];
-    i = i + 1.0;
-    if (JS.isNullish(elem)) {
+    i++;
+    if (!elem.truthy()) {
       break;
     }
 
-    if (selection.truthy()) {
-      float foundIndex = inArray(elem, selection);
-      if (foundIndex > -1.0) {
-        if (ignored.truthy()) {
-          JS.push(ignored, elem);
-        }
-        continue;
+    if (selection.truthy() && inArray(elem, selection) > -1.0) {
+      if (ignored.truthy()) {
+        JS.invoke(ignored, "push", elem);
       }
+      continue;
     }
 
     bool attached = isAttached(elem);
-
-    JsValue appended = JS.invoke(fragment, "appendChild", elem);
-    JsValue scriptTags = getAll(appended, "script");
+    tmp = getAll(JS.invoke(fragment, "appendChild", elem), "script");
 
     if (attached) {
-      setGlobalEval(scriptTags);
+      setGlobalEval(tmp);
     }
 
     if (scripts.truthy()) {
       float j = 0.0;
       while (true) {
-        JsValue scriptElem = scriptTags[j];
-        j = j + 1.0;
-        if (JS.isNullish(scriptElem)) {
+        JsValue script = tmp[j];
+        j++;
+        if (!script.truthy()) {
           break;
         }
-        string typeStr = JS.assume(JS.or(scriptElem["type"], ""));
-        if (JS.regexTest(rscriptType, typeStr)) {
-          JS.push(scripts, scriptElem);
+        if (JS.regexTest(rscriptType, JS.or(script["type"], ""))) {
+          JS.invoke(scripts, "push", script);
         }
       }
     }

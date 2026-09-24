@@ -6,7 +6,7 @@ import {
 // writes every field itself (core/, css/, manipulation/, attributes/, ajax/xhr), so it is
 // plain data: a struct view over the allocation lets each read lower to a typed field read
 // instead of an observable dynamic lookup (finer/hypotheses/042).
-export struct Support {
+export extern class Support {
   bool clearCloneStyle;
   func()->bool boxSizingReliable;
   func()->bool pixelBoxStyles;

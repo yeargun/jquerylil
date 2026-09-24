@@ -1,45 +1,25 @@
 import { jQuery, map } from "../core";
-import {
-  isNullish,
-  typeOf,
-  stringify,
-  newDOMParser,
-  call1,
-  call2,
-  arrayJoin
-} from "../js-host.lil";
+import { newDOMParser } from "../js-host.lil";
+
+JsValue textContentOf = (JsValue el) => el["textContent"];
 
 export JsValue parseXML(JsValue data) {
-  if (JS.isNullish(data) || !data.truthy() || JS.typeOf(data) != "string") {
+  if (!data.truthy() || !(data is string)) {
     return null;
   }
-
-  JsValue xml = null;
+  JsValue xml = JS.undefined();
   try {
-    JsValue parser = newDOMParser();
-    xml = JS.invoke(parser, "parseFromString", data, "text/xml");
+    xml = JS.invoke(newDOMParser(), "parseFromString", data, "text/xml");
   } catch {
   }
-
-  JsValue parserErrorElem = null;
-  bool hasXml = !JS.isNullish(xml) && xml.truthy();
-  if (hasXml) {
-    JsValue errors = JS.invoke(xml, "getElementsByTagName", "parsererror");
-    parserErrorElem = errors[0];
+  JsValue parserErrorElem = JS.and(xml, JS.invoke(xml, "getElementsByTagName", "parsererror")[0]);
+  if (!xml.truthy() || parserErrorElem.truthy()) {
+    JS.invoke(jQuery, "error", JS.add("Invalid XML: ", if (parserErrorElem.truthy()) {
+      JS.invoke(map(parserErrorElem["childNodes"], textContentOf), "join", "\n")
+    } else {
+      data
+    }));
   }
-
-  bool hasError = !JS.isNullish(parserErrorElem) && parserErrorElem.truthy();
-  if (!hasXml || hasError) {
-    JsValue detail = data;
-    if (hasError) {
-      JsValue texts = map(parserErrorElem["childNodes"], (JsValue el, JsValue _i, JsValue _arg) => {
-        return el["textContent"];
-      });
-      detail = JS.join(texts, "\n");
-    }
-    JS.invoke(jQuery, "error", "Invalid XML: " + JS.string(detail));
-  }
-
   return xml;
 }
 

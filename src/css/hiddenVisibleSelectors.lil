@@ -1,39 +1,12 @@
 import { jQuery } from "../core";
-import {
-  createEmptyObject,
-  call0
-} from "../js-host.lil";
+import { expr } from "../selector";
 
-JsValue expr = jQuery["expr"];
-if (!expr.truthy()) {
-  expr = JS.object();
-  jQuery["expr"] = expr;
+bool visible(JsValue elem) {
+  return JS.or(JS.or(elem["offsetWidth"], elem["offsetHeight"]), JS.invoke(elem, "getClientRects")["length"]).truthy();
 }
 
 JsValue pseudos = expr["pseudos"];
-if (!pseudos.truthy()) {
-  pseudos = JS.object();
-  expr["pseudos"] = pseudos;
-}
-
-bool visible(JsValue elem) {
-  JsValue offsetWidth = elem["offsetWidth"];
-  if (offsetWidth.truthy()) {
-    return true;
-  }
-  JsValue offsetHeight = elem["offsetHeight"];
-  if (offsetHeight.truthy()) {
-    return true;
-  }
-  JsValue rects = JS.invoke(elem, "getClientRects");
-  return rects.length > 0.0;
-}
-
-bool hidden(JsValue elem) {
-  return !visible(elem);
-}
-
-pseudos["hidden"] = hidden;
+pseudos["hidden"] = (JsValue elem) => !JS.invoke(pseudos, "visible", elem).truthy();
 pseudos["visible"] = visible;
 
 export { jQuery };

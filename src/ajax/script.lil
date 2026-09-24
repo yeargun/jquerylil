@@ -1,98 +1,7 @@
-import { jQuery, globalEval, wrap } from "../core";
+import { jQuery, wrap } from "../core";
 import { document } from "../var/document";
 
-struct ScriptAccepts {
-  string script;
-}
-
-struct ScriptContents {
-  Regex script;
-}
-
-struct ScriptSetup {
-  JsValue accepts;
-  JsValue contents;
-  JsValue converters;
-}
-
-struct ScriptProps {
-  JsValue charset;
-  JsValue src;
-}
-
-struct ScriptTransport {
-  JsValue send;
-  JsValue abort;
-}
-
-Regex rScriptContentType = new Regex("\\b(?:java|ecma)script\\b");
-
-JsValue scriptConverters = JS.object();
-scriptConverters["text script"] = (JsValue text) => {
-  if (text is string) {
-    globalEval(text);
-  } else {
-    globalEval(JS.string(text));
-  }
-  return text;
-};
-
-JsValue scriptSetupOptions = ScriptSetup{
-  ScriptAccepts{"text/javascript, application/javascript, application/ecmascript, application/x-ecmascript"},
-  ScriptContents{rScriptContentType},
-  scriptConverters
-};
-
-JsValue scriptTransportFactory(JsValue s) {
-  if (s["crossDomain"].truthy() || s["scriptAttrs"].truthy()) {
-    JsValue callback = null;
-
-    JsValue onHandler = JS.undefined();
-    JsValue transport = JS.undefined();
-
-    transport = ScriptTransport{
-      (JsValue _headers, JsValue complete) => {
-      JsValue attrs = s["scriptAttrs"];
-      if (!attrs.truthy()) {
-        attrs = JS.object();
-      }
-      JsValue script = wrap("<script>");
-      JS.invoke(script, "attr", attrs);
-
-      JS.invoke(script, "prop", ScriptProps{s["scriptCharset"], s["url"]});
-
-      onHandler = (JsValue evt) => {
-        JS.invoke(script, "remove");
-        callback = null;
-        if (evt.truthy()) {
-          float statusNum = 200.0;
-          if (JS.string(evt["type"]) == "error") {
-            statusNum = 404.0;
-          }
-          complete(statusNum, evt["type"]);
-        }
-        return JS.undefined();
-      };
-      callback = onHandler;
-
-      JS.invoke(script, "on", "load error", onHandler);
-
-      JS.invoke(document["head"], "appendChild", script[0]);
-      return JS.undefined();
-    },
-      () => {
-      if (callback.truthy()) {
-        callback();
-      }
-      return JS.undefined();
-    }
-    };
-
-    return transport;
-  }
-  return JS.undefined();
-}
-
+// Prevent auto-execution of scripts when no explicit dataType was provided.
 JS.invoke(jQuery, "ajaxPrefilter", (JsValue s) => {
   if (s["crossDomain"].truthy()) {
     s["contents"]["script"] = false;
@@ -100,8 +9,23 @@ JS.invoke(jQuery, "ajaxPrefilter", (JsValue s) => {
   return JS.undefined();
 });
 
-JS.invoke(jQuery, "ajaxSetup", scriptSetupOptions);
+// Install script dataType
+JS.invoke(jQuery, "ajaxSetup", object {
+  accepts: object {
+    script: "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript"
+  },
+  contents: object {
+    script: new Regex("\\b(?:java|ecma)script\\b")
+  },
+  converters: object {
+    "text script": (JsValue text) => {
+      JS.invoke(jQuery, "globalEval", text);
+      return text;
+    }
+  }
+});
 
+// Handle cache's special case and crossDomain
 JS.invoke(jQuery, "ajaxPrefilter", "script", (JsValue s) => {
   if (JS.isUndefined(s["cache"])) {
     s["cache"] = false;
@@ -112,6 +36,39 @@ JS.invoke(jQuery, "ajaxPrefilter", "script", (JsValue s) => {
   return JS.undefined();
 });
 
-JS.invoke(jQuery, "ajaxTransport", "script", scriptTransportFactory);
+// Bind script tag hack transport
+JS.invoke(jQuery, "ajaxTransport", "script", (JsValue s) => {
+  // This transport only deals with cross domain or forced-by-attrs requests
+  if (s["crossDomain"].truthy() || s["scriptAttrs"].truthy()) {
+    JsValue script = JS.undefined();
+    JsValue callback = JS.undefined();
+    return object {
+      send: (JsValue _headers, JsValue complete) => {
+        callback = (JsValue evt) => {
+          JS.invoke(script, "remove");
+          callback = null;
+          if (evt.truthy()) {
+            complete(if (JS.strictEqual(evt["type"], "error")) { 404.0 } else { 200.0 }, evt["type"]);
+          }
+          return JS.undefined();
+        };
+        JsValue attrs = JS.invoke(wrap("<script>"), "attr", JS.or(s["scriptAttrs"], JS.object()));
+        JsValue props = JS.invoke(attrs, "prop", object { charset: s["scriptCharset"], src: s["url"] });
+        script = JS.invoke(props, "on", "load error", callback);
+
+        // Use native DOM manipulation to avoid our domManip AJAX trickery
+        JS.invoke(document["head"], "appendChild", script[0]);
+        return JS.undefined();
+      },
+      abort: () => {
+        if (callback.truthy()) {
+          callback();
+        }
+        return JS.undefined();
+      }
+    };
+  }
+  return JS.undefined();
+});
 
 export { jQuery };

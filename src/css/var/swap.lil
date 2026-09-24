@@ -1,9 +1,4 @@
-import {
-  createEmptyObject,
-  call0
-} from "../../js-host.lil";
-
-export JsValue swap(JsValue elem, JsValue options, JsValue callback) {
+export JsValue swap(JsValue elem, JsValue options, func(JsValue)->JsValue callback) {
   JsValue style = elem["style"];
   JsValue old = JS.object();
 
@@ -12,7 +7,7 @@ export JsValue swap(JsValue elem, JsValue options, JsValue callback) {
     style[name] = options[name];
   }
 
-  JsValue ret = JS.call(callback, elem);
+  JsValue ret = callback(elem);
 
   for (string name in options) {
     style[name] = old[name];

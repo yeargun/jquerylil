@@ -1,6 +1,5 @@
-import {
-  objectConstructor,
-  functionToString
-} from "../js-host.lil";
+import { fnToString } from "./class2type";
 
-export string ObjectFunctionString = functionToString(objectConstructor());
+extern JsValue Object;
+
+export string ObjectFunctionString = JS.assume(JS.invoke(fnToString, "call", Object));

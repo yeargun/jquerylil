@@ -1,89 +1,76 @@
+extern JsValue this;
 import { jQuery, each, wrap, wrap2 } from "./core";
 import { isFunction } from "./var/isFunction";
 
-JsValue fnWrapAll(JsValue self, JsValue htmlArg) {
-  JsValue firstElem = self[0];
-  if (firstElem.truthy()) {
-    JsValue html = htmlArg;
+JsValue fnWrapAll(JsValue html) {
+  JsValue self = this;
+  JsValue first = self[0];
+  if (first.truthy()) {
     if (isFunction(html)) {
-      html = JS.call(html, firstElem, firstElem);
+      html = JS.call(html, first);
     }
 
-    JsValue ownerDoc = firstElem["ownerDocument"];
-    JsValue created = wrap2(html, ownerDoc);
-    JsValue firstOfCreated = JS.invoke(created, "eq", 0.0);
-    JsValue wrapEl = JS.invoke(firstOfCreated, "clone", true);
+    JsValue wrapper = JS.invoke(JS.invoke(wrap2(html, first["ownerDocument"]), "eq", 0.0), "clone", true);
 
-    if (firstElem["parentNode"].truthy()) {
-      JS.invoke(wrapEl, "insertBefore", firstElem);
+    if (first["parentNode"].truthy()) {
+      JS.invoke(wrapper, "insertBefore", first);
     }
 
-    JsValue innermost = JS.invoke(wrapEl, "map", (JsValue index, JsValue wrapElem) => {
-      JsValue elem = wrapElem;
-      while (elem["firstElementChild"].truthy()) {
-        elem = elem["firstElementChild"];
+    JS.invoke(JS.invoke(wrapper, "map", (JsValue _i, JsValue elem) => {
+      JsValue inner = elem;
+      while (inner["firstElementChild"].truthy()) {
+        inner = inner["firstElementChild"];
       }
-      return elem;
-    });
-    JS.invoke(innermost, "append", self);
+      return inner;
+    }), "append", self);
   }
 
   return self;
 }
 
-JsValue fnWrapInner(JsValue self, JsValue html) {
+JsValue fnWrapInner(JsValue html) {
   if (isFunction(html)) {
-    return each(self, (JsValue index, JsValue elem) => {
-      JsValue wrapped = wrap(elem);
-      JsValue computed = JS.call(html, elem, index, JS.undefined());
-      JS.invoke(wrapped, "wrapInner", computed);
+    return each(this, (JsValue i, JsValue elem) => {
+      JS.invoke(wrap(elem), "wrapInner", JS.call(html, elem, i));
       return JS.undefined();
     });
   }
 
-  return each(self, (JsValue index, JsValue elem) => {
-    JsValue selfWrapped = wrap(elem);
-    JsValue contents = JS.invoke(selfWrapped, "contents");
-
+  return each(this, (JsValue _i, JsValue elem) => {
+    JsValue self = wrap(elem);
+    JsValue contents = JS.invoke(self, "contents");
     if (contents.length > 0.0) {
       JS.invoke(contents, "wrapAll", html);
     } else {
-      JS.invoke(selfWrapped, "append", html);
+      JS.invoke(self, "append", html);
     }
     return JS.undefined();
   });
 }
 
-JsValue fnWrap(JsValue self, JsValue html) {
+JsValue fnWrap(JsValue html) {
   bool htmlIsFunction = isFunction(html);
-
-  return each(self, (JsValue index, JsValue elem) => {
-    JsValue wrapped = wrap(elem);
-    JsValue target = html;
-    if (htmlIsFunction) {
-      target = JS.call(html, elem, index, JS.undefined());
-    }
-    JS.invoke(wrapped, "wrapAll", target);
+  return each(this, (JsValue i, JsValue elem) => {
+    JS.invoke(wrap(elem), "wrapAll", if (htmlIsFunction) { JS.call(html, elem, i) } else { html });
     return JS.undefined();
   });
 }
 
-JsValue fnUnwrap(JsValue self, JsValue selector) {
-  JsValue parents = JS.invoke(self, "parent", selector);
-  JsValue withoutBody = JS.invoke(parents, "not", "body");
-  each(withoutBody, (JsValue index, JsValue elem) => {
-    JsValue wrapped = wrap(elem);
-    JS.invoke(wrapped, "replaceWith", elem["childNodes"]);
-    return JS.undefined();
-  });
-
-  return self;
+JsValue unwrapOne() {
+  JS.invoke(wrap(this), "replaceWith", this["childNodes"]);
+  return JS.undefined();
 }
 
-JsValue fn = jQuery["fn"];
-fn["wrapAll"] = JS.method1(fnWrapAll);
-fn["wrapInner"] = JS.method1(fnWrapInner);
-fn["wrap"] = JS.method1(fnWrap);
-fn["unwrap"] = JS.method1(fnUnwrap);
+JsValue fnUnwrap(JsValue selector) {
+  JS.invoke(JS.invoke(JS.invoke(this, "parent", selector), "not", "body"), "each", unwrapOne);
+  return this;
+}
+
+JS.invoke(jQuery["fn"], "extend", JS.object(
+  "wrapAll", fnWrapAll,
+  "wrapInner", fnWrapInner,
+  "wrap", fnWrap,
+  "unwrap", fnUnwrap
+));
 
 export { jQuery };

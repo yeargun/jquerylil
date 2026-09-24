@@ -11,9 +11,8 @@ export JsValue access(
   JsValue emptyGet,
   bool raw
 ) {
-  float i = 0.0;
   float len = elems.length;
-  bool bulk = key == null;
+  bool bulk = JS.isNullish(key);
 
   if (toType(key) == "object") {
     chainable = true;
@@ -22,11 +21,9 @@ export JsValue access(
     }
   } else if (!JS.isUndefined(value)) {
     chainable = true;
-
     if (!isFunction(value)) {
       raw = true;
     }
-
     if (bulk) {
       if (raw) {
         JS.call(fn, elems, value);
@@ -38,29 +35,20 @@ export JsValue access(
         };
       }
     }
-
     if (fn.truthy()) {
-      for (; i < len; i++) {
-        JsValue elem = elems[i];
-        JsValue computed = value;
-        if (!raw) {
-          computed = JS.call(value, elem, i, fn(elem, key));
-        }
-        fn(elem, key, computed);
+      for (float i = 0.0; i < len; i++) {
+        fn(elems[i], key, if (raw) { value } else { JS.call(value, elems[i], i, fn(elems[i], key)) });
       }
     }
   }
 
-  if (chainable) {
-    return elems;
-  }
-
-  if (bulk) {
-    return JS.call(fn, elems);
-  }
-
-  if (len != 0.0) {
-    return fn(elems[0], key);
-  }
-  return emptyGet;
+  return if (chainable) {
+    elems
+  } else {
+    if (bulk) {
+      JS.call(fn, elems)
+    } else {
+      if (len != 0.0) { fn(elems[0], key) } else { emptyGet }
+    }
+  };
 }

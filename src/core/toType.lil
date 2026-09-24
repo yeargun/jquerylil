@@ -1,20 +1,13 @@
-import { class2type } from "../var/class2type";
-import {
-  typeOf,
-  isNullish,
-  objectToStringTag
-} from "../js-host.lil";
+import { class2type, toStringTag } from "../var/class2type";
 
 export string toType(JsValue obj) {
-  if (JS.isNullish(obj)) {
-    return JS.string(obj);
-  }
-  if (JS.typeOf(obj) == "object" || JS.typeOf(obj) == "function") {
-    JsValue mapped = class2type[objectToStringTag(obj)];
-    if (mapped.truthy()) {
-      return JS.assume(mapped);
+  return if (JS.isNullish(obj)) {
+    JS.string(obj)
+  } else {
+    if (JS.typeOf(obj) == "object" || JS.typeOf(obj) == "function") {
+      JS.assume(JS.or(class2type[toStringTag(obj)], "object"))
+    } else {
+      JS.typeOf(obj)
     }
-    return "object";
-  }
-  return JS.typeOf(obj);
+  };
 }

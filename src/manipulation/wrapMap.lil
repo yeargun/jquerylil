@@ -1,33 +1,23 @@
 import { support } from "./support";
 
-export struct Wrap {
-  float depth;
-  string open;
-  string close;
-}
+JsValue thead = JS.array(1.0, "<table>", "</table>");
+JsValue td = JS.array(3.0, "<table><tbody><tr>", "</tr></tbody></table>");
 
-Wrap theadWrap = Wrap{1.0, "<table>", "</table>"};
-Wrap colWrap = Wrap{2.0, "<table><colgroup>", "</colgroup></table>"};
-Wrap trWrap = Wrap{2.0, "<table><tbody>", "</tbody></table>"};
-Wrap tdWrap = Wrap{3.0, "<table><tbody><tr>", "</tr></tbody></table>"};
-Wrap defaultWrap = Wrap{0.0, "", ""};
-Wrap optionWrap = Wrap{1.0, "<select multiple='multiple'>", "</select>"};
+export JsValue wrapMap = JS.object(
+  "thead", thead,
+  "col", JS.array(2.0, "<table><colgroup>", "</colgroup></table>"),
+  "tr", JS.array(2.0, "<table><tbody>", "</tbody></table>"),
+  "td", td,
+  "_default", JS.array(0.0, "", ""),
+  "tbody", thead,
+  "tfoot", thead,
+  "colgroup", thead,
+  "caption", thead,
+  "th", td
+);
 
-export Wrap wrapForTag(string tag) {
-  if (tag == "td" || tag == "th") {
-    return tdWrap;
-  }
-  if (tag == "tr") {
-    return trWrap;
-  }
-  if (tag == "col") {
-    return colWrap;
-  }
-  if (tag == "thead" || tag == "tbody" || tag == "tfoot" || tag == "colgroup" || tag == "caption") {
-    return theadWrap;
-  }
-  if (!support.option && (tag == "option" || tag == "optgroup")) {
-    return optionWrap;
-  }
-  return defaultWrap;
+if (!support.option) {
+  JsValue option = JS.array(1.0, "<select multiple='multiple'>", "</select>");
+  wrapMap["optgroup"] = option;
+  wrapMap["option"] = option;
 }

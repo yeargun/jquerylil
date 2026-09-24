@@ -1,107 +1,58 @@
+extern JsValue arguments;
+extern JsValue this;
 import { jQuery, each, isXMLDoc } from "../core";
 import { access } from "../core/access";
 import { support } from "./support";
 import { find } from "../selector";
-import {
-  jsUndefined,
-  createEmptyObject,
-  deleteProp,
-  hasProp,
-  isUndefined,
-  isNullish,
-  regexTest,
-  stringify,
-  parseIntRadix,
-  call1,
-  call2,
-  call3
-} from "../js-host.lil";
-
+import { parseIntRadix } from "../js-host.lil";
 
 Regex rfocusable = new Regex("^(?:input|select|textarea|button)$", "i");
 Regex rclickable = new Regex("^(?:a|area)$", "i");
 
-struct GetHook {
-  JsValue get;
-}
+JsValue propFix = JS.object("for", "htmlFor", "class", "className");
 
-struct GetSetHook {
-  JsValue get;
-  JsValue set;
-}
-
-struct PropFix {
-  string for;
-  string class;
-}
-
-struct PropHooks {
-  JsValue tabIndex;
-}
-
-JsValue propFix = PropFix{"htmlFor", "className"};
-each(["tabIndex", "readOnly", "maxLength", "cellSpacing", "cellPadding", "rowSpan", "colSpan", "useMap", "frameBorder", "contentEditable"], (JsValue _i, JsValue name) => {
-  string n = JS.string(name);
-  propFix[n.toLowerCase()] = n;
-  return JS.undefined();
-});
-
-JsValue tabIndexGet(JsValue elem) {
+JsValue propHooks = JS.object("tabIndex", JS.object("get", (JsValue elem) => {
   JsValue tabindex = JS.invoke(find, "attr", elem, "tabindex");
   if (tabindex.truthy()) {
-    return parseIntRadix(JS.string(tabindex), 10.0);
+    return parseIntRadix(JS.assume(tabindex), 10.0);
   }
-
-  JsValue nodeNameText = JS.or(JS.and(elem, elem["nodeName"]), "");
-
-  if (JS.regexTest(rfocusable, nodeNameText)) {
-    return 0.0;
-  }
-  if (JS.regexTest(rclickable, nodeNameText) && elem["href"].truthy()) {
+  if (JS.regexTest(rfocusable, elem["nodeName"]) || (JS.regexTest(rclickable, elem["nodeName"]) && elem["href"].truthy())) {
     return 0.0;
   }
   return -1.0;
-}
-
-JsValue propHooks = PropHooks{GetHook{tabIndexGet}};
-
-JsValue selectedGet(JsValue elem) {
-  JsValue parent = elem["parentNode"];
-  if (parent.truthy() && parent["parentNode"].truthy()) {
-    parent["parentNode"]["selectedIndex"];
-  }
-  return null;
-}
-
-JsValue selectedSet(JsValue elem) {
-  JsValue parent = elem["parentNode"];
-  if (parent.truthy()) {
-    parent["selectedIndex"];
-    if (parent["parentNode"].truthy()) {
-      parent["parentNode"]["selectedIndex"];
-    }
-  }
-  return null;
-}
+}));
 
 if (!support.optSelected) {
-  JsValue selectedHookBag = GetSetHook{selectedGet, selectedSet};
-  propHooks["selected"] = selectedHookBag;
+  propHooks["selected"] = JS.object(
+    "get", (JsValue elem) => {
+      JsValue parent = elem["parentNode"];
+      if (parent.truthy() && parent["parentNode"].truthy()) {
+        parent["parentNode"]["selectedIndex"];
+      }
+      return null;
+    },
+    "set", (JsValue elem) => {
+      JsValue parent = elem["parentNode"];
+      if (parent.truthy()) {
+        parent["selectedIndex"];
+        if (parent["parentNode"].truthy()) {
+          parent["parentNode"]["selectedIndex"];
+        }
+      }
+      return JS.undefined();
+    }
+  );
 }
 
-export JsValue prop(JsValue elem, JsValue nameValue, JsValue value) {
-  JsValue nodeTypeValue = JS.and(elem, elem["nodeType"]);
-  if (nodeTypeValue == 3.0 || nodeTypeValue == 8.0 || nodeTypeValue == 2.0) {
+export JsValue prop(JsValue elem, JsValue name, JsValue value) {
+  JsValue nType = elem["nodeType"];
+  if (nType == 3.0 || nType == 8.0 || nType == 2.0) {
     return JS.undefined();
   }
 
-  JsValue name = nameValue;
   JsValue hooks = null;
-  if (nodeTypeValue != 1.0 || !isXMLDoc(elem)) {
-    JsValue fixed = propFix[nameValue];
-    if (fixed.truthy()) {
-      name = fixed;
-    }
+  if (nType != 1.0 || !isXMLDoc(elem)) {
+    name = JS.or(propFix[name], name);
     hooks = propHooks[name];
   }
 
@@ -118,35 +69,38 @@ export JsValue prop(JsValue elem, JsValue nameValue, JsValue value) {
 
   if (hooks.truthy() && JS.in("get", hooks)) {
     JsValue ret = JS.invoke(hooks, "get", elem, name);
-    if (!JS.isNullish(ret)) {
+    if (!JS.strictEqual(ret, null)) {
       return ret;
     }
   }
   return elem[name];
 }
 
-export JsValue fnProp(JsValue self, JsValue args) {
-  return access(self, prop, args[0], args[1], args.length > 1.0, JS.undefined(), false);
+export JsValue fnProp(JsValue name, JsValue value) {
+  return access(this, prop, name, value, arguments.length > 1.0, JS.undefined(), false);
 }
 
-export JsValue fnRemoveProp(JsValue nameArg) {
-  JsValue self = this;
-  return each(self, (JsValue _i, JsValue el) => {
-    JsValue fixed = propFix[nameArg];
-    JsValue key = nameArg;
-    if (fixed.truthy()) {
-      key = fixed;
-    }
-    JS.delete(el, key);
+export JsValue fnRemoveProp(JsValue name) {
+  return each(this, (JsValue _i, JsValue elem) => {
+    JS.delete(elem, JS.or(propFix[name], name));
     return JS.undefined();
   });
 }
 
-jQuery["fn"]["prop"] = JS.methodRest(fnProp);
-jQuery["fn"]["removeProp"] = fnRemoveProp;
+JS.invoke(jQuery["fn"], "extend", JS.object(
+  "prop", fnProp,
+  "removeProp", fnRemoveProp
+));
 
-jQuery["prop"] = prop;
-jQuery["propHooks"] = propHooks;
-jQuery["propFix"] = propFix;
+JS.invoke(jQuery, "extend", JS.object(
+  "prop", prop,
+  "propHooks", propHooks,
+  "propFix", propFix
+));
+
+each(JS.array("tabIndex", "readOnly", "maxLength", "cellSpacing", "cellPadding", "rowSpan", "colSpan", "useMap", "frameBorder", "contentEditable"), (JsValue _i, JsValue name) => {
+  propFix[JS.invoke(name, "toLowerCase")] = name;
+  return JS.undefined();
+});
 
 export { jQuery };

@@ -1,78 +1,74 @@
+extern JsValue this;
 import { jQuery, each, wrap } from "../core";
-import { ajax } from "../ajax";
 import { stripAndCollapse } from "../core/stripAndCollapse";
 import { isFunction } from "../var/isFunction";
 import { parseHTML } from "../core/parseHTML";
 
-struct LoadAjaxOptions {
-  string url;
-  string type;
-  string dataType;
-  JsValue data;
-}
-
-JsValue fnLoad(JsValue urlArg, JsValue paramsArg, JsValue callbackArg) {
+/**
+ * Load a url into a page
+ */
+JsValue fnLoad(JsValue url, JsValue params, JsValue callback) {
+  JsValue selector = JS.undefined();
+  JsValue type = JS.undefined();
+  JsValue response = JS.undefined();
   JsValue self = this;
+  JsValue off = JS.invoke(url, "indexOf", " ");
 
-  string url = JS.string(urlArg);
-  string selector = "";
-  bool hasSelector = false;
-
-  float off = JS.stringIndexOf(url, " ");
-  if (off > -1.0) {
-    selector = stripAndCollapse(JS.stringSlice(url, off));
-    hasSelector = true;
-    url = JS.stringSlice(url, 0.0, off);
+  if (JS.greaterThan(off, -1.0)) {
+    selector = stripAndCollapse(JS.assume(JS.invoke(url, "slice", off)));
+    url = JS.invoke(url, "slice", 0.0, off);
   }
 
-  JsValue params = paramsArg;
-  JsValue callback = callbackArg;
-  string type = "GET";
-
+  // If it's a function
   if (isFunction(params)) {
+
+    // We assume that it's the callback
     callback = params;
     params = JS.undefined();
+
+  // Otherwise, build a param string
   } else if (params.truthy() && JS.typeOf(params) == "object") {
     type = "POST";
   }
 
+  // If we have elements to modify, make the request
   if (JS.greaterThan(self["length"], 0.0)) {
-    JsValue response = null;
+    JsValue request = JS.invoke(jQuery, "ajax", object {
+      url: url,
 
-    LoadAjaxOptions ajaxOptions = LoadAjaxOptions{url, type, "html", params};
-
-    JsValue request = ajax(ajaxOptions, JS.undefined());
-
-    JsValue afterRequest = JS.invoke(request, "done", (JsValue responseText, JsValue textStatus, JsValue jqXHRDone) => {
-      JsValue[] doneArgs = [responseText, textStatus, jqXHRDone];
-      response = doneArgs;
-
-      if (hasSelector) {
-        JsValue container = wrap("<div>");
-        JsValue parsed = parseHTML(responseText, null, null);
-        JS.invoke(container, "append", parsed);
-        JsValue found = JS.invoke(container, "find", selector);
-        JS.invoke(self, "html", found);
-      } else {
-        JS.invoke(self, "html", responseText);
-      }
-      return JS.undefined();
+      // If "type" variable is undefined, then "GET" method will be used.
+      // Make value of this field explicit since
+      // user can override it through ajaxSetup method
+      type: JS.or(type, "GET"),
+      dataType: "html",
+      data: params
     });
+    JsValue afterDone = JS.invoke(request, "done", JS.staticRest((JsValue args) => {
 
+      // Save response for use in complete callback
+      response = args;
+
+      JsValue responseText = args[0];
+      JS.invoke(self, "html", if (selector.truthy()) {
+        // If a selector was specified, locate the right elements in a dummy div
+        // Exclude scripts to avoid IE 'Permission Denied' errors
+        JS.invoke(JS.invoke(wrap("<div>"), "append", parseHTML(responseText, null, null)), "find", selector)
+      } else {
+        // Otherwise use the full result
+        responseText
+      });
+      return JS.undefined();
+    }));
+
+    // If the request succeeds, this function gets "data", "status", "jqXHR"
+    // but they are ignored because response was set above.
+    // If it fails, this function gets "jqXHR", "status", "error"
     if (callback.truthy()) {
-      JS.invoke(afterRequest, "always", (JsValue jqXHR, JsValue status) => {
-        each(self, JS.method0((JsValue el) => {
-          JsValue applyArgs = response;
-          if (!applyArgs.truthy()) {
-            JsValue[] fallback = [];
-            fallback.push(jqXHR["responseText"]);
-            fallback.push(status);
-            fallback.push(jqXHR);
-            applyArgs = fallback;
-          }
-          JS.invoke(callback, "apply", el, applyArgs);
+      JS.invoke(afterDone, "always", (JsValue jqXHR, JsValue status) => {
+        each(self, (JsValue _i, JsValue el) => {
+          JS.invoke(callback, "apply", el, JS.or(response, [jqXHR["responseText"], status, jqXHR]));
           return JS.undefined();
-        }));
+        });
         return JS.undefined();
       });
     }

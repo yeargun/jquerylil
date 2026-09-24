@@ -1,7 +1,3 @@
-import {
-  jsUndefined
-} from "../js-host.lil";
-
 struct GetHook {
   JsValue get;
 }

@@ -1,21 +1,10 @@
 import { isAttached } from "../../core/isAttached";
 import { css } from "../../css";
 
+// Upstream's (elem, el): `.filter(isHiddenWithinTree)` passes (index, elem).
 export bool isHiddenWithinTree(JsValue elemArg, JsValue elArg = null) {
-  JsValue elem = elemArg;
-  if (elArg.truthy()) {
-    elem = elArg;
-  }
-
+  JsValue elem = JS.or(elArg, elemArg);
   JsValue display = elem["style"]["display"];
-  if (JS.strictEqual(display, "none")) {
-    return true;
-  }
-  if (!JS.strictEqual(display, "")) {
-    return false;
-  }
-  if (!isAttached(elem)) {
-    return false;
-  }
-  return JS.strictEqual(css(elem, "display"), "none");
+  return JS.strictEqual(display, "none") ||
+    JS.strictEqual(display, "") && isAttached(elem) && JS.strictEqual(css(elem, "display"), "none");
 }

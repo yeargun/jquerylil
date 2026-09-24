@@ -150,7 +150,7 @@ export extern JsValue getProp(JsValue obj, string key);
 export extern void deleteProp(JsValue obj, string key);
 export extern bool hasProp(JsValue obj, string key);
 export extern JsValue objectBox(JsValue value);
-export extern void defineIterator(JsValue obj, JsValue iterator);
+export extern void defineIterator(JsValue obj, JsValue source);
 export extern JsValue getArrayIterator();
 export extern void noop();
 export extern void throwError(JsValue msg);

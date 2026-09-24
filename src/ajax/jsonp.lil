@@ -1,66 +1,61 @@
+extern JsValue this;
 import { jQuery, wrap } from "../core";
 import { isFunction } from "../var/isFunction";
-import { nonce } from "./var/nonce";
+import { nextGuid } from "./var/nonce";
 import { rquery } from "./var/rquery";
 import {
   windowSelf
 } from "../js-host.lil";
 
+JsValue[] oldCallbacks = [];
 Regex rjsonp = new Regex("(=)\\?(?=&|$)|\\?\\?");
 
-JsValue[] oldCallbacks = [];
-
-JsValue jsonpCallbackFactory() {
-  JsValue self = this;
-  JsValue callback = oldCallbacks.pop();
-  if (!callback.truthy()) {
-    JsValue guidVal = nonce["guid"];
-    nonce["guid"] = JS.add(guidVal, 1.0);
-    callback = JS.add(JS.add(jQuery["expando"], "_"), guidVal);
-  }
-  self[callback] = true;
+JsValue jsonpCallback() {
+  JsValue callback = JS.or(oldCallbacks.pop(), JS.add(JS.add(jQuery["expando"], "_"), nextGuid()));
+  this[callback] = true;
   return callback;
 }
 
-struct JsonpSetup {
-  string jsonp;
-  JsValue jsonpCallback;
-}
+// Default jsonp settings
+JS.invoke(jQuery, "ajaxSetup", object {
+  jsonp: "callback",
+  jsonpCallback: jsonpCallback
+});
 
-JsValue jsonpSetupOptions = JsonpSetup{"callback", jsonpCallbackFactory};
-
-JsValue jsonpPrefilter(JsValue s, JsValue originalSettings, JsValue jqXHR) {
-  JsValue jsonProp = false;
-
-  if (s["jsonp"] != false) {
-    if (JS.regexTest(rjsonp, s["url"])) {
-      jsonProp = "url";
-    } else if (s["data"] is string && JS.strictEqual(JS.invoke(JS.or(s["contentType"], ""), "indexOf", "application/x-www-form-urlencoded"), 0.0) && JS.regexTest(rjsonp, s["data"])) {
-      jsonProp = "data";
+// Detect, normalize options and install callbacks for jsonp requests
+JS.invoke(jQuery, "ajaxPrefilter", "json jsonp", (JsValue s, JsValue originalSettings, JsValue jqXHR) => {
+  JsValue overwritten = JS.undefined();
+  JsValue responseContainer = JS.undefined();
+  JsValue jsonProp = JS.and(
+    JS.strictNotEqual(s["jsonp"], false),
+    if (JS.invoke(rjsonp, "test", s["url"]).truthy()) {
+      "url"
+    } else {
+      JS.and(
+        JS.and(
+          s["data"] is string && JS.strictEqual(JS.invoke(JS.or(s["contentType"], ""), "indexOf", "application/x-www-form-urlencoded"), 0.0),
+          JS.invoke(rjsonp, "test", s["data"])
+        ),
+        "data"
+      )
     }
-  }
+  );
 
+  // Handle iff the expected data type is "jsonp" or we have a parameter to set
   if (jsonProp.truthy() || JS.strictEqual(s["dataTypes"][0], "jsonp")) {
-    JsValue jsonpCallbackSetting = s["jsonpCallback"];
-    JsValue callbackName = jsonpCallbackSetting;
-    if (isFunction(jsonpCallbackSetting)) {
-      callbackName = JS.invoke(s, "jsonpCallback");
-    }
+
+    // Get callback name, remembering preexisting value associated with it
+    JsValue callbackName = if (isFunction(s["jsonpCallback"])) { JS.invoke(s, "jsonpCallback") } else { s["jsonpCallback"] };
     s["jsonpCallback"] = callbackName;
 
+    // Insert callback into url or form data
     if (jsonProp.truthy()) {
       s[jsonProp] = JS.invoke(s[jsonProp], "replace", rjsonp, JS.add("$1", callbackName));
-    } else if (s["jsonp"] != false) {
-      JsValue sep = "?";
-      if (JS.regexTest(rquery, s["url"])) {
-        sep = "&";
-      }
-      s["url"] = JS.add(JS.add(s["url"], sep), JS.add(JS.add(s["jsonp"], "="), callbackName));
+    } else if (JS.strictNotEqual(s["jsonp"], false)) {
+      s["url"] = JS.add(JS.add(JS.add(JS.add(s["url"], if (JS.invoke(rquery, "test", s["url"]).truthy()) { "&" } else { "?" }), s["jsonp"]), "="), callbackName);
     }
 
-    JsValue responseContainer = null;
-    JsValue overwritten = null;
-
+    // Use data converter to retrieve json after script execution
     s["converters"]["script json"] = () => {
       if (!responseContainer.truthy()) {
         JS.invoke(jQuery, "error", JS.add(callbackName, " was not called"));
@@ -68,8 +63,10 @@ JsValue jsonpPrefilter(JsValue s, JsValue originalSettings, JsValue jqXHR) {
       return responseContainer[0];
     };
 
+    // Force json dataType
     s["dataTypes"][0] = "json";
 
+    // Install callback
     JsValue win = windowSelf();
     overwritten = win[callbackName];
     win[callbackName] = JS.staticRest((JsValue args) => {
@@ -77,19 +74,29 @@ JsValue jsonpPrefilter(JsValue s, JsValue originalSettings, JsValue jqXHR) {
       return JS.undefined();
     });
 
+    // Clean-up function (fires after converters)
     JS.invoke(jqXHR, "always", () => {
+
+      // If previous value didn't exist - remove it
       if (JS.isUndefined(overwritten)) {
-        JsValue wrapped = wrap(win);
-        JS.invoke(wrapped, "removeProp", callbackName);
+        JS.invoke(wrap(win), "removeProp", callbackName);
+
+      // Otherwise restore preexisting value
       } else {
         win[callbackName] = overwritten;
       }
 
+      // Save back as free
       if (s[callbackName].truthy()) {
+
+        // Make sure that re-using the options doesn't screw things around
         s["jsonpCallback"] = originalSettings["jsonpCallback"];
+
+        // Save the callback name for future use
         oldCallbacks.push(callbackName);
       }
 
+      // Call if it was a function and we have a response
       if (responseContainer.truthy() && isFunction(overwritten)) {
         overwritten(responseContainer[0]);
       }
@@ -99,12 +106,10 @@ JsValue jsonpPrefilter(JsValue s, JsValue originalSettings, JsValue jqXHR) {
       return JS.undefined();
     });
 
+    // Delegate to script
     return "script";
   }
   return JS.undefined();
-}
-
-JS.invoke(jQuery, "ajaxSetup", jsonpSetupOptions);
-JS.invoke(jQuery, "ajaxPrefilter", "json jsonp", jsonpPrefilter);
+});
 
 export { jQuery };

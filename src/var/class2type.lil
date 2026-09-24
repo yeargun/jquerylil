@@ -1,5 +1,8 @@
-import {
-  createEmptyObject
-} from "../js-host.lil";
-
 export JsValue class2type = JS.object();
+export JsValue toString = class2type["toString"];
+export JsValue hasOwn = class2type["hasOwnProperty"];
+export JsValue fnToString = hasOwn["toString"];
+
+export string toStringTag(JsValue obj) {
+  return JS.assume(JS.invoke(toString, "call", obj));
+}

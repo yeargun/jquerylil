@@ -1,114 +1,79 @@
+extern JsValue arguments;
+extern JsValue this;
 import { jQuery, each, isXMLDoc } from "../core";
 import { access } from "../core/access";
 import { nodeName } from "../core/nodeName";
 import { support } from "./support";
+import { prop } from "./prop";
 import { rnothtmlwhite } from "../var/rnothtmlwhite";
 import { expr, find, boolAttrPattern } from "../selector";
-import {
-  jsUndefined,
-  createEmptyObject,
-  hasProp,
-  isNullish,
-  isUndefined,
-  isFalse,
-  regexTest,
-  stringMatch,
-  stringify,
-  call2,
-  call3
-} from "../js-host.lil";
 
-Regex wordPattern = new Regex("\\w+", "g");
-
-struct SetHook {
-  JsValue set;
-}
-
-struct AttrHooks {
-  JsValue type;
-}
-
-JsValue removeAttrImpl(JsValue elem, JsValue value) {
-  if (!value.truthy()) {
-    return null;
-  }
-
-  JsValue nodeTypeValue = JS.and(elem, elem["nodeType"]);
-  JsValue attrNames = JS.stringMatch(JS.string(value), rnothtmlwhite);
-
-  if (attrNames.truthy() && nodeTypeValue == 1.0) {
-    float i = 0.0;
-    float len = attrNames.length;
-    for (; i < len; i++) {
-      JS.invoke(elem, "removeAttribute", JS.string(attrNames[i]));
+JsValue removeAttr(JsValue elem, JsValue value) {
+  JsValue attrNames = JS.and(value, JS.invoke(value, "match", rnothtmlwhite));
+  if (attrNames.truthy() && elem["nodeType"] == 1.0) {
+    for (float i = 0.0; i < attrNames.length; i++) {
+      JS.invoke(elem, "removeAttribute", attrNames[i]);
     }
   }
-  return null;
+  return JS.undefined();
 }
 
-JsValue typeHookSet(JsValue elem, JsValue value) {
+JsValue attrHooks = JS.object("type", JS.object("set", (JsValue elem, JsValue value) => {
   if (!support.radioValue && value == "radio" && nodeName(elem, "input")) {
     JsValue val = elem["value"];
-    JS.invoke(elem, "setAttribute", "type", JS.string(value));
+    JS.invoke(elem, "setAttribute", "type", value);
     if (val.truthy()) {
       elem["value"] = val;
     }
     return value;
   }
   return JS.undefined();
-}
+}));
 
-JsValue attrHooks = AttrHooks{SetHook{typeHookSet}};
-
-JsValue boolHookSet(JsValue elem, JsValue value, JsValue name) {
-  if (JS.isFalse(value)) {
-    removeAttrImpl(elem, name);
+JsValue boolHook = JS.object("set", (JsValue elem, JsValue value, JsValue name) => {
+  if (JS.strictEqual(value, false)) {
+    removeAttr(elem, name);
   } else {
-    string nameText = JS.string(name);
-    JS.invoke(elem, "setAttribute", nameText, nameText);
+    JS.invoke(elem, "setAttribute", name, name);
   }
   return name;
-}
+});
 
-JsValue boolHook = SetHook{boolHookSet};
-
-export JsValue attr(JsValue elem, JsValue nameValue, JsValue value) {
-  JsValue nodeTypeValue = JS.and(elem, elem["nodeType"]);
-  if (nodeTypeValue == 3.0 || nodeTypeValue == 8.0 || nodeTypeValue == 2.0) {
+export JsValue attr(JsValue elem, JsValue name, JsValue value) {
+  JsValue nType = elem["nodeType"];
+  if (nType == 3.0 || nType == 8.0 || nType == 2.0) {
     return JS.undefined();
   }
 
-  string name = JS.string(nameValue);
+  if (JS.isUndefined(elem["getAttribute"])) {
+    return prop(elem, name, value);
+  }
+
   JsValue hooks = null;
-  if (nodeTypeValue != 1.0 || !isXMLDoc(elem)) {
-    JsValue lowerHook = attrHooks[name.toLowerCase()];
-    if (lowerHook.truthy()) {
-      hooks = lowerHook;
-    } else if (JS.regexTest(boolAttrPattern, name)) {
-      hooks = boolHook;
-    }
+  if (nType != 1.0 || !isXMLDoc(elem)) {
+    hooks = JS.or(attrHooks[JS.invoke(name, "toLowerCase")], JS.and(JS.regexTest(boolAttrPattern, name), boolHook));
   }
 
   if (!JS.isUndefined(value)) {
-    if (JS.isNullish(value)) {
-      removeAttrImpl(elem, nameValue);
+    if (JS.strictEqual(value, null)) {
+      removeAttr(elem, name);
       return JS.undefined();
     }
 
     if (hooks.truthy() && JS.in("set", hooks)) {
-      JsValue ret = JS.invoke(hooks, "set", elem, value, nameValue);
+      JsValue ret = JS.invoke(hooks, "set", elem, value, name);
       if (!JS.isUndefined(ret)) {
         return ret;
       }
     }
 
-    JS.invoke(elem, "setAttribute", name, JS.string(value));
+    JS.invoke(elem, "setAttribute", name, JS.add(value, ""));
     return value;
   }
 
   if (hooks.truthy() && JS.in("get", hooks)) {
-    JsValue ret = JS.invoke(hooks, "get", elem, nameValue);
-    if (!JS.isNullish(ret)) {
+    JsValue ret = JS.invoke(hooks, "get", elem, name);
+    if (!JS.strictEqual(ret, null)) {
       return ret;
     }
   }
@@ -120,55 +85,44 @@ export JsValue attr(JsValue elem, JsValue nameValue, JsValue value) {
   return ret;
 }
 
-export JsValue fnAttr(JsValue self, JsValue args) {
-  return access(self, attr, args[0], args[1], args.length > 1.0, JS.undefined(), false);
+export JsValue fnAttr(JsValue name, JsValue value) {
+  return access(this, attr, name, value, arguments.length > 1.0, JS.undefined(), false);
 }
 
-JsValue fnRemoveAttr(JsValue self, JsValue nameArg) {
-  return each(self, (JsValue _i, JsValue el) => {
-    removeAttrImpl(el, nameArg);
-    return JS.undefined();
-  });
+JsValue fnRemoveAttr(JsValue name) {
+  return each(this, (JsValue _i, JsValue elem) => removeAttr(elem, name));
 }
 
-void populateAttrHandle(JsValue _i, JsValue nameValue) {
-  if (!(nameValue is string)) {
-    return;
-  }
-  string boolName = nameValue;
-  JsValue attrHandleMap = expr["attrHandle"];
-  JsValue existingGetter = attrHandleMap[boolName];
-  JsValue getter = find["attr"];
-  if (existingGetter.truthy()) {
-    getter = existingGetter;
-  }
+JS.invoke(jQuery["fn"], "extend", JS.object(
+  "attr", fnAttr,
+  "removeAttr", fnRemoveAttr
+));
 
-  attrHandleMap[boolName] = (JsValue elem, JsValue nameArg, JsValue isXML) => {
-    JsValue ret = null;
+JS.invoke(jQuery, "extend", JS.object(
+  "attr", attr,
+  "attrHooks", attrHooks,
+  "removeAttr", removeAttr
+));
+
+JsValue attrHandle = expr["attrHandle"];
+
+JsValue installBoolHandle(JsValue _i, JsValue name) {
+  JsValue getter = JS.or(attrHandle[name], find["attr"]);
+
+  attrHandle[name] = (JsValue elem, JsValue nameArg, JsValue isXML) => {
+    JsValue ret = JS.undefined();
+    JsValue lowercaseName = JS.invoke(nameArg, "toLowerCase");
     if (!isXML.truthy()) {
-      string lowered = JS.string(nameArg).toLowerCase();
-      JsValue map = expr["attrHandle"];
-      JsValue previous = map[lowered];
-      map[lowered] = ret;
-      JsValue got = getter(elem, nameArg, isXML);
-      if (!JS.isNullish(got)) {
-        ret = lowered;
-      } else {
-        ret = null;
-      }
-      map[lowered] = previous;
+      JsValue handle = attrHandle[lowercaseName];
+      attrHandle[lowercaseName] = ret;
+      ret = if (JS.isNullish(getter(elem, nameArg, isXML))) { null } else { lowercaseName };
+      attrHandle[lowercaseName] = handle;
     }
     return ret;
   };
+  return JS.undefined();
 }
 
-jQuery["fn"]["attr"] = JS.methodRest(fnAttr);
-jQuery["fn"]["removeAttr"] = JS.method1(fnRemoveAttr);
-
-jQuery["attr"] = attr;
-jQuery["attrHooks"] = attrHooks;
-jQuery["removeAttr"] = removeAttrImpl;
-
-each(JS.stringMatch(boolAttrPattern.source, wordPattern), populateAttrHandle);
+each(JS.stringMatch(boolAttrPattern.source, new Regex("\\w+", "g")), installBoolHandle);
 
 export { jQuery };

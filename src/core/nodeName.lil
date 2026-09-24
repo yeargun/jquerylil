@@ -1,3 +1,4 @@
 export bool nodeName(JsValue elem, string name) {
-  return elem["nodeName"].truthy() && JS.string(elem["nodeName"]).toLowerCase() == name.toLowerCase();
+  string actual = JS.assume(JS.or(elem["nodeName"], ""));
+  return actual.toLowerCase() == name.toLowerCase();
 }
