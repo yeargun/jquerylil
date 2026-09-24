@@ -139,6 +139,8 @@ tbody td:last-child strong { color: var(--acid); }
 .method-note p { max-width: 820px; margin: 0; color: #b7d7e8; line-height: 1.7; font-size: 13px; }
 .method-note strong { color: white; }
 .method-note a { color: var(--acid); font: 500 11px "DM Mono", monospace; white-space: nowrap; }
+.bars-note { margin-top: 18px; color: #b7d7e8; font: 500 12px/1.6 "DM Mono", monospace; }
+.bars-note strong { color: white; }
 .perf-note { margin-top: 22px; color: var(--muted); font: 500 12px/1.6 "DM Mono", monospace; }
 
 
@@ -175,7 +177,7 @@ tbody td:last-child strong { color: var(--acid); }
 .compiler-provenance dl div { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; padding-block: 8px; border-top: 1px solid var(--line); }
 .compiler-provenance dt { color: var(--muted); font: 500 10px/1.5 "DM Mono", monospace; text-transform: uppercase; }
 .compiler-provenance dd { min-width: 0; margin: 0; overflow-wrap: anywhere; font: 500 11px/1.5 "DM Mono", monospace; }
-+
+
 .closing { padding-block: 130px; text-align: center; }
 .closing h2 { font-size: clamp(60px, 8.5vw, 112px); }
 .install-row.large { margin: 48px auto 0; text-align: left; }

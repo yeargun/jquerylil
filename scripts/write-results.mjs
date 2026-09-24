@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from "node:fs"
 import { auditNames } from "./audit-names.mjs"
+import { measuredBars, refreshReadme } from "./readme-tables.mjs"
 import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -32,6 +33,10 @@ const blurbs = {
   gallery: "$.Deferred and $.when.",
 }
 
+// jQuery's own Git source, bundled as ESM and minified by Terser, from the
+// paired source build that also records the build times (site/comparison.json).
+const sourceBuilt = JSON.parse(readFileSync(join(root, "site", "comparison.json"), "utf8")).esm.original
+
 const memoryRatios = Object.values(bench.report).map((row) => row.retainedMemory.ratio)
 const retainedRatio =
   memoryRatios.reduce((sum, value) => sum + value, 0) / memoryRatios.length
@@ -46,8 +51,10 @@ const results = {
   size: [
     { id: "officialDev", name: "Official jquery.js", ...sizes.library.officialDev, note: "published development artifact" },
     { id: "officialMin", name: "Official jquery.min.js", ...sizes.library.officialMin, note: "published minified artifact" },
-    { id: "itslil", name: "@itslil/jquery", ...sizes.library.itslil, note: "LilScript compiler-selected ESM", primary: true },
+    { id: "sourceTerser", name: "jQuery source ESM + Terser", raw: sourceBuilt.raw, gzip9: sourceBuilt.gzip9, brotli11: sourceBuilt.brotli11, note: "jQuery's Git source at the 3.7.1 tag, bundled as ESM by esbuild and minified by Terser (site/esm-comparison/original.js)" },
+    { id: "itslil", name: "@itslil/jquery", ...sizes.library.itslil, note: "LilScript compiler output; the build adds only the license banner and `export default`", primary: true },
   ],
+  bars: measuredBars(),
   apps: Object.entries(sizes.apps).map(([id, lanes]) => ({
     id,
     title: titles[id],
@@ -72,59 +79,4 @@ const results = {
 writeFileSync(join(root, "site", "results.json"), `${JSON.stringify(results, null, 2)}\n`)
 console.log("wrote site/results.json")
 
-// The README's three number tables are generated from the same report, because
-// hand-maintained copies of them went stale by a full percentage point between
-// rebuilds. Everything outside the fences is prose and is left alone.
-const times = (value) => `${value.toFixed(2)}×`
-const n = (value) => value.toLocaleString("en-US")
-const officialMin = results.size.find((lane) => lane.id === "officialMin")
-
-const tables = {
-  size: [
-    "| Lane | Raw | gzip-9 | Brotli-11 | vs official min |",
-    "| --- | ---: | ---: | ---: | ---: |",
-    ...results.size.map((lane) => {
-      const cells = `${n(lane.raw)} | ${n(lane.gzip9)} | ${n(lane.brotli11)} | ${times(lane.brotli11 / officialMin.brotli11)}`
-      return lane.primary
-        ? `| **\`@itslil/jquery\` ESM** | **${cells.split(" | ").join("** | **")}** |`
-        : `| ${lane.name.replace(/^Official (.+)$/, "Official `$1`")} | ${cells} |`
-    }),
-  ],
-  apps: [
-    "| App | jquery Brotli | @itslil/jquery Brotli | Ratio |",
-    "| --- | ---: | ---: | ---: |",
-    ...results.apps.map((app) =>
-      `| ${app.title} | ${n(app.jquery.brotli11)} | ${n(app.itslil.brotli11)} | ${times(app.itslil.brotli11 / app.jquery.brotli11)} |`),
-  ],
-  perf: [
-    "| Suite | jquery@3.7.1 | @itslil/jquery | Ratio |",
-    "| --- | ---: | ---: | ---: |",
-    ...results.throughput.map((suite) =>
-      `| ${suite.name} | ${suite.officialMs.toFixed(2)} ms | ${suite.candidateMs.toFixed(2)} ms | ${times(suite.ratio)} |`),
-  ],
-  perfnote: [
-    `Isolated Node ${results.node} processes versus \`jquery@3.7.1\`. 8 samples, first ${results.warmupDiscard} discarded, median of the rest. Ratio is \`@itslil/jquery\` / official (lower is faster). Checksums match on every suite. Mean retained memory **${times(results.memory.retainedRatio)}**.`,
-  ],
-  names: [
-    "| Names in `dist/jquery.raw.js` | Count | Renameable |",
-    "| --- | ---: | --- |",
-    `| Property names, total | ${n(results.names.propertyNames)} | ${n(results.names.propertyNameBytes)} emitted bytes |`,
-    `| — spellings \`${results.names.upstream}\` also ships | ${n(results.names.upstreamNames)} | no: a caller can reach them |`,
-    `| — platform members (${results.names.platformNames.join(", ")}) | ${results.names.platformNames.length} | no: the host owns them |`,
-    `| — invented by the port | ${results.names.leakedNames.length} | ${results.names.leakedNames.length === 0 ? "**nothing left to mangle**" : results.names.leakedNames.map((entry) => `\`${entry.name}\``).join(", ")} |`,
-    `| Identifiers at one or two characters | ${n(results.names.shortIdentifiers)} of ${n(results.names.distinctIdentifiers)} | mangled whole-program |`,
-    `| ESM exports | ${results.names.exports.length} | \`${results.names.exports.join("`, `")}\` |`,
-  ],
-}
-
-const readmePath = join(root, "README.md")
-let readme = readFileSync(readmePath, "utf8")
-for (const [name, rows] of Object.entries(tables)) {
-  const fence = new RegExp(`(<!-- generated:${name} -->\\n)[\\s\\S]*?(<!-- /generated:${name} -->)`)
-  if (!fence.test(readme)) throw new Error(`README is missing the ${name} fence`)
-  // A replacer function, not a template: `$` is a substitution escape in a
-  // string replacement and the exports row legitimately contains `$`.
-  readme = readme.replace(fence, (_, open, close) => `${open}${rows.join("\n")}\n${close}`)
-}
-writeFileSync(readmePath, readme)
-console.log("refreshed the generated README tables")
+refreshReadme(results)

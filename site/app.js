@@ -22,6 +22,10 @@ function renderHero() {
   document.querySelector("#hero-ratio").innerHTML = `${ratio.toFixed(2)}<span>×</span>`
   document.querySelector("#hero-bytes").textContent =
     `${formatter.format(officialMin.brotli11)} B → ${formatter.format(itslil.brotli11)} B`
+  const gap = officialMin.brotli11 - itslil.brotli11
+  document.querySelector("#hero-verdict").textContent = gap > 0
+    ? `It is ${formatter.format(gap)} B smaller than official jquery.min.js on Brotli-11.`
+    : `Official jquery.min.js is still ${formatter.format(-gap)} B smaller on Brotli-11.`
   document.querySelector("#hero-vs-dev").textContent = times(itslil.brotli11 / officialDev.brotli11)
   const suites = data.throughput ?? []
   document.querySelector("#hero-suites").textContent =
@@ -93,6 +97,22 @@ function renderSize() {
       return `<div class="${cls}" style="width:${width}%"><span>${lane.name}</span><strong>${formatter.format(lane.brotli11)} B</strong></div>`
     })
     .join("")
+}
+
+// Other minifiers over jQuery's own source ESM, from the same source build
+// as the build-time facts below (site/comparison.json).
+function renderBars() {
+  const note = document.querySelector("#bars-note")
+  const lanes = data.bars?.lanes ?? []
+  if (!note || lanes.length === 0) return
+  const itslil = data.size.find((lane) => lane.primary)
+  const signed = (value) => `${value < 0 ? "−" : "+"}${formatter.format(Math.abs(value))} B`
+  note.innerHTML =
+    `<strong>Other minifiers on jQuery's source ESM.</strong> ` +
+    lanes
+      .map((lane) => `${lane.name}: ${formatter.format(lane.brotli11)} B Brotli-11, ${formatter.format(lane.raw)} B raw (ours ${signed(itslil.brotli11 - lane.brotli11)} / ${signed(itslil.raw - lane.raw)})`)
+      .join("; ") +
+    `. ${data.bars.source}`
 }
 
 function renderApps() {
@@ -205,6 +225,7 @@ renderPerf()
 renderDemos()
 renderApps()
 renderSize()
+renderBars()
 renderNames()
 bindCopy()
 bindProgress()

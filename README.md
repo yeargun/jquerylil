@@ -1,7 +1,5 @@
 # @itslil/jquery
 
-
-
 jQuery 3.7.1, reimplemented in [LilScript](https://github.com/yeargun/lilscript) and published as a dependency-free drop-in.
 
 This is **not** the official `jquery` package. It is an independent runtime that implements the `jquery@3.7.1` public API.
@@ -31,7 +29,7 @@ Alias the import if you already write `from "jquery"`:
 
 ## Current snapshot
 
-This is the port as it stands. We are **smaller than official `jquery.min.js` on raw bytes and larger on Brotli**, and faster on every throughput suite we ran. The gap is not slack in the mangler — see [Names](#names) — it is emitted volume that compresses worse than jQuery's hand-written source.
+This is the port as it stands, built by the one LilScript compiler. The tables below are generated from the measured reports, so the comparison with official `jquery.min.js` — raw, gzip and Brotli — is whatever they say for the committed `dist/`, not a claim kept by hand. Property names are the public ABI and are not renamed — see [Names](#names).
 
 ## Size
 
@@ -42,10 +40,22 @@ Reusable package artifacts, measured with `lilscript-codec` gzip-9 / Brotli-11.
 | --- | ---: | ---: | ---: | ---: |
 | Official `jquery.js` | 285,314 | 83,619 | 69,545 | 2.53× |
 | Official `jquery.min.js` | 87,533 | 30,336 | 27,445 | 1.00× |
-| **`@itslil/jquery` ESM** | **86,072** | **32,042** | **28,764** | **1.05×** |
+| jQuery source ESM + Terser | 87,468 | 30,497 | 27,675 | 1.01× |
+| **`@itslil/jquery` ESM** | **76,017** | **28,349** | **25,487** | **0.93×** |
 <!-- /generated:size -->
 
-The published ESM is the LilScript compiler output plus a license banner and a default export. It is not pretty-printed and not run through Terser. `node scripts/write-results.mjs` regenerates the three tables in this file from `reports/`, so they cannot drift from the artifact again.
+The published ESM is the LilScript compiler output plus a license banner and a default export. It is not pretty-printed and not run through Terser or any other minifier; the CJS and UMD files are the same output with the export clause swapped for `module.exports` or dropped. `node scripts/write-results.mjs` regenerates the tables in this file from `reports/`, so they cannot drift from the artifact again.
+
+Against the other minifiers. Official `jquery.min.js` is the file jQuery publishes. The source-built lanes are jQuery's own Git source at the 3.7.1 tag, bundled into one ESM by esbuild and minified by Terser, esbuild or Oxc, measured in the same run as the build times below (`comparison/source-build/esm.json`). The last three columns are `@itslil/jquery` minus the bar.
+
+<!-- generated:bars -->
+| Bar | Raw | gzip-9 | Brotli-11 | `@itslil/jquery` raw | gzip-9 | Brotli-11 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Official `jquery.min.js` | 87,533 | 30,336 | 27,445 | −11,516 | −1,987 | −1,958 |
+| jQuery source ESM + Terser | 87,468 | 30,497 | 27,675 | −11,451 | −2,148 | −2,188 |
+| jQuery source ESM + esbuild 0.28.1 | 88,320 | 31,538 | 28,665 | −12,303 | −3,189 | −3,178 |
+| jQuery source ESM + Oxc (Vite 8.2.1 minify) | 87,418 | 30,562 | 27,765 | −11,401 | −2,213 | −2,278 |
+<!-- /generated:bars -->
 
 ## Example app bundles
 
@@ -54,33 +64,33 @@ Same six apps, Vite production minify, official `jquery@3.7.1` vs `@itslil/jquer
 <!-- generated:apps -->
 | App | jquery Brotli | @itslil/jquery Brotli | Ratio |
 | --- | ---: | ---: | ---: |
-| Todos | 28,847 | 29,488 | 1.02× |
-| Tabs | 28,634 | 29,352 | 1.03× |
-| Search | 28,737 | 29,490 | 1.03× |
-| Cart | 28,877 | 29,583 | 1.02× |
-| Accordion | 28,548 | 29,256 | 1.02× |
-| Gallery | 28,790 | 29,499 | 1.02× |
+| Todos | 28,847 | 26,475 | 0.92× |
+| Tabs | 28,634 | 26,271 | 0.92× |
+| Search | 28,737 | 26,413 | 0.92× |
+| Cart | 28,877 | 26,532 | 0.92× |
+| Accordion | 28,548 | 26,275 | 0.92× |
+| Gallery | 28,790 | 26,490 | 0.92× |
 <!-- /generated:apps -->
 
-Vite minifies both lanes. Official still wins the app chunks.
+Vite minifies both lanes, so this is what an app ships, not the published file; the ratio column is the result.
 
 ## Performance
 
 <!-- generated:perfnote -->
-Isolated Node v20.19.0 processes versus `jquery@3.7.1`. 8 samples, first 2 discarded, median of the rest. Ratio is `@itslil/jquery` / official (lower is faster). Checksums match on every suite. Mean retained memory **1.06×**.
+Isolated Node v24.11.1 processes versus `jquery@3.7.1`. 8 samples, first 2 discarded, median of the rest. Ratio is `@itslil/jquery` / official (lower is faster). Checksums match on every suite. Mean retained memory **1.16×**.
 <!-- /generated:perfnote -->
 
 <!-- generated:perf -->
 | Suite | jquery@3.7.1 | @itslil/jquery | Ratio |
 | --- | ---: | ---: | ---: |
-| core | 514.52 ms | 473.61 ms | 0.92× |
-| events | 107.90 ms | 92.33 ms | 0.86× |
-| deferred | 144.04 ms | 55.43 ms | 0.38× |
-| collection | 10.80 ms | 7.99 ms | 0.74× |
-| event-state | 21.17 ms | 16.14 ms | 0.76× |
+| core | 584.99 ms | 529.16 ms | 0.90× |
+| events | 129.11 ms | 110.75 ms | 0.86× |
+| deferred | 161.65 ms | 76.91 ms | 0.48× |
+| collection | 9.21 ms | 8.31 ms | 0.90× |
+| event-state | 15.30 ms | 15.54 ms | 1.02× |
 <!-- /generated:perf -->
 
-**5 / 5 suites ≤ 1.05×.** All five are faster. The deferred suite is a much cheaper implementation of the same resolve/done checksum; it is not a different workload. Absolute milliseconds move with the host; the ratio is the result.
+The deferred suite is a much cheaper implementation of the same resolve/done checksum; it is not a different workload. Absolute milliseconds move with the host; the ratio is the result.
 
 ## Names
 
@@ -91,15 +101,30 @@ Identifiers are mangled whole-program, and property names are the ABI: for a dro
 <!-- generated:names -->
 | Names in `dist/jquery.raw.js` | Count | Renameable |
 | --- | ---: | --- |
-| Property names, total | 476 | 16,824 emitted bytes |
-| — spellings `jquery@3.7.1` also ships | 472 | no: a caller can reach them |
-| — platform members (hasOwn, charAt, borderWidth, define) | 4 | no: the host owns them |
+| Property names, total | 446 | 15,907 emitted bytes |
+| — spellings `jquery@3.7.1` also ships | 444 | no: a caller can reach them |
+| — platform members (charAt, define) | 2 | no: the host owns them |
 | — invented by the port | 0 | **nothing left to mangle** |
-| Identifiers at one or two characters | 381 of 884 | mangled whole-program |
+| Identifiers at one or two characters | 351 of 898 | mangled whole-program |
 | ESM exports | 2 | `$`, `jQuery` |
 <!-- /generated:names -->
 
-The compiler can rename more than this. `[mangle] internal_properties = "all"` with `extern_fields = false` — LilScript's equivalent of Closure ADVANCED's externs contract — renames 157 further names for **−2,895 raw / −552 Brotli** on this port. 156 of those 157 are names upstream jQuery itself ships; the 157th is `define`, the AMD loader global. The resulting artifact does not survive `import`: it renames `document.implementation` and throws before jQuery is constructed. That option is not a size lever here, and the audit is what keeps it from being mistaken for one.
+Renaming more than this breaks the drop-in. The old LilScript compiler had an externs-style option (`[mangle] internal_properties = "all"` with `extern_fields = false`, like Closure ADVANCED) that renamed 157 further names for −552 Brotli; 156 of them are names upstream jQuery ships, the 157th is `define`, and the result threw on `import` because it renamed `document.implementation`. The current compiler has no such option, and the audit is what keeps an ABI rename from being mistaken for a size lever.
+
+## Compiler and compile time
+
+The site shows how long the compiler and the whole package build take, next to the original repository's own build. Both are measured on the same machine from clean outputs, three builds each, by LilScript's paired source-build worker. `comparison/source-build/` keeps the commands, samples, per-invocation compiler times and lockfiles, and `site/source-build.json` has the consolidated record. `npm run check:site` refuses to build the page if the sources, config or `dist/` no longer match that record (`scripts/build-comparison.mjs`).
+
+<!-- generated:compiler -->
+| Build | Wall time | Scope |
+| --- | ---: | --- |
+| LilScript compiler, one invocation | 20.71 s median | `src/entry.lil` → `dist/jquery.raw.js` |
+| LilScript package | 20.80 s median (20.75 s–20.90 s; 3 builds) | `node scripts/build.mjs --compile --force` |
+| Original repository | 3.17 s median (3.07 s–3.27 s; 3 builds) | `npm run build-all-variants` in jquery 3.7.1 (`f79d5f1`) |
+| Original comparison ESM | 1.19 s median | esbuild bundle + Terser, recorded separately |
+
+Measured 2026-09-24 with LilScript [`aa2052f0`](https://github.com/yeargun/lilscript/commit/aa2052f081ca8184666ca280ee9b91d476e46cfc) (binary SHA-256 `13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9`) on Azure Standard_B8als_v2, AMD EPYC 7763 64-Core Processor, 8 vCPUs, 15.6 GiB RAM, Node v24.11.1. Runtime checks: 6/6 pass.
+<!-- /generated:compiler -->
 
 ## Compatibility
 
@@ -117,22 +142,21 @@ Compiled JavaScript in `dist/` is what npm installs. Rebuilding from `src/**/*.l
 
 ```sh
 npm run build            # wrap the current compiler artifact
-npm run build -- --compile
+npm run build -- --compile   # compile src/entry.lil, then wrap
 npm test                 # jsdom vs jquery@3.7.1
 npm run check:names      # the mangling audit above
 npm run examples         # http://127.0.0.1:4178/examples/
 ```
 
 Refreshing the published numbers is one ordered pass. `write-results.mjs` owns
-`site/results.json` and the three generated tables in this file; `record` adds the
-run to the frozen compiler comparison the site renders, with the compiler
-revision and every artifact hash computed at that moment.
+`site/results.json` and the generated tables in this file. It reads the paired
+source build (`site/comparison.json`, `comparison/source-build/`), which is
+re-measured whenever the sources, config or compiler change.
 
 ```sh
 npm run bench            # reports/bench.json
 npm run measure          # reports/sizes.json (Vite-bundles the six apps twice)
 node scripts/write-results.mjs
-npm run record -- --compiler "$LILSCRIPT_COMPILER" --codec "$LILSCRIPT_CODEC"
 npm run check:site
 ```
 

@@ -1,45 +1,66 @@
 {
   "pin": "jquery@3.7.1",
   "package": "@itslil/jquery",
-  "node": "v20.19.0",
+  "node": "v24.11.1",
   "codec": "lilscript-codec gzip-9 / brotli-11",
   "warmupDiscard": 2,
   "memory": {
-    "retainedRatio": 1.0598451985700337
+    "retainedRatio": 1.160354562808548
   },
   "size": [
     {
       "id": "officialDev",
-      "name": "Original \u00b7 ESM",
-      "raw": 246365,
-      "gzip9": 53457,
-      "brotli11": 45238,
-      "note": "ESM comparison with matching external dependencies.",
-      "measuredAt": "2026-09-10T20:37:53Z",
-      "artifactSha256": "5413f4b708de85622cb70ccbc5d12d52a154b86d4221e1023839dc7095e90a31"
+      "name": "Official jquery.js",
+      "raw": 285314,
+      "gzip9": 83619,
+      "brotli11": 69545,
+      "note": "published development artifact"
     },
     {
       "id": "officialMin",
-      "name": "Original \u00b7 ESM + Terser",
+      "name": "Official jquery.min.js",
+      "raw": 87533,
+      "gzip9": 30336,
+      "brotli11": 27445,
+      "note": "published minified artifact"
+    },
+    {
+      "id": "sourceTerser",
+      "name": "jQuery source ESM + Terser",
       "raw": 87468,
       "gzip9": 30497,
       "brotli11": 27675,
-      "note": "ESM comparison with matching external dependencies.",
-      "measuredAt": "2026-09-10T20:37:53Z",
-      "artifactSha256": "0b1e49c4d55136ef2a851edeb12f2dd4bd866c73c404f38531951d09596a95c5"
+      "note": "jQuery's Git source at the 3.7.1 tag, bundled as ESM by esbuild and minified by Terser (site/esm-comparison/original.js)"
     },
     {
       "id": "itslil",
       "name": "@itslil/jquery",
-      "raw": 81827,
-      "gzip9": 31257,
-      "brotli11": 27901,
-      "note": "ESM output from LilScript 4dc4e33.",
-      "primary": true,
-      "measuredAt": "2026-09-10T20:37:53Z",
-      "artifactSha256": "326714febeab523e83721d2b2201fcdd5f4b7d98d6a7ae84d4f4e48202a7c4ef"
+      "raw": 76017,
+      "gzip9": 28349,
+      "brotli11": 25487,
+      "note": "LilScript compiler output; the build adds only the license banner and `export default`",
+      "primary": true
     }
   ],
+  "bars": {
+    "source": "Measured with the Terser lane: jQuery's Git source at 3.7.1 (f79d5f1) bundled as one ESM by esbuild, then minified by each tool; comparison/source-build/esm.json.",
+    "lanes": [
+      {
+        "id": "esbuild",
+        "name": "jQuery source ESM + esbuild 0.28.1",
+        "raw": 88320,
+        "gzip9": 31538,
+        "brotli11": 28665
+      },
+      {
+        "id": "oxc",
+        "name": "jQuery source ESM + Oxc (Vite 8.2.1 minify)",
+        "raw": 87418,
+        "gzip9": 30562,
+        "brotli11": 27765
+      }
+    ]
+  },
   "apps": [
     {
       "id": "todos",
@@ -50,9 +71,9 @@
         "brotli11": 28847
       },
       "itslil": {
-        "raw": 86316,
-        "gzip9": 32841,
-        "brotli11": 29488
+        "raw": 74967,
+        "gzip9": 29370,
+        "brotli11": 26475
       }
     },
     {
@@ -64,9 +85,9 @@
         "brotli11": 28634
       },
       "itslil": {
-        "raw": 85842,
-        "gzip9": 32612,
-        "brotli11": 29352
+        "raw": 74493,
+        "gzip9": 29134,
+        "brotli11": 26271
       }
     },
     {
@@ -78,9 +99,9 @@
         "brotli11": 28737
       },
       "itslil": {
-        "raw": 86104,
-        "gzip9": 32772,
-        "brotli11": 29490
+        "raw": 74755,
+        "gzip9": 29278,
+        "brotli11": 26413
       }
     },
     {
@@ -92,9 +113,9 @@
         "brotli11": 28877
       },
       "itslil": {
-        "raw": 86392,
-        "gzip9": 32899,
-        "brotli11": 29583
+        "raw": 75043,
+        "gzip9": 29415,
+        "brotli11": 26532
       }
     },
     {
@@ -106,9 +127,9 @@
         "brotli11": 28548
       },
       "itslil": {
-        "raw": 85670,
-        "gzip9": 32538,
-        "brotli11": 29256
+        "raw": 74321,
+        "gzip9": 29068,
+        "brotli11": 26275
       }
     },
     {
@@ -120,42 +141,42 @@
         "brotli11": 28790
       },
       "itslil": {
-        "raw": 86145,
-        "gzip9": 32811,
-        "brotli11": 29499
+        "raw": 74796,
+        "gzip9": 29334,
+        "brotli11": 26490
       }
     }
   ],
   "throughput": [
     {
       "name": "core",
-      "officialMs": 514.5200150000001,
-      "candidateMs": 473.61264900000003,
-      "ratio": 0.9204941211081944
+      "officialMs": 584.9913560000001,
+      "candidateMs": 529.158958,
+      "ratio": 0.9045585931700499
     },
     {
       "name": "events",
-      "officialMs": 107.90046400000006,
-      "candidateMs": 92.32849999999996,
-      "ratio": 0.8556821405327777
+      "officialMs": 129.10832499999998,
+      "candidateMs": 110.752227,
+      "ratio": 0.857824055884855
     },
     {
       "name": "deferred",
-      "officialMs": 144.04187900000005,
-      "candidateMs": 55.42536700000005,
-      "ratio": 0.3847864758831703
+      "officialMs": 161.64754700000003,
+      "candidateMs": 76.90600799999999,
+      "ratio": 0.4757635326195205
     },
     {
       "name": "collection",
-      "officialMs": 10.801004999999975,
-      "candidateMs": 7.985919000000024,
-      "ratio": 0.7393681421312223
+      "officialMs": 9.20741099999998,
+      "candidateMs": 8.312085000000025,
+      "ratio": 0.9027602873381066
     },
     {
       "name": "event-state",
-      "officialMs": 21.16676799999999,
-      "candidateMs": 16.143703999999957,
-      "ratio": 0.7626910258571343
+      "officialMs": 15.303533000000016,
+      "candidateMs": 15.544974999999965,
+      "ratio": 1.015776879757109
     }
   ],
   "examples": [
@@ -193,22 +214,19 @@
   "names": {
     "artifact": "dist/jquery.raw.js",
     "upstream": "jquery@3.7.1",
-    "propertyNames": 476,
-    "upstreamNames": 472,
+    "propertyNames": 446,
+    "upstreamNames": 444,
     "platformNames": [
-      "hasOwn",
       "charAt",
-      "borderWidth",
       "define"
     ],
     "leakedNames": [],
-    "propertyNameBytes": 16824,
-    "distinctIdentifiers": 884,
-    "shortIdentifiers": 381,
+    "propertyNameBytes": 15907,
+    "distinctIdentifiers": 898,
+    "shortIdentifiers": 351,
     "exports": [
       "$",
       "jQuery"
     ]
-  },
-  "sizeMeasuredAt": "2026-09-10T20:37:53Z"
+  }
 }

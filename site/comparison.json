@@ -1,10 +1,10 @@
 {
   "schemaVersion": 2,
-  "measuredAt": "2026-09-10T20:37:53Z",
+  "measuredAt": "2026-09-24T04:15:52Z",
   "name": "jquerylil",
   "compiler": {
-    "commit": "4dc4e3337d9ffd758d65e3852682d6e13d9331c1",
-    "sha256": "0616048498eb9eb2e4bd75b39e8e6a083733ada647e16108edfee30ad183beeb"
+    "commit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
+    "sha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9"
   },
   "upstream": {
     "package": "jquery",
@@ -21,30 +21,30 @@
   "buildComplete": true,
   "machine": {
     "provider": "Azure",
-    "instanceClass": "Standard_D16als_v7",
-    "cpu": "AMD EPYC 9V45 96-Core Processor",
-    "logicalCpus": 16,
-    "memoryBytes": 33648435200,
-    "os": "Ubuntu 24.04.4 LTS",
-    "kernel": "6.17.0-1022-azure",
+    "instanceClass": "Standard_B8als_v2",
+    "cpu": "AMD EPYC 7763 64-Core Processor",
+    "logicalCpus": 8,
+    "memoryBytes": 16706420736,
+    "os": "Ubuntu 24.04.3 LTS",
+    "kernel": "7.0.0-1014-azure",
     "node": "v24.11.1",
     "rayonThreads": 8,
     "loadAtStart": [
-      0.548828125,
-      1.61328125,
-      1.76513671875
+      3.103515625,
+      2.79833984375,
+      3.62548828125
     ],
     "loadAtEnd": [
-      1.86962890625,
-      3.6591796875,
-      3.23583984375
+      2.04833984375,
+      2.5576171875,
+      3.4716796875
     ]
   },
   "build": {
-    "compilerSeconds": null,
-    "packageSeconds": 274.483675767,
-    "originalSeconds": 1.6170904380001048,
-    "originalEsmSeconds": 0.595806358,
+    "compilerSeconds": 20.70594573020935,
+    "packageSeconds": 20.80345013099577,
+    "originalSeconds": 3.170451760997821,
+    "originalEsmSeconds": 1.190560002,
     "packageScope": "node scripts/build.mjs --compile --force",
     "originalScope": "npm run build-all-variants",
     "protocol": {
@@ -52,15 +52,15 @@
       "cleanOutputs": true,
       "dependencyInstallationTimedSeparately": true,
       "sourceArchives": "Pinned Git checkouts; original repository package build commands, followed by production ESM assembly.",
-      "workerUse": "Both implementations use the same machine and Node version. This shared build pool also runs unrelated jobs; timings are contextual wall times, with CPU time recorded separately."
+      "workerUse": "Both implementations use the same machine and Node version. The machine is a burstable Azure VM that also runs unrelated jobs; timings are contextual wall times, with CPU time recorded separately."
     }
   },
   "esm": {
     "lilscript": {
-      "raw": 81827,
-      "gzip9": 31257,
-      "brotli11": 27901,
-      "sha256": "326714febeab523e83721d2b2201fcdd5f4b7d98d6a7ae84d4f4e48202a7c4ef",
+      "raw": 76017,
+      "gzip9": 28349,
+      "brotli11": 25487,
+      "sha256": "1a86124819692b097adef9fac3ca71a6715d3e68165fddea63241430f41a170a",
       "file": "./esm-comparison/lilscript.js"
     },
     "original": {
@@ -74,9 +74,9 @@
   "sourceBuild": {
     "original": {
       "complete": true,
-      "medianSeconds": 1.6170904380001048,
-      "minimumSeconds": 1.6168044940000073,
-      "maximumSeconds": 1.7166505559998768,
+      "medianSeconds": 3.170451760997821,
+      "minimumSeconds": 3.0709373650024645,
+      "maximumSeconds": 3.271198529000685,
       "samples": [
         {
           "command": [
@@ -84,8 +84,8 @@
             "run",
             "build-all-variants"
           ],
-          "wallSeconds": 1.7166505559998768,
-          "cpuSeconds": 2.792360999999999,
+          "wallSeconds": 3.271198529000685,
+          "cpuSeconds": 5.100336999999999,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-1.log",
@@ -97,8 +97,8 @@
             "run",
             "build-all-variants"
           ],
-          "wallSeconds": 1.6170904380001048,
-          "cpuSeconds": 2.5967159999996827,
+          "wallSeconds": 3.0709373650024645,
+          "cpuSeconds": 4.823704,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-2.log",
@@ -110,8 +110,8 @@
             "run",
             "build-all-variants"
           ],
-          "wallSeconds": 1.6168044940000073,
-          "cpuSeconds": 2.597697000000208,
+          "wallSeconds": 3.170451760997821,
+          "cpuSeconds": 4.918892,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-3.log",
@@ -121,9 +121,9 @@
     },
     "lilscript": {
       "complete": true,
-      "medianSeconds": 274.483675767,
-      "minimumSeconds": 273.93155338099996,
-      "maximumSeconds": 274.69273940499943,
+      "medianSeconds": 20.80345013099577,
+      "minimumSeconds": 20.754080651997356,
+      "maximumSeconds": 20.904782865996822,
       "samples": [
         {
           "command": [
@@ -131,8 +131,8 @@
             "-c",
             "node scripts/build.mjs --compile --force"
           ],
-          "wallSeconds": 274.483675767,
-          "cpuSeconds": 1191.764301,
+          "wallSeconds": 20.80345013099577,
+          "cpuSeconds": 20.794802,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-1.log",
@@ -144,8 +144,8 @@
             "-c",
             "node scripts/build.mjs --compile --force"
           ],
-          "wallSeconds": 273.93155338099996,
-          "cpuSeconds": 1182.9355050000004,
+          "wallSeconds": 20.754080651997356,
+          "cpuSeconds": 20.70842,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-2.log",
@@ -157,8 +157,8 @@
             "-c",
             "node scripts/build.mjs --compile --force"
           ],
-          "wallSeconds": 274.69273940499943,
-          "cpuSeconds": 1189.7490770000002,
+          "wallSeconds": 20.904782865996822,
+          "cpuSeconds": 20.876731000000007,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-3.log",
@@ -166,7 +166,7 @@
         }
       ]
     },
-    "scopeNote": "Both timings cover each repository\u2019s package build command; their output formats and build checks can differ.",
+    "scopeNote": "Both timings cover each repository’s package build command; their output formats and build checks can differ.",
     "cleanOutputs": true,
     "installationExcluded": true
   }

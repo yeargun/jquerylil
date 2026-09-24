@@ -31,7 +31,7 @@
         <div class="hero-copy">
           <p class="eyebrow"><span class="live-dot"></span> jQuery 3.7.1 · LilScript port · @itslil/jquery</p>
           <h1>jQuery,<br /><em>compiled.</em></h1>
-          <p class="lede">The <code>jquery@3.7.1</code> public API, rewritten in LilScript and shipped as a dependency-free drop-in. The published ESM is the compiler-selected compact module. Original ESM plus Terser is slightly smaller on Brotli. Throughput is measured against the same official package.</p>
+          <p class="lede">The <code>jquery@3.7.1</code> public API, rewritten in LilScript and shipped as a dependency-free drop-in. The published ESM is the LilScript compiler's own output. <span id="hero-verdict">Its size against official <code>jquery.min.js</code> is measured below.</span> Throughput is measured against the same official package.</p>
           <div class="install-row">
             <code>npm install @itslil/jquery</code>
             <button class="copy" data-copy="npm install @itslil/jquery" type="button">copy</button>
@@ -44,24 +44,25 @@
 
         <div class="scoreboard" aria-label="Compression and performance results">
           <div class="score-main">
-            <span class="score-label">Brotli-11 vs original ESM + Terser</span>
+            <span class="score-label">Brotli-11 vs official min</span>
             <strong id="hero-ratio">—<span>×</span></strong>
             <p id="hero-bytes"></p>
           </div>
           <div class="score-grid">
-            <div><strong id="hero-vs-dev">—</strong><span>vs unminified original ESM</span></div>
+            <div><strong id="hero-vs-dev">—</strong><span>vs official jquery.js</span></div>
             <div><strong id="hero-suites">—</strong><span>suites ≤ 1.05×</span></div>
             <div><strong id="hero-apps">6</strong><span>example apps</span></div>
             <div><strong id="hero-memory">—</strong><span>retained memory</span></div>
           </div>
-          <p class="score-note">Canonical size is lilscript-codec gzip-9 / Brotli-11. The published artifact is the compiler-selected ESM, not a downstream Terser pick. Throughput is candidate / official, same Node process isolation. Runtime checks: 6/6 pass.</p>
+          <p class="score-note">Canonical size is lilscript-codec gzip-9 / Brotli-11. The published artifact is the compiler's ESM; no Terser or other minifier runs after it. Throughput is candidate / official, same Node process isolation. Runtime checks: 6/6 pass.</p>
         </div>
       </section>
 
       <section class="ticker" aria-label="Supported APIs">
         <div>select <span>✦</span> events <span>✦</span> deferred <span>✦</span> callbacks <span>✦</span> ajax <span>✦</span> css <span>✦</span> effects <span>✦</span> traversing <span>✦</span> attributes <span>✦</span> data <span>✦</span> queue <span>✦</span> noConflict</div>
       </section>
-<section class="performance shell" id="performance">
+
+      <section class="performance shell" id="performance">
         <div class="section-heading">
           <div>
             <p class="eyebrow">Measured vs jquery@3.7.1</p>
@@ -127,7 +128,7 @@
               <p class="eyebrow">The receipts</p>
               <h2>Raw, gzip,<br />and Brotli.</h2>
             </div>
-            <p>Reusable package artifacts, not a closed-world app. Official lanes are the published <code>jquery.js</code> and <code>jquery.min.js</code>. @itslil/jquery is the LilScript compiler-selected ESM.</p>
+            <p>Reusable package artifacts, not a closed-world app. Official lanes are the published <code>jquery.js</code> and <code>jquery.min.js</code>. @itslil/jquery is the LilScript compiler's ESM: the build adds only the license banner and <code>export default</code>, and no minifier runs after the compiler. The source-built lane is jQuery's own Git source at the 3.7.1 tag, bundled as ESM and minified by Terser.</p>
           </div>
           <div class="total-bar" id="total-bar"></div>
           <div class="table-wrap">
@@ -138,14 +139,15 @@
                   <th>Raw</th>
                   <th>gzip-9</th>
                   <th>Brotli-11</th>
-                  <th>vs original ESM + Terser</th>
+                  <th>vs official min</th>
                 </tr>
               </thead>
               <tbody id="results-body"></tbody>
             </table>
           </div>
+          <p class="bars-note" id="bars-note"></p>
           <div class="method-note">
-            <p><strong>Why official min still wins.</strong> jQuery is a public-name, string-key, host-heavy library, and a drop-in has to keep every name a page already calls. That ABI is measured below, not assumed. The compiler-selected artifact is the published one; downstream Terser of that artifact is a diagnostic only and is not what npm installs.</p>
+            <p><strong>What a drop-in has to keep.</strong> jQuery is a public-name, string-key, host-heavy library, and a drop-in has to keep every name a page already calls. That ABI is measured below, not assumed. The compiler's artifact is the published one; nothing downstream re-minifies what npm installs.</p>
             <a href="https://github.com/yeargun/jquerylil#names">README ↗</a>
           </div>
         </div>
