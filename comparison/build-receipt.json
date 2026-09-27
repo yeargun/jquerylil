@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "name": "jquerylil",
-  "measuredAt": "2026-09-24T04:15:52Z",
+  "measuredAt": "2026-09-27T15:04:07Z",
   "status": "verified",
   "buildPassed": true,
   "summary": "A clean build of sourceCommit reproduced the published dist/ byte for byte and passed the repository test command.",
-  "sourceCommit": "acd4bab3574fa5acc9b0de1005e3c6fb423f2df0",
-  "previousPublicCommit": "824c3026d7f13f227879376b775607c06d387c20",
+  "sourceCommit": "b2f12c4d726d06df89ff4393038883717350690a",
+  "previousPublicCommit": "2ab4b893ca1080cd760d8b3f299fc1dcdb1ee9f7",
   "compiler": {
-    "commit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
-    "sha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9",
+    "commit": "249686599dc3bf1b6bf70dc9a030081b755bbb24",
+    "sha256": "47048e41164027e92d3bf1d1840d8d83e04c60532c031ceb3346222e194b3041",
     "profile": "release",
     "dirty": false
   },
@@ -24,14 +24,14 @@
     "node": "v24.11.1",
     "rayonThreads": 8,
     "loadAtStart": [
-      3.103515625,
-      2.79833984375,
-      3.62548828125
+      12.08984375,
+      12.6640625,
+      10.14599609375
     ],
     "loadAtEnd": [
-      2.04833984375,
-      2.5576171875,
-      3.4716796875
+      11.26025390625,
+      11.9013671875,
+      10.212890625
     ],
     "concurrencyNote": "One port at a time on this host, which also runs unrelated jobs; timings are contextual wall times, not controlled speedup benchmarks."
   },
@@ -45,18 +45,18 @@
   "comparisonScope": "jquery@3.7.1 public ESM runtime graph; dependency installation excluded; this is a comparison bundle build, not the upstream vendor release pipeline Sizes use canonical zlib 1.3.1 gzip-9 and Google Brotli 1.1.0 quality 11.",
   "sizes": {
     "previous": {
-      "path": "dist/jquery.esm.js@824c302",
-      "raw": 81828,
-      "gzip9": 31260,
-      "brotli11": 27898,
-      "sha256": "b43df6f9adc4bf1b69d523b6f7a98ff4b9348b481606a4946e5b9ba0e28de0e0"
-    },
-    "current": {
-      "path": "dist/jquery.esm.js",
+      "path": "dist/jquery.esm.js@2ab4b89",
       "raw": 76017,
       "gzip9": 28349,
       "brotli11": 25487,
       "sha256": "1a86124819692b097adef9fac3ca71a6715d3e68165fddea63241430f41a170a"
+    },
+    "current": {
+      "path": "dist/jquery.esm.js",
+      "raw": 75922,
+      "gzip9": 28317,
+      "brotli11": 25452,
+      "sha256": "c682ac96f65493464d5bd50aebfb8e28e3d68a53f5b10d0309aa97465d32cd21"
     },
     "upstream": {
       "path": "site/esm-comparison/original.js",
@@ -113,46 +113,46 @@
   "candidateArtifacts": [
     {
       "path": "dist/jquery.cjs",
-      "raw": 76070,
-      "gzip9": 28357,
-      "brotli11": 25498,
-      "sha256": "1b5e45025a4e1a254408ba76c12aad72c7d8d0c2dda9d1b4ce5bfe94b3accedf"
+      "raw": 75975,
+      "gzip9": 28326,
+      "brotli11": 25525,
+      "sha256": "976417719cb1ebc0129d1adfe1e0d6778ddfe16fc8a34bab3a84cc989e0d9a3d"
     },
     {
       "path": "dist/jquery.esm.js",
-      "raw": 76017,
-      "gzip9": 28349,
-      "brotli11": 25487,
-      "sha256": "1a86124819692b097adef9fac3ca71a6715d3e68165fddea63241430f41a170a"
+      "raw": 75922,
+      "gzip9": 28317,
+      "brotli11": 25452,
+      "sha256": "c682ac96f65493464d5bd50aebfb8e28e3d68a53f5b10d0309aa97465d32cd21"
     },
     {
       "path": "dist/jquery.impl.js",
-      "raw": 75921,
-      "gzip9": 28294,
-      "brotli11": 25429,
-      "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+      "raw": 75826,
+      "gzip9": 28262,
+      "brotli11": 25407,
+      "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
     },
     {
       "path": "dist/jquery.raw.js",
-      "raw": 75921,
-      "gzip9": 28294,
-      "brotli11": 25429,
-      "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+      "raw": 75826,
+      "gzip9": 28262,
+      "brotli11": 25407,
+      "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
     },
     {
       "path": "dist/jquery.umd.js",
-      "raw": 75972,
-      "gzip9": 28325,
-      "brotli11": 25459,
-      "sha256": "d8c09602c1eaada1f4e7e6f702b56c5f8e17f9cb07476a2720d4fc957a2cb936"
+      "raw": 75877,
+      "gzip9": 28294,
+      "brotli11": 25482,
+      "sha256": "2d3f309e8aafa82acad2b44dbf841def587797ceb4150a0efe2750515adb6395"
     }
   ],
   "timing": {
-    "primaryCompilerSeconds": 20.70594573020935,
+    "primaryCompilerSeconds": 34.81005263328552,
     "primaryScope": "Median wall time of the one compiler process per build, over three clean builds.",
-    "packageSeconds": 20.80345013099577,
+    "packageSeconds": 35.01292237400776,
     "packageScope": "node scripts/build.mjs --compile --force; median of three clean builds.",
-    "upstreamSeconds": 3.170451760997821,
+    "upstreamSeconds": 6.706023313978221,
     "upstreamScope": "npm run build-all-variants in the pinned jquery 3.7.1 checkout; median of three clean builds."
   },
   "behavior": {
@@ -160,46 +160,46 @@
     "summary": "Repository test command passed (exit 0). tests 6 · pass 6 · fail 0",
     "after": {
       "exitCode": 0,
-      "tail": "▶ @itslil/jquery vs jquery@3.7.1\n  ✔ exports the 3.7.1 surface (0.79543ms)\n  ✔ matches core utilities (1.549073ms)\n  ✔ matches Deferred resolve/reject (0.70984ms)\n  ✔ ships the compiler-selected compact ESM, not a pretty-printed wrapper (2.148035ms)\n  ✔ loads from CommonJS (11.365997ms)\n  ✔ selects, classes, and events (6.621557ms)\n✔ @itslil/jquery vs jquery@3.7.1 (24.618961ms)\nℹ tests 6\nℹ suites 1\nℹ pass 6\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 565.657565\n"
+      "tail": "▶ @itslil/jquery vs jquery@3.7.1\n  ✔ exports the 3.7.1 surface (1.117174ms)\n  ✔ matches core utilities (2.490567ms)\n  ✔ matches Deferred resolve/reject (1.226128ms)\n  ✔ ships the compiler-selected compact ESM, not a pretty-printed wrapper (3.165071ms)\n  ✔ loads from CommonJS (14.117353ms)\n  ✔ selects, classes, and events (9.367874ms)\n✔ @itslil/jquery vs jquery@3.7.1 (33.060218ms)\nℹ tests 6\nℹ suites 1\nℹ pass 6\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1393.486488\n"
     }
   },
   "findings": [
-    "The one LilScript compiler (aa2052f0) rebuilt the rewritten port sources; dist/ is compiler output plus the license banner and export wrappers, with no post-minifier.",
-    "Previous public dist/jquery.esm.js 27898 -> 25487 Brotli-11.",
+    "The one LilScript compiler (24968659) rebuilt the port sources; dist/ is compiler output plus the license banner and export wrappers, with no post-minifier.",
+    "Previous public dist/jquery.esm.js 25487 -> 25452 Brotli-11 (the previous file was compiled by aa2052f0, the 2026-09-24 release).",
     "Upstream version gap: pinned 3.7.1; npm latest is 4.x."
   ],
   "primaryArtifact": "dist/jquery.esm.js",
   "beforePage": {
     "url": "https://yeargun.github.io/jquerylil/",
     "status": 200,
-    "sha256": "a35492cf8826fbc84189acc680e6cfbf4976e1b62b3842ba121aa500bccc4be1",
-    "lastModified": "Thu, 10 Sep 2026 21:13:46 GMT"
+    "sha256": "db62dc3cfa30f8f9e70c55ab566298e2bb42532dd6853b5c73f5fe154615adcc",
+    "lastModified": "Thu, 24 Sep 2026 04:19:08 GMT"
   },
-  "codecSha256": "125776830df72bbaf9704fee3c38bb0bf29bfc6bcceb5bc8707a0507a128d7b9",
+  "codecSha256": "85329d361ef3339d4ff7b7ca1f00065d561340eb4fc98a2799af327134a3a3f0",
   "publicationArtifacts": [
     {
       "path": "dist/jquery.umd.js",
-      "sha256": "d8c09602c1eaada1f4e7e6f702b56c5f8e17f9cb07476a2720d4fc957a2cb936"
+      "sha256": "2d3f309e8aafa82acad2b44dbf841def587797ceb4150a0efe2750515adb6395"
     },
     {
       "path": "dist/jquery.cjs",
-      "sha256": "1b5e45025a4e1a254408ba76c12aad72c7d8d0c2dda9d1b4ce5bfe94b3accedf"
+      "sha256": "976417719cb1ebc0129d1adfe1e0d6778ddfe16fc8a34bab3a84cc989e0d9a3d"
     },
     {
       "path": "dist/jquery.impl.js",
-      "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+      "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
     },
     {
       "path": "dist/jquery.esm.js",
-      "sha256": "1a86124819692b097adef9fac3ca71a6715d3e68165fddea63241430f41a170a"
+      "sha256": "c682ac96f65493464d5bd50aebfb8e28e3d68a53f5b10d0309aa97465d32cd21"
     },
     {
       "path": "dist/jquery.raw.js",
-      "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+      "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
     }
   ],
   "publicationPolicy": "Promote freshly tested distribution",
-  "publicationBase": "824c3026d7f13f227879376b775607c06d387c20",
+  "publicationBase": "2ab4b893ca1080cd760d8b3f299fc1dcdb1ee9f7",
   "publicationSourceFingerprint": "0b805fdc3407620f06f45da25d9b666889be433422cb8f4abe0158718e82ae67",
   "comparisonArtifacts": [
     {
@@ -208,25 +208,25 @@
     },
     {
       "path": "site/esm-comparison/lilscript.js",
-      "sha256": "1a86124819692b097adef9fac3ca71a6715d3e68165fddea63241430f41a170a"
+      "sha256": "c682ac96f65493464d5bd50aebfb8e28e3d68a53f5b10d0309aa97465d32cd21"
     },
     {
       "path": "site/source-build.json",
-      "sha256": "8a3f4bd3c410eca426fb716716f662f053f5735b8798f7a9691a56300e0e8884"
+      "sha256": "fff1471951c4707a0e6b680fdbe46f3da01f528075d4daec88b82c0356741e59"
     },
     {
       "path": "site/comparison.json",
-      "sha256": "7b33ddcf08f0d75d60ef3dd18976fe2c66f1cb8b1b2b064cd0cf52122bc45ac5"
+      "sha256": "44fc6262b20e4ea954a18116f9baa87ddba0732bb3926f624b366376376542dd"
     }
   ],
   "sourceBuildReceipt": "comparison/source-build/result.json",
   "currentMeasurement": {
     "compiler": {
-      "commit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
-      "sha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9"
+      "commit": "249686599dc3bf1b6bf70dc9a030081b755bbb24",
+      "sha256": "47048e41164027e92d3bf1d1840d8d83e04c60532c031ceb3346222e194b3041"
     },
     "source": {
-      "commit": "acd4bab3574fa5acc9b0de1005e3c6fb423f2df0"
+      "commit": "b2f12c4d726d06df89ff4393038883717350690a"
     },
     "upstream": {
       "repository": "https://github.com/jquery/jquery.git",

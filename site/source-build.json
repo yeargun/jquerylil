@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "name": "jquerylil",
-  "startedAt": "2026-09-24T04:14:32Z",
+  "startedAt": "2026-09-27T15:01:45Z",
   "machine": {
     "provider": "Azure",
     "instanceClass": "Standard_B8als_v2",
@@ -13,19 +13,19 @@
     "node": "v24.11.1",
     "rayonThreads": 8,
     "loadAtStart": [
-      3.103515625,
-      2.79833984375,
-      3.62548828125
+      12.08984375,
+      12.6640625,
+      10.14599609375
     ],
     "loadAtEnd": [
-      2.04833984375,
-      2.5576171875,
-      3.4716796875
+      11.26025390625,
+      11.9013671875,
+      10.212890625
     ]
   },
   "compiler": {
-    "commit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
-    "sha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9"
+    "commit": "249686599dc3bf1b6bf70dc9a030081b755bbb24",
+    "sha256": "47048e41164027e92d3bf1d1840d8d83e04c60532c031ceb3346222e194b3041"
   },
   "source": {
     "repository": "https://github.com/jquery/jquery.git",
@@ -35,7 +35,7 @@
     "directory": "."
   },
   "portSource": {
-    "commit": "acd4bab3574fa5acc9b0de1005e3c6fb423f2df0"
+    "commit": "b2f12c4d726d06df89ff4393038883717350690a"
   },
   "prerequisiteAdjustments": null,
   "steps": {
@@ -48,13 +48,13 @@
         "--no-fund"
       ],
       "cwd": "upstream",
-      "wallSeconds": 0.8157963229969027,
-      "cpuSeconds": 0.986366,
+      "wallSeconds": 1.4281085340189748,
+      "cpuSeconds": 1.380509,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-install.log",
-      "logSha256": "6eb5c7a977c81de0f1d3467e2f45e06e193db90aab501ab7fdf965dad37e6621",
-      "tail": "\nup to date in 724ms\n"
+      "logSha256": "b125771fda8addd462adfe7f7b03299feb35e28badbb2d16ae8589e371216f8f",
+      "tail": "\nup to date in 1s\n"
     },
     "original-build-1": {
       "command": [
@@ -63,8 +63,8 @@
         "build-all-variants"
       ],
       "cwd": "upstream",
-      "wallSeconds": 3.271198529000685,
-      "cpuSeconds": 5.100336999999999,
+      "wallSeconds": 6.511135132983327,
+      "cpuSeconds": 7.200406999999999,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-1.log",
@@ -78,8 +78,8 @@
         "node scripts/build.mjs --compile --force"
       ],
       "cwd": "port",
-      "wallSeconds": 20.80345013099577,
-      "cpuSeconds": 20.794802,
+      "wallSeconds": 37.02315662294859,
+      "cpuSeconds": 34.931129000000006,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-1.log",
@@ -88,19 +88,19 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/src/entry.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/src/entry.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js"
           ],
-          "startedAt": 1790223276.829441,
-          "wallSeconds": 20.70594573020935,
+          "startedAt": 1790521313.144744,
+          "wallSeconds": 36.856194496154785,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js",
-          "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
         }
       ]
     },
@@ -111,8 +111,8 @@
         "node scripts/build.mjs --compile --force"
       ],
       "cwd": "port",
-      "wallSeconds": 20.754080651997356,
-      "cpuSeconds": 20.70842,
+      "wallSeconds": 34.15803459304152,
+      "cpuSeconds": 32.772245,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-2.log",
@@ -121,19 +121,19 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/src/entry.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/src/entry.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js"
           ],
-          "startedAt": 1790223297.63403,
-          "wallSeconds": 20.618839502334595,
+          "startedAt": 1790521350.1666014,
+          "wallSeconds": 33.99633049964905,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js",
-          "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
         }
       ]
     },
@@ -144,8 +144,8 @@
         "build-all-variants"
       ],
       "cwd": "upstream",
-      "wallSeconds": 3.0709373650024645,
-      "cpuSeconds": 4.823704,
+      "wallSeconds": 7.093379703001119,
+      "cpuSeconds": 7.378857000000007,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-2.log",
@@ -159,8 +159,8 @@
         "build-all-variants"
       ],
       "cwd": "upstream",
-      "wallSeconds": 3.170451760997821,
-      "cpuSeconds": 4.918892,
+      "wallSeconds": 6.706023313978221,
+      "cpuSeconds": 7.371600999999991,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-3.log",
@@ -174,8 +174,8 @@
         "node scripts/build.mjs --compile --force"
       ],
       "cwd": "port",
-      "wallSeconds": 20.904782865996822,
-      "cpuSeconds": 20.876731000000007,
+      "wallSeconds": 35.01292237400776,
+      "cpuSeconds": 33.925307,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-3.log",
@@ -184,32 +184,32 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/src/entry.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/src/entry.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js"
           ],
-          "startedAt": 1790223324.6446383,
-          "wallSeconds": 20.78191351890564,
+          "startedAt": 1790521398.1593451,
+          "wallSeconds": 34.81005263328552,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js",
-          "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
         }
       ]
     },
     "original-esm": {
       "command": [
         "node",
-        "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/tools/source-esm.mjs",
-        "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild",
+        "/home/azureuser/lilscript-work/release-0927/srcbuild/jquerylil/tools/source-esm.mjs",
+        "/home/azureuser/lilscript-work/release-0927/srcbuild/jquerylil",
         "jquerylil"
       ],
       "cwd": "upstream",
-      "wallSeconds": 6.126759251004842,
-      "cpuSeconds": 8.626356000000008,
+      "wallSeconds": 12.236915318993852,
+      "cpuSeconds": 14.047286999999997,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-esm.log",
@@ -223,13 +223,13 @@
         "node --test test/compat.test.mjs"
       ],
       "cwd": "port",
-      "wallSeconds": 0.6655228539966629,
-      "cpuSeconds": 0.7300839999999935,
+      "wallSeconds": 1.4773345419671386,
+      "cpuSeconds": 1.0275709999999818,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-tests.log",
-      "logSha256": "9801826e8b8b9c01b984c4e96c857384779b455b110a2777f6b409f12283d9e2",
-      "tail": "▶ @itslil/jquery vs jquery@3.7.1\n  ✔ exports the 3.7.1 surface (0.79543ms)\n  ✔ matches core utilities (1.549073ms)\n  ✔ matches Deferred resolve/reject (0.70984ms)\n  ✔ ships the compiler-selected compact ESM, not a pretty-printed wrapper (2.148035ms)\n  ✔ loads from CommonJS (11.365997ms)\n  ✔ selects, classes, and events (6.621557ms)\n✔ @itslil/jquery vs jquery@3.7.1 (24.618961ms)\nℹ tests 6\nℹ suites 1\nℹ pass 6\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 565.657565\n"
+      "logSha256": "f821ece3c7ebfe75caff1e27bc9babdadd6ed470252055b2d1cac50d79e1263e",
+      "tail": "▶ @itslil/jquery vs jquery@3.7.1\n  ✔ exports the 3.7.1 surface (1.117174ms)\n  ✔ matches core utilities (2.490567ms)\n  ✔ matches Deferred resolve/reject (1.226128ms)\n  ✔ ships the compiler-selected compact ESM, not a pretty-printed wrapper (3.165071ms)\n  ✔ loads from CommonJS (14.117353ms)\n  ✔ selects, classes, and events (9.367874ms)\n✔ @itslil/jquery vs jquery@3.7.1 (33.060218ms)\nℹ tests 6\nℹ suites 1\nℹ pass 6\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1393.486488\n"
     }
   },
   "nativeBuilds": [
@@ -240,8 +240,8 @@
         "build-all-variants"
       ],
       "cwd": "upstream",
-      "wallSeconds": 3.271198529000685,
-      "cpuSeconds": 5.100336999999999,
+      "wallSeconds": 6.511135132983327,
+      "cpuSeconds": 7.200406999999999,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-1.log",
@@ -255,8 +255,8 @@
         "build-all-variants"
       ],
       "cwd": "upstream",
-      "wallSeconds": 3.0709373650024645,
-      "cpuSeconds": 4.823704,
+      "wallSeconds": 7.093379703001119,
+      "cpuSeconds": 7.378857000000007,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-2.log",
@@ -270,8 +270,8 @@
         "build-all-variants"
       ],
       "cwd": "upstream",
-      "wallSeconds": 3.170451760997821,
-      "cpuSeconds": 4.918892,
+      "wallSeconds": 6.706023313978221,
+      "cpuSeconds": 7.371600999999991,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-3.log",
@@ -287,8 +287,8 @@
         "node scripts/build.mjs --compile --force"
       ],
       "cwd": "port",
-      "wallSeconds": 20.80345013099577,
-      "cpuSeconds": 20.794802,
+      "wallSeconds": 37.02315662294859,
+      "cpuSeconds": 34.931129000000006,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-1.log",
@@ -297,19 +297,19 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/src/entry.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/src/entry.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js"
           ],
-          "startedAt": 1790223276.829441,
-          "wallSeconds": 20.70594573020935,
+          "startedAt": 1790521313.144744,
+          "wallSeconds": 36.856194496154785,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js",
-          "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
         }
       ]
     },
@@ -320,8 +320,8 @@
         "node scripts/build.mjs --compile --force"
       ],
       "cwd": "port",
-      "wallSeconds": 20.754080651997356,
-      "cpuSeconds": 20.70842,
+      "wallSeconds": 34.15803459304152,
+      "cpuSeconds": 32.772245,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-2.log",
@@ -330,19 +330,19 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/src/entry.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/src/entry.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js"
           ],
-          "startedAt": 1790223297.63403,
-          "wallSeconds": 20.618839502334595,
+          "startedAt": 1790521350.1666014,
+          "wallSeconds": 33.99633049964905,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js",
-          "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
         }
       ]
     },
@@ -353,8 +353,8 @@
         "node scripts/build.mjs --compile --force"
       ],
       "cwd": "port",
-      "wallSeconds": 20.904782865996822,
-      "cpuSeconds": 20.876731000000007,
+      "wallSeconds": 35.01292237400776,
+      "cpuSeconds": 33.925307,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-3.log",
@@ -363,19 +363,19 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/src/entry.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/src/entry.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js"
           ],
-          "startedAt": 1790223324.6446383,
-          "wallSeconds": 20.78191351890564,
+          "startedAt": 1790521398.1593451,
+          "wallSeconds": 34.81005263328552,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/jquerylil/srcbuild/ports/jquerylil/dist/jquery.raw.js",
-          "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/jquerylil/dist/jquery.raw.js",
+          "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
         }
       ]
     }
@@ -400,19 +400,19 @@
     "external": [],
     "samples": [
       {
-        "bundleSeconds": 0.041397408999999996,
-        "wallSeconds": 1.484087902
+        "bundleSeconds": 0.08504188799999997,
+        "wallSeconds": 3.051463616
       },
       {
-        "bundleSeconds": 0.02100277200000005,
-        "wallSeconds": 1.190560002
+        "bundleSeconds": 0.05099020399999972,
+        "wallSeconds": 2.319153487
       },
       {
-        "bundleSeconds": 0.01980902900000001,
-        "wallSeconds": 1.0375172769999998
+        "bundleSeconds": 0.03792334000000028,
+        "wallSeconds": 2.1449368749999995
       }
     ],
-    "medianSeconds": 1.190560002,
+    "medianSeconds": 2.319153487,
     "toolchain": {
       "esbuild": "0.28.1",
       "terser": "5.51.2",
@@ -470,62 +470,62 @@
   "lilscriptArtifacts": [
     {
       "path": "dist/jquery.cjs",
-      "raw": 76070,
-      "gzip9": 28357,
-      "brotli11": 25498,
-      "sha256": "1b5e45025a4e1a254408ba76c12aad72c7d8d0c2dda9d1b4ce5bfe94b3accedf"
+      "raw": 75975,
+      "gzip9": 28326,
+      "brotli11": 25525,
+      "sha256": "976417719cb1ebc0129d1adfe1e0d6778ddfe16fc8a34bab3a84cc989e0d9a3d"
     },
     {
       "path": "dist/jquery.esm.js",
-      "raw": 76017,
-      "gzip9": 28349,
-      "brotli11": 25487,
-      "sha256": "1a86124819692b097adef9fac3ca71a6715d3e68165fddea63241430f41a170a"
+      "raw": 75922,
+      "gzip9": 28317,
+      "brotli11": 25452,
+      "sha256": "c682ac96f65493464d5bd50aebfb8e28e3d68a53f5b10d0309aa97465d32cd21"
     },
     {
       "path": "dist/jquery.impl.js",
-      "raw": 75921,
-      "gzip9": 28294,
-      "brotli11": 25429,
-      "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+      "raw": 75826,
+      "gzip9": 28262,
+      "brotli11": 25407,
+      "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
     },
     {
       "path": "dist/jquery.raw.js",
-      "raw": 75921,
-      "gzip9": 28294,
-      "brotli11": 25429,
-      "sha256": "0f5db226c5f6f292aff4112b2d74bcd1622266c3aa7bc002fbf11902060f9240"
+      "raw": 75826,
+      "gzip9": 28262,
+      "brotli11": 25407,
+      "sha256": "24fb58a876627aef605877be36abe8e447069ec780c6bbc55aed6e91ad78a81c"
     },
     {
       "path": "dist/jquery.umd.js",
-      "raw": 75972,
-      "gzip9": 28325,
-      "brotli11": 25459,
-      "sha256": "d8c09602c1eaada1f4e7e6f702b56c5f8e17f9cb07476a2720d4fc957a2cb936"
+      "raw": 75877,
+      "gzip9": 28294,
+      "brotli11": 25482,
+      "sha256": "2d3f309e8aafa82acad2b44dbf841def587797ceb4150a0efe2750515adb6395"
     }
   ],
   "nativeBuildsSummary": {
     "samples": 3,
     "successful": 3,
-    "medianSeconds": 3.170451760997821,
-    "minimumSeconds": 3.0709373650024645,
-    "maximumSeconds": 3.271198529000685
+    "medianSeconds": 6.706023313978221,
+    "minimumSeconds": 6.511135132983327,
+    "maximumSeconds": 7.093379703001119
   },
   "lilscriptBuildsSummary": {
     "samples": 3,
     "successful": 3,
-    "medianSeconds": 20.80345013099577,
-    "minimumSeconds": 20.754080651997356,
-    "maximumSeconds": 20.904782865996822
+    "medianSeconds": 35.01292237400776,
+    "minimumSeconds": 34.15803459304152,
+    "maximumSeconds": 37.02315662294859
   },
   "status": "complete",
-  "finishedAt": "2026-09-24T04:15:52Z",
+  "finishedAt": "2026-09-27T15:04:07Z",
   "sourceBuild": {
     "original": {
       "complete": true,
-      "medianSeconds": 3.170451760997821,
-      "minimumSeconds": 3.0709373650024645,
-      "maximumSeconds": 3.271198529000685,
+      "medianSeconds": 6.706023313978221,
+      "minimumSeconds": 6.511135132983327,
+      "maximumSeconds": 7.093379703001119,
       "samples": [
         {
           "command": [
@@ -533,8 +533,8 @@
             "run",
             "build-all-variants"
           ],
-          "wallSeconds": 3.271198529000685,
-          "cpuSeconds": 5.100336999999999,
+          "wallSeconds": 6.511135132983327,
+          "cpuSeconds": 7.200406999999999,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-1.log",
@@ -546,8 +546,8 @@
             "run",
             "build-all-variants"
           ],
-          "wallSeconds": 3.0709373650024645,
-          "cpuSeconds": 4.823704,
+          "wallSeconds": 7.093379703001119,
+          "cpuSeconds": 7.378857000000007,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-2.log",
@@ -559,8 +559,8 @@
             "run",
             "build-all-variants"
           ],
-          "wallSeconds": 3.170451760997821,
-          "cpuSeconds": 4.918892,
+          "wallSeconds": 6.706023313978221,
+          "cpuSeconds": 7.371600999999991,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-3.log",
@@ -570,9 +570,9 @@
     },
     "lilscript": {
       "complete": true,
-      "medianSeconds": 20.80345013099577,
-      "minimumSeconds": 20.754080651997356,
-      "maximumSeconds": 20.904782865996822,
+      "medianSeconds": 35.01292237400776,
+      "minimumSeconds": 34.15803459304152,
+      "maximumSeconds": 37.02315662294859,
       "samples": [
         {
           "command": [
@@ -580,8 +580,8 @@
             "-c",
             "node scripts/build.mjs --compile --force"
           ],
-          "wallSeconds": 20.80345013099577,
-          "cpuSeconds": 20.794802,
+          "wallSeconds": 37.02315662294859,
+          "cpuSeconds": 34.931129000000006,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-1.log",
@@ -593,8 +593,8 @@
             "-c",
             "node scripts/build.mjs --compile --force"
           ],
-          "wallSeconds": 20.754080651997356,
-          "cpuSeconds": 20.70842,
+          "wallSeconds": 34.15803459304152,
+          "cpuSeconds": 32.772245,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-2.log",
@@ -606,8 +606,8 @@
             "-c",
             "node scripts/build.mjs --compile --force"
           ],
-          "wallSeconds": 20.904782865996822,
-          "cpuSeconds": 20.876731000000007,
+          "wallSeconds": 35.01292237400776,
+          "cpuSeconds": 33.925307,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-3.log",

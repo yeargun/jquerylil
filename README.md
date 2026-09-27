@@ -41,7 +41,7 @@ Reusable package artifacts, measured with `lilscript-codec` gzip-9 / Brotli-11.
 | Official `jquery.js` | 285,314 | 83,619 | 69,545 | 2.53× |
 | Official `jquery.min.js` | 87,533 | 30,336 | 27,445 | 1.00× |
 | jQuery source ESM + Terser | 87,468 | 30,497 | 27,675 | 1.01× |
-| **`@itslil/jquery` ESM** | **76,017** | **28,349** | **25,487** | **0.93×** |
+| **`@itslil/jquery` ESM** | **75,922** | **28,317** | **25,452** | **0.93×** |
 <!-- /generated:size -->
 
 The published ESM is the LilScript compiler output plus a license banner and a default export. It is not pretty-printed and not run through Terser or any other minifier; the CJS and UMD files are the same output with the export clause swapped for `module.exports` or dropped. `node scripts/write-results.mjs` regenerates the tables in this file from `reports/`, so they cannot drift from the artifact again.
@@ -51,10 +51,10 @@ Against the other minifiers. Official `jquery.min.js` is the file jQuery publish
 <!-- generated:bars -->
 | Bar | Raw | gzip-9 | Brotli-11 | `@itslil/jquery` raw | gzip-9 | Brotli-11 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Official `jquery.min.js` | 87,533 | 30,336 | 27,445 | −11,516 | −1,987 | −1,958 |
-| jQuery source ESM + Terser | 87,468 | 30,497 | 27,675 | −11,451 | −2,148 | −2,188 |
-| jQuery source ESM + esbuild 0.28.1 | 88,320 | 31,538 | 28,665 | −12,303 | −3,189 | −3,178 |
-| jQuery source ESM + Oxc (Vite 8.2.1 minify) | 87,418 | 30,562 | 27,765 | −11,401 | −2,213 | −2,278 |
+| Official `jquery.min.js` | 87,533 | 30,336 | 27,445 | −11,611 | −2,019 | −1,993 |
+| jQuery source ESM + Terser | 87,468 | 30,497 | 27,675 | −11,546 | −2,180 | −2,223 |
+| jQuery source ESM + esbuild 0.28.1 | 88,320 | 31,538 | 28,665 | −12,398 | −3,221 | −3,213 |
+| jQuery source ESM + Oxc (Vite 8.2.1 minify) | 87,418 | 30,562 | 27,765 | −11,496 | −2,245 | −2,313 |
 <!-- /generated:bars -->
 
 ## Example app bundles
@@ -64,12 +64,12 @@ Same six apps, Vite production minify, official `jquery@3.7.1` vs `@itslil/jquer
 <!-- generated:apps -->
 | App | jquery Brotli | @itslil/jquery Brotli | Ratio |
 | --- | ---: | ---: | ---: |
-| Todos | 28,847 | 26,475 | 0.92× |
-| Tabs | 28,634 | 26,271 | 0.92× |
-| Search | 28,737 | 26,413 | 0.92× |
-| Cart | 28,877 | 26,532 | 0.92× |
-| Accordion | 28,548 | 26,275 | 0.92× |
-| Gallery | 28,790 | 26,490 | 0.92× |
+| Todos | 28,847 | 26,513 | 0.92× |
+| Tabs | 28,634 | 26,347 | 0.92× |
+| Search | 28,737 | 26,392 | 0.92× |
+| Cart | 28,877 | 26,568 | 0.92× |
+| Accordion | 28,548 | 26,189 | 0.92× |
+| Gallery | 28,790 | 26,474 | 0.92× |
 <!-- /generated:apps -->
 
 Vite minifies both lanes, so this is what an app ships, not the published file; the ratio column is the result.
@@ -77,17 +77,17 @@ Vite minifies both lanes, so this is what an app ships, not the published file; 
 ## Performance
 
 <!-- generated:perfnote -->
-Isolated Node v24.11.1 processes versus `jquery@3.7.1`. 8 samples, first 2 discarded, median of the rest. Ratio is `@itslil/jquery` / official (lower is faster). Checksums match on every suite. Mean retained memory **1.16×**.
+Isolated Node v24.11.1 processes versus `jquery@3.7.1`. 8 samples, first 2 discarded, median of the rest. Ratio is `@itslil/jquery` / official (lower is faster). Checksums match on every suite. Mean retained memory **1.15×**.
 <!-- /generated:perfnote -->
 
 <!-- generated:perf -->
 | Suite | jquery@3.7.1 | @itslil/jquery | Ratio |
 | --- | ---: | ---: | ---: |
-| core | 584.99 ms | 529.16 ms | 0.90× |
-| events | 129.11 ms | 110.75 ms | 0.86× |
-| deferred | 161.65 ms | 76.91 ms | 0.48× |
-| collection | 9.21 ms | 8.31 ms | 0.90× |
-| event-state | 15.30 ms | 15.54 ms | 1.02× |
+| core | 794.82 ms | 860.97 ms | 1.08× |
+| events | 243.53 ms | 170.63 ms | 0.70× |
+| deferred | 260.02 ms | 130.49 ms | 0.50× |
+| collection | 17.37 ms | 16.36 ms | 0.94× |
+| event-state | 30.63 ms | 26.12 ms | 0.85× |
 <!-- /generated:perf -->
 
 The deferred suite is a much cheaper implementation of the same resolve/done checksum; it is not a different workload. Absolute milliseconds move with the host; the ratio is the result.
@@ -118,12 +118,12 @@ The site shows how long the compiler and the whole package build take, next to t
 <!-- generated:compiler -->
 | Build | Wall time | Scope |
 | --- | ---: | --- |
-| LilScript compiler, one invocation | 20.71 s median | `src/entry.lil` → `dist/jquery.raw.js` |
-| LilScript package | 20.80 s median (20.75 s–20.90 s; 3 builds) | `node scripts/build.mjs --compile --force` |
-| Original repository | 3.17 s median (3.07 s–3.27 s; 3 builds) | `npm run build-all-variants` in jquery 3.7.1 (`f79d5f1`) |
-| Original comparison ESM | 1.19 s median | esbuild bundle + Terser, recorded separately |
+| LilScript compiler, one invocation | 34.81 s median | `src/entry.lil` → `dist/jquery.raw.js` |
+| LilScript package | 35.01 s median (34.16 s–37.02 s; 3 builds) | `node scripts/build.mjs --compile --force` |
+| Original repository | 6.71 s median (6.51 s–7.09 s; 3 builds) | `npm run build-all-variants` in jquery 3.7.1 (`f79d5f1`) |
+| Original comparison ESM | 2.32 s median | esbuild bundle + Terser, recorded separately |
 
-Measured 2026-09-24 with LilScript [`aa2052f0`](https://github.com/yeargun/lilscript/commit/aa2052f081ca8184666ca280ee9b91d476e46cfc) (binary SHA-256 `13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9`) on Azure Standard_B8als_v2, AMD EPYC 7763 64-Core Processor, 8 vCPUs, 15.6 GiB RAM, Node v24.11.1. Runtime checks: 6/6 pass.
+Measured 2026-09-27 with LilScript [`24968659`](https://github.com/yeargun/lilscript/commit/249686599dc3bf1b6bf70dc9a030081b755bbb24) (binary SHA-256 `47048e41164027e92d3bf1d1840d8d83e04c60532c031ceb3346222e194b3041`) on Azure Standard_B8als_v2, AMD EPYC 7763 64-Core Processor, 8 vCPUs, 15.6 GiB RAM, Node v24.11.1. Runtime checks: 6/6 pass.
 <!-- /generated:compiler -->
 
 ## Compatibility

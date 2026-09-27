@@ -5,7 +5,7 @@
   "codec": "lilscript-codec gzip-9 / brotli-11",
   "warmupDiscard": 2,
   "memory": {
-    "retainedRatio": 1.160354562808548
+    "retainedRatio": 1.151668870589234
   },
   "size": [
     {
@@ -35,9 +35,9 @@
     {
       "id": "itslil",
       "name": "@itslil/jquery",
-      "raw": 76017,
-      "gzip9": 28349,
-      "brotli11": 25487,
+      "raw": 75922,
+      "gzip9": 28317,
+      "brotli11": 25452,
       "note": "LilScript compiler output; the build adds only the license banner and `export default`",
       "primary": true
     }
@@ -71,9 +71,9 @@
         "brotli11": 28847
       },
       "itslil": {
-        "raw": 74967,
-        "gzip9": 29370,
-        "brotli11": 26475
+        "raw": 74860,
+        "gzip9": 29356,
+        "brotli11": 26513
       }
     },
     {
@@ -85,9 +85,9 @@
         "brotli11": 28634
       },
       "itslil": {
-        "raw": 74493,
-        "gzip9": 29134,
-        "brotli11": 26271
+        "raw": 74386,
+        "gzip9": 29124,
+        "brotli11": 26347
       }
     },
     {
@@ -99,9 +99,9 @@
         "brotli11": 28737
       },
       "itslil": {
-        "raw": 74755,
-        "gzip9": 29278,
-        "brotli11": 26413
+        "raw": 74648,
+        "gzip9": 29270,
+        "brotli11": 26392
       }
     },
     {
@@ -113,9 +113,9 @@
         "brotli11": 28877
       },
       "itslil": {
-        "raw": 75043,
-        "gzip9": 29415,
-        "brotli11": 26532
+        "raw": 74936,
+        "gzip9": 29404,
+        "brotli11": 26568
       }
     },
     {
@@ -127,9 +127,9 @@
         "brotli11": 28548
       },
       "itslil": {
-        "raw": 74321,
-        "gzip9": 29068,
-        "brotli11": 26275
+        "raw": 74214,
+        "gzip9": 29054,
+        "brotli11": 26189
       }
     },
     {
@@ -141,42 +141,42 @@
         "brotli11": 28790
       },
       "itslil": {
-        "raw": 74796,
-        "gzip9": 29334,
-        "brotli11": 26490
+        "raw": 74689,
+        "gzip9": 29322,
+        "brotli11": 26474
       }
     }
   ],
   "throughput": [
     {
       "name": "core",
-      "officialMs": 584.9913560000001,
-      "candidateMs": 529.158958,
-      "ratio": 0.9045585931700499
+      "officialMs": 794.81648,
+      "candidateMs": 860.969989,
+      "ratio": 1.0832311743208949
     },
     {
       "name": "events",
-      "officialMs": 129.10832499999998,
-      "candidateMs": 110.752227,
-      "ratio": 0.857824055884855
+      "officialMs": 243.52906799999994,
+      "candidateMs": 170.628916,
+      "ratio": 0.7006511271993208
     },
     {
       "name": "deferred",
-      "officialMs": 161.64754700000003,
-      "candidateMs": 76.90600799999999,
-      "ratio": 0.4757635326195205
+      "officialMs": 260.02005099999997,
+      "candidateMs": 130.486857,
+      "ratio": 0.5018338258844507
     },
     {
       "name": "collection",
-      "officialMs": 9.20741099999998,
-      "candidateMs": 8.312085000000025,
-      "ratio": 0.9027602873381066
+      "officialMs": 17.366840000000025,
+      "candidateMs": 16.36127500000009,
+      "ratio": 0.9420985625479401
     },
     {
       "name": "event-state",
-      "officialMs": 15.303533000000016,
-      "candidateMs": 15.544974999999965,
-      "ratio": 1.015776879757109
+      "officialMs": 30.632814999999937,
+      "candidateMs": 26.115711999999917,
+      "ratio": 0.8525403884690314
     }
   ],
   "examples": [

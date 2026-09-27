@@ -1,10 +1,10 @@
 {
   "schemaVersion": 2,
-  "measuredAt": "2026-09-24T04:15:52Z",
+  "measuredAt": "2026-09-27T15:04:07Z",
   "name": "jquerylil",
   "compiler": {
-    "commit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
-    "sha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9"
+    "commit": "249686599dc3bf1b6bf70dc9a030081b755bbb24",
+    "sha256": "47048e41164027e92d3bf1d1840d8d83e04c60532c031ceb3346222e194b3041"
   },
   "upstream": {
     "package": "jquery",
@@ -30,21 +30,21 @@
     "node": "v24.11.1",
     "rayonThreads": 8,
     "loadAtStart": [
-      3.103515625,
-      2.79833984375,
-      3.62548828125
+      12.08984375,
+      12.6640625,
+      10.14599609375
     ],
     "loadAtEnd": [
-      2.04833984375,
-      2.5576171875,
-      3.4716796875
+      11.26025390625,
+      11.9013671875,
+      10.212890625
     ]
   },
   "build": {
-    "compilerSeconds": 20.70594573020935,
-    "packageSeconds": 20.80345013099577,
-    "originalSeconds": 3.170451760997821,
-    "originalEsmSeconds": 1.190560002,
+    "compilerSeconds": 34.81005263328552,
+    "packageSeconds": 35.01292237400776,
+    "originalSeconds": 6.706023313978221,
+    "originalEsmSeconds": 2.319153487,
     "packageScope": "node scripts/build.mjs --compile --force",
     "originalScope": "npm run build-all-variants",
     "protocol": {
@@ -57,10 +57,10 @@
   },
   "esm": {
     "lilscript": {
-      "raw": 76017,
-      "gzip9": 28349,
-      "brotli11": 25487,
-      "sha256": "1a86124819692b097adef9fac3ca71a6715d3e68165fddea63241430f41a170a",
+      "raw": 75922,
+      "gzip9": 28317,
+      "brotli11": 25452,
+      "sha256": "c682ac96f65493464d5bd50aebfb8e28e3d68a53f5b10d0309aa97465d32cd21",
       "file": "./esm-comparison/lilscript.js"
     },
     "original": {
@@ -74,9 +74,9 @@
   "sourceBuild": {
     "original": {
       "complete": true,
-      "medianSeconds": 3.170451760997821,
-      "minimumSeconds": 3.0709373650024645,
-      "maximumSeconds": 3.271198529000685,
+      "medianSeconds": 6.706023313978221,
+      "minimumSeconds": 6.511135132983327,
+      "maximumSeconds": 7.093379703001119,
       "samples": [
         {
           "command": [
@@ -84,8 +84,8 @@
             "run",
             "build-all-variants"
           ],
-          "wallSeconds": 3.271198529000685,
-          "cpuSeconds": 5.100336999999999,
+          "wallSeconds": 6.511135132983327,
+          "cpuSeconds": 7.200406999999999,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-1.log",
@@ -97,8 +97,8 @@
             "run",
             "build-all-variants"
           ],
-          "wallSeconds": 3.0709373650024645,
-          "cpuSeconds": 4.823704,
+          "wallSeconds": 7.093379703001119,
+          "cpuSeconds": 7.378857000000007,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-2.log",
@@ -110,8 +110,8 @@
             "run",
             "build-all-variants"
           ],
-          "wallSeconds": 3.170451760997821,
-          "cpuSeconds": 4.918892,
+          "wallSeconds": 6.706023313978221,
+          "cpuSeconds": 7.371600999999991,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-3.log",
@@ -121,9 +121,9 @@
     },
     "lilscript": {
       "complete": true,
-      "medianSeconds": 20.80345013099577,
-      "minimumSeconds": 20.754080651997356,
-      "maximumSeconds": 20.904782865996822,
+      "medianSeconds": 35.01292237400776,
+      "minimumSeconds": 34.15803459304152,
+      "maximumSeconds": 37.02315662294859,
       "samples": [
         {
           "command": [
@@ -131,8 +131,8 @@
             "-c",
             "node scripts/build.mjs --compile --force"
           ],
-          "wallSeconds": 20.80345013099577,
-          "cpuSeconds": 20.794802,
+          "wallSeconds": 37.02315662294859,
+          "cpuSeconds": 34.931129000000006,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-1.log",
@@ -144,8 +144,8 @@
             "-c",
             "node scripts/build.mjs --compile --force"
           ],
-          "wallSeconds": 20.754080651997356,
-          "cpuSeconds": 20.70842,
+          "wallSeconds": 34.15803459304152,
+          "cpuSeconds": 32.772245,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-2.log",
@@ -157,8 +157,8 @@
             "-c",
             "node scripts/build.mjs --compile --force"
           ],
-          "wallSeconds": 20.904782865996822,
-          "cpuSeconds": 20.876731000000007,
+          "wallSeconds": 35.01292237400776,
+          "cpuSeconds": 33.925307,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-3.log",
