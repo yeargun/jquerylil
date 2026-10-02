@@ -1,40 +1,52 @@
-# Candidate search runs to convergence rather than the production slice.
-# `production` caps the proposal budget at 384 and then scales it by artifact
-# size, so a large module exhausts the beam before it reaches the naming and
-# class-shape families. Measured on this port with `lilscript-codec`:
+# Compiler-owned delivery; no JavaScript post-minifier or export rewriting.
+[policy]
+version = 3
 [javascript]
 priority = "size-first"
-optimization_level = 15
-cost_model = "brotli"
+# Assumes unpatched platform builtins; disable when consumers replace them.
 assume_pristine_builtins = true
-strip_console = true
-candidate_search = "always"
-candidate_proposal_limit = 1536
-terminal_codec_probe_limit = 1536
-candidate_byte_budget = 16777216
-# The one compiler (lilscript aa2052f0) reports every other family the old
-# route listed here as having no effect, so only the ones it reads remain.
-compression = [
-  "identifier-mangling",
-  "property-mangling",
-  "string-pooling",
-  "string-array-packing",
-  "parameterized-function-merging",
-]
-# 8.16 (measured, this artifact): the beam width picks which basin the terminal
-# search lands in, and the curve is not monotone -- 8:+0, 12:+0, 16:-97, 20:-97 against the
-# default. It is tuned, not raised, and it drifts with the compiler, so it is
-# re-measured rather than trusted. (The five largest ports do not respond to it
-# at all: their width is clamped by the candidate limit before the beam binds.)
-candidate_beam_width = 16
-# A property read has no side effect and may be repeated or dropped: this
-# port reads plain data, never a getter it would run twice.
+# Remove debugLog instrumentation; ordinary print and host console effects remain.
+strip_debug = true
+compression = ["identifier-mangling", "property-mangling", "string-pooling", "string-array-packing", "parameterized-function-merging"]
+# Plain-data reads must not run getters; disable for effectful accessor integrations.
 assume_pure_property_reads = true
 
+# Preserved effort setting. 13 favors size; 14/15 allow more expensive marginal searches.
+[effort]
+level = 15
+
+# Optimize the delivered files for this codec, independently of raw/gzip objectives.
+[objective]
+codecs = "brotli"
 [mangle]
 identifiers = true
 properties = true
 
-[bundle]
-# The artifact carries js-host.ts inside it rather than importing it.
+[delivery]
+mode = "single"
+directory = "."
 host_modules = "embed"
+select = ["esm"]
+entry_names = "jquery.esm.js"
+[delivery.entries]
+esm = "src/package-esm.lil"
+cjs = "src/package-cjs.lil"
+browser = "src/package-browser.lil"
+
+[[delivery.also]]
+name = "cjs"
+format = "cjs"
+entries = ["cjs"]
+exports = "default"
+es_module_marker = "never"
+entry_names = "jquery.cjs"
+
+# entry.lil owns jQuery/$ registration and noConflict; publish the same callable.
+[[delivery.also]]
+name = "browser"
+format = "iife"
+exports = "default"
+global = "jQuery"
+global_binding = "property"
+entries = ["browser"]
+entry_names = "jquery.umd.js"

@@ -1,0 +1,2 @@
+import {jQuery, $} from "./entry.lil";
+export {jQuery, $, jQuery as default};

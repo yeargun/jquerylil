@@ -46,7 +46,13 @@
     "NOTICE.md",
     "README.md"
   ],
-  "sideEffects": true,
+  "sideEffects": [
+    "./dist/jquery.cjs",
+    "./dist/jquery.esm.js",
+    "./dist/jquery.impl.js",
+    "./dist/jquery.raw.js",
+    "./dist/jquery.umd.js"
+  ],
   "engines": {
     "node": ">=18"
   },
