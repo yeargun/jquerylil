@@ -1,0 +1,6 @@
+// CommonJS publishes the callable jQuery object, with its historical aliases.
+import {jQuery} from "./entry.lil";
+jQuery["jQuery"] = jQuery;
+jQuery["$"] = jQuery;
+jQuery["default"] = jQuery;
+export {jQuery as default};

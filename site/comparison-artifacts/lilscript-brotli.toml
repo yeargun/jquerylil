@@ -22,37 +22,12 @@ codecs = "brotli"
 identifiers = true
 properties = true
 
+
 [delivery]
 mode = "single"
-directory = "."
 host_modules = "embed"
-select = ["esm"]
-entry_names = "jquery.esm.js"
+entry_names = "index.mjs"
 [delivery.entries]
-esm = "src/package-esm.lil"
-cjs = "src/package-cjs.lil"
-browser = "src/package-browser.lil"
-
-[[delivery.also]]
-name = "cjs"
-format = "cjs"
-entries = ["cjs"]
-exports = "default"
-es_module_marker = "never"
-entry_names = "jquery.cjs"
-
-# entry.lil owns jQuery/$ registration and noConflict; publish the same callable.
-[[delivery.also]]
-name = "browser"
-format = "iife"
-exports = "default"
-global = "jQuery"
-global_binding = "property"
-entries = ["browser"]
-entry_names = "jquery.umd.js"
-
-[policy.resources]
-logical_work = 2000000000
-
+index = "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/package-esm.lil"
 [execution]
 jobs = 1

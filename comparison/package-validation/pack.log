@@ -1,0 +1,5 @@
+
+> @itslil/jquery@3.7.1 check:pack
+> node scripts/check-pack.mjs
+
+npm pack: 146 files, 166233 bytes packed, 541594 bytes unpacked

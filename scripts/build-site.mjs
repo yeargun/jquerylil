@@ -1,3 +1,4 @@
+import {verifyComparison} from './build-comparison.mjs'
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises"
 import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
@@ -15,6 +16,7 @@ const pages = [
   "gallery.html",
 ]
 
+verifyComparison(root)
 await rm(output, { recursive: true, force: true })
 await mkdir(join(examplesDest, "lib"), { recursive: true })
 await cp(join(root, "site"), output, { recursive: true })
@@ -35,5 +37,5 @@ for (const page of pages) {
 await writeFile(join(output, ".nojekyll"), "")
 console.log(`Built GitHub Pages site at ${output}`)
 
-// Publish current build facts using the existing page typography.
-await import("./build-comparison.mjs").then(({writeComparison}) => writeComparison({root, output}));
+
+await import('./package-download.mjs').then(({writePackageDownload}) => writePackageDownload(root, output));

@@ -1,0 +1,1871 @@
+{
+  "compiler": {
+    "baseRevision": "f7d29bd9",
+    "binarySha256": "8ff44fabb92c949e68240ce6541038fd52e2f3c04d1a9ac470031e4238541c3a",
+    "hasLocalSourceChanges": true
+  },
+  "machine": {
+    "cpu": "AMD EPYC 7763 64-Core Processor",
+    "logicalCpus": 8,
+    "memoryGiB": 15.6,
+    "os": "Linux-7.0.0-1014-azure-x86_64-with-glibc2.39",
+    "node": "v20.19.0"
+  },
+  "lilscript": [
+    {
+      "library": "jquerylil",
+      "objective": "raw",
+      "command": [
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/bin/lilscript",
+        "--config",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/configs/jquerylil-raw.toml",
+        "--target",
+        "js-module",
+        "--mode",
+        "production",
+        "--jobs",
+        "1",
+        "--out-dir",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/artifacts/jquerylil/raw",
+        "--explain",
+        "json",
+        "--cache",
+        "off",
+        "--logical-work",
+        "8000000000"
+      ],
+      "wallSeconds": 81.13003568899876,
+      "returncode": 0,
+      "compilerSha256": "8ff44fabb92c949e68240ce6541038fd52e2f3c04d1a9ac470031e4238541c3a",
+      "configSha256": "aa01e8441a544d4672da279b33f6dc78298c9268fc9c88a917b2c440ea1ee302",
+      "measuredAt": "2026-10-03T14:12:39.701607+00:00",
+      "outputSha256": "9775ceace75bdff1371354fb2328e7c54dc3c664f51c543efa6e670d0151e82a",
+      "raw": 73493
+    },
+    {
+      "library": "jquerylil",
+      "objective": "gzip",
+      "command": [
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/bin/lilscript",
+        "--config",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/configs/jquerylil-gzip.toml",
+        "--target",
+        "js-module",
+        "--mode",
+        "production",
+        "--jobs",
+        "1",
+        "--out-dir",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/artifacts/jquerylil/gzip",
+        "--explain",
+        "json",
+        "--cache",
+        "off",
+        "--logical-work",
+        "8000000000"
+      ],
+      "wallSeconds": 70.99062472100195,
+      "returncode": 0,
+      "compilerSha256": "8ff44fabb92c949e68240ce6541038fd52e2f3c04d1a9ac470031e4238541c3a",
+      "configSha256": "6256e63c673d4d8655c78753dd72daa8d4802097c751a0837f7952f0a2f333fc",
+      "measuredAt": "2026-10-03T14:13:50.723051+00:00",
+      "outputSha256": "f9988b75ec2467ce17584aaa8c4c3b918c1e2dd7a017c6a7891623eeb3968eed",
+      "raw": 76538
+    },
+    {
+      "library": "jquerylil",
+      "objective": "brotli",
+      "command": [
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/bin/lilscript",
+        "--config",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/configs/jquerylil-brotli.toml",
+        "--target",
+        "js-module",
+        "--mode",
+        "production",
+        "--jobs",
+        "1",
+        "--out-dir",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/artifacts/jquerylil/brotli",
+        "--explain",
+        "json",
+        "--cache",
+        "off",
+        "--logical-work",
+        "8000000000"
+      ],
+      "wallSeconds": 170.31063453901152,
+      "returncode": 0,
+      "compilerSha256": "8ff44fabb92c949e68240ce6541038fd52e2f3c04d1a9ac470031e4238541c3a",
+      "configSha256": "18d3681a61a17e2e520351038b7df3795e8b5e3489879f4c3c51b710652380c3",
+      "measuredAt": "2026-10-03T14:16:41.046971+00:00",
+      "outputSha256": "8a632730918d39862d52b5e3e1bed71aa548cd2e1e663b3ed0a1ba0f4618ce21",
+      "raw": 76753
+    }
+  ],
+  "upstream": {
+    "name": "jquerylil",
+    "package": "jquery",
+    "version": "3.7.1",
+    "resolveDir": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil",
+    "output": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/upstream/jquerylil",
+    "entry": "import jQuery from \"jquery\"; export {jQuery,jQuery as $,jQuery as default};",
+    "external": [],
+    "sharedExports": [
+      "$",
+      "default",
+      "jQuery"
+    ],
+    "excludedExports": [],
+    "additionalExports": [],
+    "resolution": {
+      "platform": "neutral",
+      "conditions": [
+        "production"
+      ],
+      "mainFields": [
+        "module",
+        "main"
+      ],
+      "target": "es2020",
+      "defines": {
+        "process.env.NODE_ENV": "production"
+      },
+      "css": "excluded; measured JavaScript only"
+    },
+    "minifiers": [
+      {
+        "tool": "Terser",
+        "version": "5.51.2",
+        "esbuild": "0.28.1",
+        "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/upstream/jquerylil/terser.mjs",
+        "sha256": "6f4716e49340d4d7d2191f6d0370a0d423ff6c265febf760f5f9bc80c6d0a428",
+        "raw": 87403,
+        "imports": [],
+        "wallSeconds": 2.0994397549999992,
+        "command": [
+          "/home/azureuser/.nvm/versions/node/v20.19.0/bin/node",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/upstream.mjs",
+          "child",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/upstream/jquerylil/job.json",
+          "Terser"
+        ]
+      },
+      {
+        "tool": "esbuild",
+        "version": "0.28.1",
+        "esbuild": "0.28.1",
+        "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/upstream/jquerylil/esbuild.mjs",
+        "sha256": "7853b6ca49d5b27540f6a3d12019438317d7c3420055942466df94549fce8bdc",
+        "raw": 88230,
+        "imports": [],
+        "wallSeconds": 0.09429710200000045,
+        "command": [
+          "/home/azureuser/.nvm/versions/node/v20.19.0/bin/node",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/upstream.mjs",
+          "child",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/upstream/jquerylil/job.json",
+          "esbuild"
+        ]
+      },
+      {
+        "tool": "Oxc",
+        "version": "via Vite 8.2.1",
+        "esbuild": "0.28.1",
+        "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/upstream/jquerylil/oxc.mjs",
+        "sha256": "ac667507f1f8211af67b2da95e8c9ab59c463b140b494f28c75138f4dda4940f",
+        "raw": 87344,
+        "imports": [],
+        "wallSeconds": 0.22061806599999909,
+        "command": [
+          "/home/azureuser/.nvm/versions/node/v20.19.0/bin/node",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/upstream.mjs",
+          "child",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/upstream/jquerylil/job.json",
+          "Oxc"
+        ]
+      }
+    ]
+  },
+  "sourceInputs": {
+    "root": 0,
+    "entries": [
+      {
+        "name": "index",
+        "module": 0
+      }
+    ],
+    "modules": [
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/package-esm.lil",
+        "bytes": 78,
+        "sha256": "7c24bd82110259ba0a770409cc592ae1fba156b8078b93ef57440281d3958ba1",
+        "dependencies": [
+          1
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/entry.lil",
+        "bytes": 1302,
+        "sha256": "f986f027261729561669b6b0b49368f6d99ef1e8f1cf978efe97ef28c6e5e2bd",
+        "dependencies": [
+          2,
+          13,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          11,
+          31,
+          32,
+          33,
+          34,
+          44,
+          48,
+          49,
+          51,
+          54,
+          61,
+          63,
+          64,
+          66,
+          72,
+          73,
+          85,
+          86,
+          68,
+          67,
+          87,
+          88,
+          89,
+          90,
+          91,
+          95,
+          96,
+          98,
+          99,
+          100,
+          101,
+          102,
+          103
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core.lil",
+        "bytes": 9436,
+        "sha256": "1202685efcf5b66574471208fe6b72e110ce9b3f199652ac77c7c1316a03fd62",
+        "dependencies": [
+          3,
+          4,
+          5,
+          7,
+          6,
+          9,
+          10,
+          11,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/alloc.lil",
+        "bytes": 64,
+        "sha256": "ff2b8785d2dca5a1c452ae5061dc873c56763f6749676240fcb41aad03c61926",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/arr.lil",
+        "bytes": 79,
+        "sha256": "2026b155ad07643cc0714fcc708d2e55441af0f8f2176855449a3b70708307b7",
+        "dependencies": [
+          3
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/ObjectFunctionString.lil",
+        "bytes": 155,
+        "sha256": "9d1e8f1e1a2b529f056868d8bfd164fe04a0ab07abc5d0c164615ade3d70924f",
+        "dependencies": [
+          6
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/class2type.lil",
+        "bytes": 291,
+        "sha256": "3db9e89979778bf993266ca1d2e94678f202f72a6bcfaf218e5ce2f9be2ff43c",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/support.lil",
+        "bytes": 864,
+        "sha256": "0bb6002ab310c06af2b5590d0bd83ad60881e72d1229301ad27c2595eabe5aa3",
+        "dependencies": [
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/js-host.lil",
+        "bytes": 7449,
+        "sha256": "8050f9401b58790322a07e97c4931d27583da13da78571ebd1c9f38ac928aee2",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/isFunction.lil",
+        "bytes": 161,
+        "sha256": "893655ab5b6ce7bd4038aff0d75184369e4789a5639644f41ea8939952c02637",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/isWindow.lil",
+        "bytes": 105,
+        "sha256": "0b278bf4a77d03c9f1d80d5d373ed0b23a398d1d7382403c45c32f53e4b4fd31",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/DOMEval.lil",
+        "bytes": 733,
+        "sha256": "b1c784d419fe7cb2401fdd1529977c0acb0d96cf8cb1ae229a1c97af95ec8557",
+        "dependencies": [
+          12
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/document.lil",
+        "bytes": 96,
+        "sha256": "9d6d57dd94e60a15f9ec3ab285aee3a9875e8a20a9e71e8f98b732df97102ef8",
+        "dependencies": [
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/callbacks.lil",
+        "bytes": 4561,
+        "sha256": "874a9409f3c0e5661b4c349001797478a3f5602a2986663312f7c1f8926e1328",
+        "dependencies": [
+          3,
+          2,
+          9,
+          14,
+          15
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/toType.lil",
+        "bytes": 342,
+        "sha256": "c9d437d934ade7a90a8c2a64b3db18ab9537a6d5452bb76336ccedc7c3a80c57",
+        "dependencies": [
+          6
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/rnothtmlwhite.lil",
+        "bytes": 70,
+        "sha256": "c20224d734f75bdc38ed188c9872eeb4687a41e40b68de0afdcc5ed40f2864ed",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/deferred.lil",
+        "bytes": 8743,
+        "sha256": "82be2ad5acbbc1fcea0602b9a894719f92abd3a055f9d3b10634608793dd3f7c",
+        "dependencies": [
+          2,
+          9,
+          13,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/deferred/exceptionHook.lil",
+        "bytes": 525,
+        "sha256": "a5807cb25dbcc2c57566cbd226f1e14571dc774125c1bfcc93166336103378c5",
+        "dependencies": [
+          16,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/readyException.lil",
+        "bytes": 205,
+        "sha256": "4b5d0493021610d37b4c2f9837893c2a8f6270168d8cc1ba05016b4c026846c7",
+        "dependencies": [
+          2,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/ready.lil",
+        "bytes": 1611,
+        "sha256": "04375708cca2a916083032573a6b239b9366981bd5692f5402c28e1c11b80a25",
+        "dependencies": [
+          2,
+          16,
+          12,
+          18,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/access.lil",
+        "bytes": 1217,
+        "sha256": "e76a07cdf0acd51c233268da91d69b431c0b2273e4550fa8a9f2ae4afc5e8cfb",
+        "dependencies": [
+          2,
+          14,
+          9
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/data/var/acceptData.lil",
+        "bytes": 136,
+        "sha256": "e13eec87c64db45863eb2512940ccc1ad741b6e84370bea34822f359efcee3a4",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/data/Data.lil",
+        "bytes": 3864,
+        "sha256": "b37920634276a593464a590df025adcd832de91d41f52f62387782d6e5eb5bb0",
+        "dependencies": [
+          2,
+          23,
+          15,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/camelCase.lil",
+        "bytes": 388,
+        "sha256": "68605263d7579dd36de27f34f425e3b3e0794a67b0a5494f1df5188102166528",
+        "dependencies": [
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/data/var/dataPriv.lil",
+        "bytes": 275,
+        "sha256": "cb2889c4a6a5a57b194feb5023d3f63140684604ccc70a82948df48a6f5859f5",
+        "dependencies": [
+          22
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/data/var/dataUser.lil",
+        "bytes": 275,
+        "sha256": "6d15609e361952dcefea67b396f6d1805107dfe33bc2f78fec41056da1ecb997",
+        "dependencies": [
+          22
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/data.lil",
+        "bytes": 3147,
+        "sha256": "41727f745c1f063bb1f7411fd6a5857deb293257bcd2535837b20179b275c33a",
+        "dependencies": [
+          2,
+          23,
+          24,
+          25
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/queue.lil",
+        "bytes": 4278,
+        "sha256": "1eae39bd7facf7743c03f699e9efb308b7508a48a0b7034b3e6cb5ae80887b89",
+        "dependencies": [
+          2,
+          24,
+          16
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/queue/delay.lil",
+        "bytes": 585,
+        "sha256": "de4570a7415b4658c4dbf1bd8498e440988144772636cef17e2a1ce7b8da6d1c",
+        "dependencies": [
+          2,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/selector/contains.lil",
+        "bytes": 882,
+        "sha256": "7a88070a4b90e6ceddcbc2900d7312edefd960e043875a0d747265db510d7e78",
+        "dependencies": [
+          2,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/selector/escapeSelector.lil",
+        "bytes": 809,
+        "sha256": "96f45081f90c23d230a7499f5f97f31d757ad21d4f3262c995fd473030c59290",
+        "dependencies": [
+          2,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/isAttached.lil",
+        "bytes": 360,
+        "sha256": "90026241610c5c27e5e1643186f4b3c06387ad3eae92d86bf8951e2a9126e799",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/parseXML.lil",
+        "bytes": 806,
+        "sha256": "7a2d7fd42c50112fc103b1e9b27a983d585d48268fe0bf799f76d049317e5148",
+        "dependencies": [
+          2,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/support.lil",
+        "bytes": 419,
+        "sha256": "f33255952d816017c17ded690cfc76c8fa0a7136f4ddc9ea613b4f5f108b047a",
+        "dependencies": [
+          12,
+          7,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/parseHTML.lil",
+        "bytes": 1376,
+        "sha256": "91b6625753eeb04f0b974a84fed8591232d0646aeb88b5a4eef3abbebcea808a",
+        "dependencies": [
+          3,
+          2,
+          12,
+          35,
+          36,
+          33
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/var/rsingleTag.lil",
+        "bytes": 129,
+        "sha256": "420fcecf8c4881a3a018a5ad816340b199367d0559291e4114bcc3c713bc96be",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/manipulation/buildFragment.lil",
+        "bytes": 2538,
+        "sha256": "f41584128ac849bde28e449b5a17b1d8aa5b7d39dfac7a7e538461357630db60",
+        "dependencies": [
+          3,
+          2,
+          14,
+          31,
+          37,
+          38,
+          39,
+          41,
+          43
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/manipulation/var/rtagName.lil",
+        "bytes": 80,
+        "sha256": "ba6d5bbd2f0669b75137e17fb1f872e04dbde03fd30a7bce6351c63f8ef21612",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/manipulation/var/rscriptType.lil",
+        "bytes": 81,
+        "sha256": "8010826db0fdf9ae3511a2aba0c699503370829e13d35b7afa1cb96b49c31306",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/manipulation/wrapMap.lil",
+        "bytes": 658,
+        "sha256": "50be0d2498ec23fb76b6ab4782a30556f200aa4bb6aa1798e42da18ecd9c1c59",
+        "dependencies": [
+          40
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/manipulation/support.lil",
+        "bytes": 848,
+        "sha256": "2394435738466e613573dde25a41d254c9e02d0e176c067295542d9cdc9d9308",
+        "dependencies": [
+          12,
+          7
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/manipulation/getAll.lil",
+        "bytes": 603,
+        "sha256": "aec4198208253c8bf7df985363f838dc4a2ff5f19a8d1aa316952a4e9fa8d83e",
+        "dependencies": [
+          3,
+          2,
+          42
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/nodeName.lil",
+        "bytes": 163,
+        "sha256": "c60dcdf4a17fed511134f8182d5c24c3b7c9c6afb0da58fb7e18184c6dfe94c7",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/manipulation/setGlobalEval.lil",
+        "bytes": 318,
+        "sha256": "065dcb96cd34d681c5afc87b85efe2195cfb1b1193555fd66dc4dcf5242fe836",
+        "dependencies": [
+          24
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/selector.lil",
+        "bytes": 28544,
+        "sha256": "36c796a83dc90141e368cb924a9f4d60efb23de80ecb8a1c5958be2608d6feb1",
+        "dependencies": [
+          3,
+          2,
+          42,
+          12,
+          45,
+          46,
+          47,
+          29,
+          30,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/documentElement.lil",
+        "bytes": 156,
+        "sha256": "3599abd0804eec48951b52ca8200c148931a580370327da9211393eb90b90648",
+        "dependencies": [
+          12,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/whitespace.lil",
+        "bytes": 50,
+        "sha256": "8659cc14203bc043b0bf2ad8d2fea88a2ee7a8522f2dbdfe2bc8267858ee7345",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/rtrimCSS.lil",
+        "bytes": 160,
+        "sha256": "55351106044a1768ba6f014e2ceb4e82367386d0407c9d05c5eece7776d36c4f",
+        "dependencies": [
+          46
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/init.lil",
+        "bytes": 2307,
+        "sha256": "03b52c0229de1b8644e8439fd2a4588982f5b96c69497f7365aa74e58bac7049",
+        "dependencies": [
+          2,
+          12,
+          9,
+          35
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/traversing/findFilter.lil",
+        "bytes": 2502,
+        "sha256": "cdb1588459acaff0cd1b06270b168c03660e8ee2249dc4dd4df89ecba5ed1533",
+        "dependencies": [
+          2,
+          9,
+          50,
+          44,
+          29
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/traversing/var/rneedsContext.lil",
+        "bytes": 105,
+        "sha256": "faba810c412c335fe1639cfb72c69b8ac02f2251e8d7c786e289afc7b7ed8b8e",
+        "dependencies": [
+          44
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/traversing.lil",
+        "bytes": 4931,
+        "sha256": "8f3304cc9e141e480d20308697f8bdb9ec7cc78a9470ebad6b3111105583ca12",
+        "dependencies": [
+          2,
+          52,
+          53,
+          50,
+          42,
+          44,
+          48,
+          49,
+          29,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/traversing/var/dir.lil",
+        "bytes": 477,
+        "sha256": "904ef2334e1efc60b03d3a4c51767c3faef9b6b1cff2278dd85fc954e7a6df8f",
+        "dependencies": [
+          2
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/traversing/var/siblings.lil",
+        "bytes": 248,
+        "sha256": "ebcb6a6c12c5e1c9fb684676bb2914ec53292117862d1fde14240eeaa186bc98",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/attributes.lil",
+        "bytes": 167,
+        "sha256": "ad38c21e6860c38c3fb116a791289d2218c677a53a82c39cf0bf6ccb5c16a345",
+        "dependencies": [
+          2,
+          55,
+          57,
+          58,
+          60
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/attributes/attr.lil",
+        "bytes": 3664,
+        "sha256": "48a8f15b6c8bc481f94b58263e1d5109d1fc2bd77436f0a1eee9218a934874e6",
+        "dependencies": [
+          2,
+          20,
+          42,
+          56,
+          57,
+          15,
+          44
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/attributes/support.lil",
+        "bytes": 574,
+        "sha256": "f253f39aafd99406bb35280ac3247b67e1498654b0227f9c6df0f115dc6fa518",
+        "dependencies": [
+          12,
+          7
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/attributes/prop.lil",
+        "bytes": 3007,
+        "sha256": "773615558b6b003d444e020d957137ff04fc3b05b95975cece6b1a8429a7f7c5",
+        "dependencies": [
+          2,
+          20,
+          56,
+          44,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/attributes/classes.lil",
+        "bytes": 4233,
+        "sha256": "de07546a249089dfd92eab549bfa614abe5beba97369febbaaca7e9b9b970c69",
+        "dependencies": [
+          2,
+          59,
+          9,
+          15,
+          24
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/core/stripAndCollapse.lil",
+        "bytes": 251,
+        "sha256": "310a0aa297cc16238a1b84ec43b65f370fa786216b87ae630446a863692655e1",
+        "dependencies": [
+          15,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/attributes/val.lil",
+        "bytes": 4245,
+        "sha256": "9cabd9a8f853a92e1591d0ce82eacb4c25e89f5e444a15655061458788eefa10",
+        "dependencies": [
+          2,
+          59,
+          42,
+          56,
+          9,
+          44
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/event.lil",
+        "bytes": 33737,
+        "sha256": "1ef7d9a088a319ce96fb26e95a8cc6c794bafb36ea6fa34d5dd5dde9ca226286",
+        "dependencies": [
+          2,
+          12,
+          45,
+          15,
+          62,
+          9,
+          10,
+          21,
+          24,
+          42,
+          44,
+          29,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/rcheckableType.lil",
+        "bytes": 70,
+        "sha256": "6462c2cc575cad66f313f1a1afce7ad22ebfe54093b8f8cffe07d602c248f029",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/event/trigger.lil",
+        "bytes": 264,
+        "sha256": "a1fcd9a494775dd797e67cc9d4831ef37ff7de99c995edd41472f363a5079bef",
+        "dependencies": [
+          61
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/manipulation.lil",
+        "bytes": 12679,
+        "sha256": "f84ae19439f74aac9b3176ee01c696192ce7eeb3798248b82a800e738f121fcd",
+        "dependencies": [
+          2,
+          61,
+          49,
+          29,
+          31,
+          11,
+          42,
+          20,
+          65,
+          9,
+          62,
+          37,
+          38,
+          39,
+          41,
+          43,
+          36,
+          40,
+          24,
+          25,
+          21
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/flat.lil",
+        "bytes": 113,
+        "sha256": "05db02d5f1887db523b15cc901afcb32d407bdcaabf750ed5dba34a6330eefdf",
+        "dependencies": [
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/manipulation/_evalUrl.lil",
+        "bytes": 673,
+        "sha256": "684e0f3651b20cc14552c02825b3fa6f20b707824608eeb006a5591d859d1431",
+        "dependencies": [
+          2,
+          67,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/ajax.lil",
+        "bytes": 20523,
+        "sha256": "8f7a8965f316ace7304c6cc8c2f3036a16ce0c3a4a9432f0d3686beddd1b2e7d",
+        "dependencies": [
+          2,
+          16,
+          63,
+          13,
+          12,
+          9,
+          15,
+          68,
+          69,
+          70,
+          71,
+          32,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/serialize.lil",
+        "bytes": 3468,
+        "sha256": "da0b03c5fc61133ca8a95523d8eff37609f051d32f4b682049208116f1891568",
+        "dependencies": [
+          2,
+          14,
+          62,
+          9,
+          57
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/ajax/var/location.lil",
+        "bytes": 103,
+        "sha256": "a747b30dcc9c10260ad79887df70e3903b8e887a48232a2034c044b6a46435bc",
+        "dependencies": [
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/ajax/var/nonce.lil",
+        "bytes": 277,
+        "sha256": "bc8e4eb10d316e7f0efc22f42a23497dbe8c297a23da30d891750677a39544d5",
+        "dependencies": [
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/ajax/var/rquery.lil",
+        "bytes": 40,
+        "sha256": "0b13e40a35069d7b2206ac8e6680557fe2d44e54b281bf0ff6d049009cf598ac",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/wrap.lil",
+        "bytes": 1984,
+        "sha256": "bb0452cb87ad5a2aea6f3e67fa004827673ffe408c699b7b35e352d9954aaf82",
+        "dependencies": [
+          2,
+          9
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css.lil",
+        "bytes": 15619,
+        "sha256": "740b4229315f4636ef930da472c8501261dfc7c2abccbcca54dff5944cddfb67",
+        "dependencies": [
+          2,
+          20,
+          23,
+          42,
+          74,
+          76,
+          77,
+          78,
+          79,
+          80,
+          31,
+          81,
+          47,
+          82,
+          83,
+          84,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/rcssNum.lil",
+        "bytes": 112,
+        "sha256": "93cab48eae54bfaab41fb7e0e14290d66eb2a2d365f43d8ca099b64b35f84188",
+        "dependencies": [
+          75
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/var/pnum.lil",
+        "bytes": 64,
+        "sha256": "fc323e509d58117481e6ee6140dceb2a439faca765ea06f53b12016f4a2602b7",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/var/rnumnonpx.lil",
+        "bytes": 114,
+        "sha256": "e5d206d809ef1d263f1f3036ee8d45b7cf2d02d9a0ef563861c68aca0550923d",
+        "dependencies": [
+          75
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/var/rcustomProp.lil",
+        "bytes": 45,
+        "sha256": "11479289fa7670b7b4f54fb0b6553bcd1866ed026961daed7e3858a9b361b6bf",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/var/cssExpand.lil",
+        "bytes": 64,
+        "sha256": "c117e089aa4193000b1a3db0ae52db87549788d6cc19b55d04fa19b8bdda286c",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/var/getStyles.lil",
+        "bytes": 280,
+        "sha256": "8d08a85a4e6a5b16dc023dd4e58d86aa67eec52e5315da7478b808167522f425",
+        "dependencies": [
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/var/swap.lil",
+        "bytes": 365,
+        "sha256": "c2cf87cd5b549f2fd884b0b3c946b16a194c5960d39b6e6117ee9c0b09bb7630",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/var/rboxStyle.lil",
+        "bytes": 104,
+        "sha256": "1bd96e3cfe73f61671a62c97da807cca37c66c5e9aeae108632e640986b2ad5a",
+        "dependencies": [
+          78
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/addGetHookIf.lil",
+        "bytes": 304,
+        "sha256": "fc63e189854b7ca3e73b0bd2ee0df217175bc359ff77502487314c186e668870",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/support.lil",
+        "bytes": 3986,
+        "sha256": "cae70633990548ba478dd26ed13b1e1f3c54f415f38f12489003eb971f545f11",
+        "dependencies": [
+          12,
+          45,
+          7,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/finalPropName.lil",
+        "bytes": 830,
+        "sha256": "b8d8400bc28a3c79082b75ca84f0cca8ada424d0621416edffe53daea8e44186",
+        "dependencies": [
+          12,
+          2
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/adjustCSS.lil",
+        "bytes": 59,
+        "sha256": "a3a47e45841625ae1e73c7523aae4f9d745857170f49b508d0530b2c878856e1",
+        "dependencies": [
+          73
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/hiddenVisibleSelectors.lil",
+        "bytes": 393,
+        "sha256": "8e6c29ccca95f2e415c58543c02b2bceaa0ca48610ccee4502558ab1a4927f52",
+        "dependencies": [
+          2,
+          44
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/ajax/xhr.lil",
+        "bytes": 4043,
+        "sha256": "96990743aca6ad1c35790cc26d7eb34e372ca2de479d5e3a9d631434acae88f1",
+        "dependencies": [
+          2,
+          7,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/ajax/script.lil",
+        "bytes": 2312,
+        "sha256": "df0c74bde47cf669504feeacd59153edc3a1f9ca32acbbc97b9a78ad8f3b6be5",
+        "dependencies": [
+          2,
+          12
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/ajax/jsonp.lil",
+        "bytes": 3667,
+        "sha256": "f30e01942b73672701b87fa45a9c84092cafba9739932c09b1ba3df72eac3452",
+        "dependencies": [
+          2,
+          9,
+          70,
+          71,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/ajax/load.lil",
+        "bytes": 2624,
+        "sha256": "2f8fcf5a57132fddca6dba150c6ac4fd61d984356fc5adb131002c423dddbe50",
+        "dependencies": [
+          2,
+          59,
+          9,
+          34
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/effects.lil",
+        "bytes": 21779,
+        "sha256": "8987c81e7c3c4c1ccbe914030e9bffae517460af2deffac7b6ef67921d696706",
+        "dependencies": [
+          2,
+          23,
+          12,
+          9,
+          74,
+          15,
+          78,
+          92,
+          85,
+          24,
+          93,
+          73,
+          94,
+          16,
+          27,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/var/isHiddenWithinTree.lil",
+        "bytes": 469,
+        "sha256": "51c8f82f70ac3cad1889cd8c759946c0a8d080fe3bb14ef176d802a2327fa365",
+        "dependencies": [
+          31,
+          73
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/showHide.lil",
+        "bytes": 2357,
+        "sha256": "3ba9624563b60d76a9768dc8d3e4e6b5fe4085a0f12259de6629094513e0b82e",
+        "dependencies": [
+          2,
+          24,
+          73,
+          92
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/effects/Tween.lil",
+        "bytes": 5557,
+        "sha256": "49e199e0c9ebcc60593e76699f9a11856e4139bc84e9410e4a1565c00d59e410",
+        "dependencies": [
+          2,
+          73,
+          84,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/effects/animatedSelector.lil",
+        "bytes": 212,
+        "sha256": "915d29ba4303814d3252e6ecd6a1205cc4b8b79a4f1e591e3e94ca4bc99c3494",
+        "dependencies": [
+          2,
+          44
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/offset.lil",
+        "bytes": 5970,
+        "sha256": "bb92a790836df0fbdb742937a98aac7f07a07b56ed9413cf54a388b632f1cfc3",
+        "dependencies": [
+          2,
+          20,
+          45,
+          9,
+          10,
+          76,
+          97,
+          82,
+          83,
+          73,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/css/curCSS.lil",
+        "bytes": 53,
+        "sha256": "2e19f947c23fe71c9c6e3f21f29d721194bc9a51aee6f9adb1ae0dbeef144960",
+        "dependencies": [
+          73
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/dimensions.lil",
+        "bytes": 1672,
+        "sha256": "11aaa5627eb8ae6c8d2ffe8d481a062093eb36a90264d7289e32c1710498c904",
+        "dependencies": [
+          2,
+          20,
+          10,
+          73
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/deprecated.lil",
+        "bytes": 2032,
+        "sha256": "f4b2f9dedbf94e77e4d3fd6d183c5724a9b64e30807a9dc90552c4147de34cf0",
+        "dependencies": [
+          2,
+          42,
+          23,
+          14,
+          9,
+          10,
+          4
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/deprecated/ajax-event-alias.lil",
+        "bytes": 492,
+        "sha256": "b41661d2b5c65ea02d8293e562414ccfed9c5f567ffaf2aa8437d1b709886067",
+        "dependencies": [
+          2,
+          67,
+          61,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/deprecated/event.lil",
+        "bytes": 1649,
+        "sha256": "df9278ae5480232f7826dba0a7bd26e8f5cb85b5dda9ea8b100bcb4321b54d06",
+        "dependencies": [
+          2,
+          61
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/exports/amd.lil",
+        "bytes": 296,
+        "sha256": "c81e027bd2ab9b16f9f00aaf6b5d77c41759257a6e7dcb4a466432eca8ff9d9f",
+        "dependencies": [
+          2,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/jquerylil/src/exports/global.lil",
+        "bytes": 466,
+        "sha256": "b50a827455c316be6f602b3a992dce7a16783da99055fbb9107ff975181edb3e",
+        "dependencies": [
+          2,
+          8
+        ],
+        "dynamic_dependencies": []
+      }
+    ],
+    "host_modules": [
+      {
+        "specifier": "./js-host.ts",
+        "stem": "js-host",
+        "delivered_bytes": 6743,
+        "sha256": "aa9ac3726998caa7c75101737b82e78a032e84a449115193392f5b0e00230432",
+        "exports": [
+          [
+            "windowSelf",
+            "windowSelf"
+          ],
+          [
+            "windowDocument",
+            "windowDocument"
+          ],
+          [
+            "documentElementOf",
+            "documentElementOf"
+          ],
+          [
+            "objectToStringTag",
+            "objectToStringTag"
+          ],
+          [
+            "functionToString",
+            "functionToString"
+          ],
+          [
+            "objectHasOwn",
+            "objectHasOwn"
+          ],
+          [
+            "getPrototypeOf",
+            "getPrototypeOf"
+          ],
+          [
+            "typeOf",
+            "typeOf"
+          ],
+          [
+            "isNullish",
+            "isNullish"
+          ],
+          [
+            "isFalse",
+            "isFalse"
+          ],
+          [
+            "isUndefined",
+            "isUndefined"
+          ],
+          [
+            "stringify",
+            "stringify"
+          ],
+          [
+            "jsAssume",
+            "jsAssume"
+          ],
+          [
+            "createEmptyObject",
+            "createEmptyObject"
+          ],
+          [
+            "createNullProtoObject",
+            "createNullProtoObject"
+          ],
+          [
+            "createArray",
+            "createArray"
+          ],
+          [
+            "arrayPush",
+            "arrayPush"
+          ],
+          [
+            "arrayPop",
+            "arrayPop"
+          ],
+          [
+            "arraySlice",
+            "arraySlice"
+          ],
+          [
+            "arrayIndexOf",
+            "arrayIndexOf"
+          ],
+          [
+            "arraySort",
+            "arraySort"
+          ],
+          [
+            "arraySplice",
+            "arraySplice"
+          ],
+          [
+            "arrayConcatApply",
+            "arrayConcatApply"
+          ],
+          [
+            "arrayFlat",
+            "arrayFlat"
+          ],
+          [
+            "objectConstructor",
+            "objectConstructor"
+          ],
+          [
+            "arrayIsArray",
+            "arrayIsArray"
+          ],
+          [
+            "call0",
+            "call0"
+          ],
+          [
+            "call1",
+            "call1"
+          ],
+          [
+            "call2",
+            "call2"
+          ],
+          [
+            "call3",
+            "call3"
+          ],
+          [
+            "apply",
+            "apply"
+          ],
+          [
+            "isFunctionValue",
+            "isFunctionValue"
+          ],
+          [
+            "isWindowValue",
+            "isWindowValue"
+          ],
+          [
+            "objectKeys",
+            "objectKeys"
+          ],
+          [
+            "mathRandom",
+            "mathRandom"
+          ],
+          [
+            "stringReplace",
+            "stringReplace"
+          ],
+          [
+            "stringReplace2",
+            "stringReplace2"
+          ],
+          [
+            "stringMatch",
+            "stringMatch"
+          ],
+          [
+            "stringSplit",
+            "stringSplit"
+          ],
+          [
+            "arrayJoin",
+            "arrayJoin"
+          ],
+          [
+            "regexTest",
+            "regexTest"
+          ],
+          [
+            "regexExec",
+            "regexExec"
+          ],
+          [
+            "setProp",
+            "setProp"
+          ],
+          [
+            "getProp",
+            "getProp"
+          ],
+          [
+            "deleteProp",
+            "deleteProp"
+          ],
+          [
+            "objectBox",
+            "objectBox"
+          ],
+          [
+            "hasProp",
+            "hasProp"
+          ],
+          [
+            "defineIterator",
+            "defineIterator"
+          ],
+          [
+            "getArrayIterator",
+            "getArrayIterator"
+          ],
+          [
+            "noop",
+            "noop"
+          ],
+          [
+            "throwError",
+            "throwError"
+          ],
+          [
+            "throwTypeError",
+            "throwTypeError"
+          ],
+          [
+            "jsUndefined",
+            "jsUndefined"
+          ],
+          [
+            "UNDEFINED",
+            "UNDEFINED"
+          ],
+          [
+            "scheduleTimeout",
+            "scheduleTimeout"
+          ],
+          [
+            "call4",
+            "call4"
+          ],
+          [
+            "consoleWarn3",
+            "consoleWarn3"
+          ],
+          [
+            "nodeNameOf",
+            "nodeNameOf"
+          ],
+          [
+            "getNodeType",
+            "getNodeType"
+          ],
+          [
+            "getTextContent",
+            "getTextContent"
+          ],
+          [
+            "getNodeValue",
+            "getNodeValue"
+          ],
+          [
+            "getNamespaceURI",
+            "getNamespaceURI"
+          ],
+          [
+            "getOwnerDocument",
+            "getOwnerDocument"
+          ],
+          [
+            "objectCreate",
+            "objectCreate"
+          ],
+          [
+            "setLength",
+            "setLength"
+          ],
+          [
+            "newRegexp",
+            "newRegexp"
+          ],
+          [
+            "defineConfigurable",
+            "defineConfigurable"
+          ],
+          [
+            "unaryPlus",
+            "unaryPlus"
+          ],
+          [
+            "getAttribute",
+            "getAttribute"
+          ],
+          [
+            "setAttribute",
+            "setAttribute"
+          ],
+          [
+            "removeAttribute",
+            "removeAttribute"
+          ],
+          [
+            "createElement",
+            "createElement"
+          ],
+          [
+            "appendChild",
+            "appendChild"
+          ],
+          [
+            "matchesSelector",
+            "matchesSelector"
+          ],
+          [
+            "dateNow",
+            "dateNow"
+          ],
+          [
+            "parseIntRadix",
+            "parseIntRadix"
+          ],
+          [
+            "stringReplaceFirst",
+            "stringReplaceFirst"
+          ],
+          [
+            "addEventListener",
+            "addEventListener"
+          ],
+          [
+            "removeEventListener",
+            "removeEventListener"
+          ],
+          [
+            "debugLog",
+            "debugLog"
+          ],
+          [
+            "scheduleTimeoutMs",
+            "scheduleTimeoutMs"
+          ],
+          [
+            "clearTimeoutId",
+            "clearTimeoutId"
+          ],
+          [
+            "throwValue",
+            "throwValue"
+          ],
+          [
+            "arrayShift",
+            "arrayShift"
+          ],
+          [
+            "arrayUnshift",
+            "arrayUnshift"
+          ],
+          [
+            "stringSlice",
+            "stringSlice"
+          ],
+          [
+            "stringIndexOf",
+            "stringIndexOf"
+          ],
+          [
+            "newDOMParser",
+            "newDOMParser"
+          ],
+          [
+            "parseHexEscape",
+            "parseHexEscape"
+          ],
+          [
+            "stringFromCharCode1",
+            "stringFromCharCode1"
+          ],
+          [
+            "stringFromCharCode2",
+            "stringFromCharCode2"
+          ],
+          [
+            "mathRound",
+            "mathRound"
+          ],
+          [
+            "mathCeil",
+            "mathCeil"
+          ],
+          [
+            "mathMax",
+            "mathMax"
+          ],
+          [
+            "mathMin",
+            "mathMin"
+          ],
+          [
+            "mathCos",
+            "mathCos"
+          ],
+          [
+            "mathPI",
+            "mathPI"
+          ],
+          [
+            "requestAnimationFrameOrNull",
+            "requestAnimationFrameOrNull"
+          ],
+          [
+            "parseFloatValue",
+            "parseFloatValue"
+          ],
+          [
+            "isFiniteValue",
+            "isFiniteValue"
+          ],
+          [
+            "encodeURIComponentValue",
+            "encodeURIComponentValue"
+          ],
+          [
+            "newXMLHttpRequest",
+            "newXMLHttpRequest"
+          ]
+        ],
+        "imports": []
+      }
+    ],
+    "host_reserved": [
+      "Array",
+      "Date",
+      "Error",
+      "Function",
+      "Math",
+      "Number",
+      "Object",
+      "RegExp",
+      "String",
+      "Symbol",
+      "TypeError",
+      "console",
+      "encodeURIComponent",
+      "globalThis",
+      "isFinite",
+      "parseFloat",
+      "parseInt",
+      "undefined",
+      "window"
+    ]
+  },
+  "validation": {
+    "checks": 21,
+    "runs": [
+      {
+        "objective": "raw",
+        "suite": "compat",
+        "checks": 7,
+        "command": [
+          "node",
+          "--no-warnings",
+          "--experimental-loader",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/redirect-loader.mjs",
+          "--test",
+          "test/compat.test.mjs"
+        ],
+        "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/validation/raw/jquerylil/dist/index.mjs",
+        "ok": true
+      },
+      {
+        "objective": "gzip",
+        "suite": "compat",
+        "checks": 7,
+        "command": [
+          "node",
+          "--no-warnings",
+          "--experimental-loader",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/redirect-loader.mjs",
+          "--test",
+          "test/compat.test.mjs"
+        ],
+        "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/validation/gzip/jquerylil/dist/index.mjs",
+        "ok": true
+      },
+      {
+        "objective": "brotli",
+        "suite": "compat",
+        "checks": 7,
+        "command": [
+          "node",
+          "--no-warnings",
+          "--experimental-loader",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/redirect-loader.mjs",
+          "--test",
+          "test/compat.test.mjs"
+        ],
+        "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/validation/brotli/jquerylil/dist/index.mjs",
+        "ok": true
+      }
+    ],
+    "ok": true,
+    "scope": "Current independent main-entry builds; package-format tests are recorded separately."
+  },
+  "workLimit": 8000000000,
+  "timingScope": "One sequential fresh-output build per objective/minifier. Upstream timing is ESM bundling and minification, not original-repository source compilation."
+}

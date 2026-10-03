@@ -54,13 +54,37 @@ describe("@itslil/jquery vs jquery@3.7.1", () => {
     assert.deepEqual(run($l), run($u))
   })
 
-  it("ships the compiler-selected compact ESM, not a pretty-printed wrapper", async () => {
+  it("renders callback changes through the same public tween instance", () => {
+    const run = ($) => {
+      const object = { x: 0 }
+      const observations = []
+      let tween
+      tween = $.Tween(object, {
+        duration: 100,
+        step(now, current) {
+          observations.push([now, current.now, current === tween, this === object])
+          current.now = 99
+        }
+      }, "x", 10, "linear")
+      const returned = tween.run(0.5)
+      return { observations, rendered: object.x, now: tween.now, same: returned === tween }
+    }
+    const expected = { observations: [[5, 5, true, true]], rendered: 99, now: 99, same: true }
+    assert.deepEqual(run(loaded.official), expected)
+    assert.deepEqual(run(loaded.lil), expected)
+  })
+
+  it("ships compact ESM with the same default and named exports", async () => {
     const { readFileSync } = await import("node:fs")
     const esm = readFileSync(resolve(root, "dist/jquery.esm.js"), "utf8")
     assert.ok(esm.split("\n").length <= 3, "ESM must stay compact compiler output")
     assert.doesNotMatch(esm, /\/\/ jquery-measured/)
-    assert.match(esm, /export\{/)
-    assert.match(esm, /export default /)
+    // `export { binding as default }` and `export default binding` expose the
+    // same public value. Check the actual module contract, not one spelling.
+    const module = await import(pathToFileURL(resolve(root, "dist/jquery.esm.js")).href)
+    assert.equal(module.default, loaded.lil)
+    assert.equal(module.jQuery, loaded.lil)
+    assert.equal(module.$, loaded.lil)
   })
 
   it("loads from CommonJS", async () => {

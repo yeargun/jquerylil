@@ -1,184 +1,4 @@
 {
-  "pin": "jquery@3.7.1",
-  "package": "@itslil/jquery",
-  "node": "v24.11.1",
-  "codec": "lilscript-codec gzip-9 / brotli-11",
-  "warmupDiscard": 2,
-  "memory": {
-    "retainedRatio": 1.151668870589234
-  },
-  "size": [
-    {
-      "id": "officialDev",
-      "name": "Official jquery.js",
-      "raw": 285314,
-      "gzip9": 83619,
-      "brotli11": 69545,
-      "note": "published development artifact"
-    },
-    {
-      "id": "officialMin",
-      "name": "Official jquery.min.js",
-      "raw": 87533,
-      "gzip9": 30336,
-      "brotli11": 27445,
-      "note": "published minified artifact"
-    },
-    {
-      "id": "sourceTerser",
-      "name": "jQuery source ESM + Terser",
-      "raw": 87468,
-      "gzip9": 30497,
-      "brotli11": 27675,
-      "note": "jQuery's Git source at the 3.7.1 tag, bundled as ESM by esbuild and minified by Terser (site/esm-comparison/original.js)"
-    },
-    {
-      "id": "itslil",
-      "name": "@itslil/jquery",
-      "raw": 75922,
-      "gzip9": 28317,
-      "brotli11": 25452,
-      "note": "LilScript compiler output; the build adds only the license banner and `export default`",
-      "primary": true
-    }
-  ],
-  "bars": {
-    "source": "Measured with the Terser lane: jQuery's Git source at 3.7.1 (f79d5f1) bundled as one ESM by esbuild, then minified by each tool; comparison/source-build/esm.json.",
-    "lanes": [
-      {
-        "id": "esbuild",
-        "name": "jQuery source ESM + esbuild 0.28.1",
-        "raw": 88320,
-        "gzip9": 31538,
-        "brotli11": 28665
-      },
-      {
-        "id": "oxc",
-        "name": "jQuery source ESM + Oxc (Vite 8.2.1 minify)",
-        "raw": 87418,
-        "gzip9": 30562,
-        "brotli11": 27765
-      }
-    ]
-  },
-  "apps": [
-    {
-      "id": "todos",
-      "title": "Todos",
-      "jquery": {
-        "raw": 88623,
-        "gzip9": 31779,
-        "brotli11": 28847
-      },
-      "itslil": {
-        "raw": 74860,
-        "gzip9": 29356,
-        "brotli11": 26513
-      }
-    },
-    {
-      "id": "tabs",
-      "title": "Tabs",
-      "jquery": {
-        "raw": 88119,
-        "gzip9": 31540,
-        "brotli11": 28634
-      },
-      "itslil": {
-        "raw": 74386,
-        "gzip9": 29124,
-        "brotli11": 26347
-      }
-    },
-    {
-      "id": "search",
-      "title": "Search",
-      "jquery": {
-        "raw": 88385,
-        "gzip9": 31714,
-        "brotli11": 28737
-      },
-      "itslil": {
-        "raw": 74648,
-        "gzip9": 29270,
-        "brotli11": 26392
-      }
-    },
-    {
-      "id": "cart",
-      "title": "Cart",
-      "jquery": {
-        "raw": 88699,
-        "gzip9": 31833,
-        "brotli11": 28877
-      },
-      "itslil": {
-        "raw": 74936,
-        "gzip9": 29404,
-        "brotli11": 26568
-      }
-    },
-    {
-      "id": "accordion",
-      "title": "Accordion",
-      "jquery": {
-        "raw": 87947,
-        "gzip9": 31473,
-        "brotli11": 28548
-      },
-      "itslil": {
-        "raw": 74214,
-        "gzip9": 29054,
-        "brotli11": 26189
-      }
-    },
-    {
-      "id": "gallery",
-      "title": "Gallery",
-      "jquery": {
-        "raw": 88440,
-        "gzip9": 31750,
-        "brotli11": 28790
-      },
-      "itslil": {
-        "raw": 74689,
-        "gzip9": 29322,
-        "brotli11": 26474
-      }
-    }
-  ],
-  "throughput": [
-    {
-      "name": "core",
-      "officialMs": 794.81648,
-      "candidateMs": 860.969989,
-      "ratio": 1.0832311743208949
-    },
-    {
-      "name": "events",
-      "officialMs": 243.52906799999994,
-      "candidateMs": 170.628916,
-      "ratio": 0.7006511271993208
-    },
-    {
-      "name": "deferred",
-      "officialMs": 260.02005099999997,
-      "candidateMs": 130.486857,
-      "ratio": 0.5018338258844507
-    },
-    {
-      "name": "collection",
-      "officialMs": 17.366840000000025,
-      "candidateMs": 16.36127500000009,
-      "ratio": 0.9420985625479401
-    },
-    {
-      "name": "event-state",
-      "officialMs": 30.632814999999937,
-      "candidateMs": 26.115711999999917,
-      "ratio": 0.8525403884690314
-    }
-  ],
   "examples": [
     {
       "id": "todos",
@@ -211,22 +31,280 @@
       "blurb": "$.Deferred and $.when."
     }
   ],
-  "names": {
-    "artifact": "dist/jquery.raw.js",
-    "upstream": "jquery@3.7.1",
-    "propertyNames": 446,
-    "upstreamNames": 444,
-    "platformNames": [
-      "charAt",
-      "define"
+  "package": "@itslil/jquery",
+  "pin": "jquery@3.7.1",
+  "objectiveComparison": {
+    "schemaVersion": 4,
+    "name": "jquerylil",
+    "package": "@itslil/jquery",
+    "measuredAt": "2026-10-03T18:02:15.587797+03:00",
+    "compiler": {
+      "baseRevision": "f7d29bd9",
+      "binarySha256": "8ff44fabb92c949e68240ce6541038fd52e2f3c04d1a9ac470031e4238541c3a",
+      "hasLocalSourceChanges": true
+    },
+    "upstream": {
+      "package": "jquery",
+      "version": "3.7.1",
+      "external": [],
+      "sharedExports": [
+        "$",
+        "default",
+        "jQuery"
+      ],
+      "excludedExports": [],
+      "additionalExports": [],
+      "resolution": {
+        "platform": "neutral",
+        "conditions": [
+          "production"
+        ],
+        "mainFields": [
+          "module",
+          "main"
+        ],
+        "target": "es2020",
+        "defines": {
+          "process.env.NODE_ENV": "production"
+        },
+        "css": "excluded; measured JavaScript only"
+      }
+    },
+    "scope": "Browser jQuery singleton exposing the same default, jQuery and $ entry names. The comparison includes the complete main entry; API compatibility is limited to the recorded checks.",
+    "machine": {
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "logicalCpus": 8,
+      "memoryGiB": 15.6,
+      "os": "Linux-7.0.0-1014-azure-x86_64-with-glibc2.39",
+      "node": "v20.19.0"
+    },
+    "objectives": [
+      {
+        "objective": "raw",
+        "metric": "raw",
+        "lilscript": {
+          "artifact": "./comparison-artifacts/lilscript-raw.mjs",
+          "sizes": {
+            "raw": 73493,
+            "gzip9": 29098,
+            "brotli11": 26278
+          },
+          "sha256": "9775ceace75bdff1371354fb2328e7c54dc3c664f51c543efa6e670d0151e82a",
+          "buildSeconds": 81.13003568899876,
+          "config": "./comparison-artifacts/lilscript-raw.toml",
+          "configSha256": "aa01e8441a544d4672da279b33f6dc78298c9268fc9c88a917b2c440ea1ee302"
+        },
+        "original": {
+          "tool": "Oxc",
+          "version": "via Vite 8.2.1",
+          "artifact": "./comparison-artifacts/original-oxc.mjs",
+          "sizes": {
+            "raw": 87344,
+            "gzip9": 30540,
+            "brotli11": 27766
+          },
+          "sha256": "ac667507f1f8211af67b2da95e8c9ab59c463b140b494f28c75138f4dda4940f",
+          "buildSeconds": 0.22061806599999909
+        },
+        "ratio": 0.8414201318922879
+      },
+      {
+        "objective": "gzip",
+        "metric": "gzip9",
+        "lilscript": {
+          "artifact": "./comparison-artifacts/lilscript-gzip.mjs",
+          "sizes": {
+            "raw": 76538,
+            "gzip9": 28626,
+            "brotli11": 25780
+          },
+          "sha256": "f9988b75ec2467ce17584aaa8c4c3b918c1e2dd7a017c6a7891623eeb3968eed",
+          "buildSeconds": 70.99062472100195,
+          "config": "./comparison-artifacts/lilscript-gzip.toml",
+          "configSha256": "6256e63c673d4d8655c78753dd72daa8d4802097c751a0837f7952f0a2f333fc"
+        },
+        "original": {
+          "tool": "Terser",
+          "version": "5.51.2",
+          "artifact": "./comparison-artifacts/original-terser.mjs",
+          "sizes": {
+            "raw": 87403,
+            "gzip9": 30458,
+            "brotli11": 27631
+          },
+          "sha256": "6f4716e49340d4d7d2191f6d0370a0d423ff6c265febf760f5f9bc80c6d0a428",
+          "buildSeconds": 2.0994397549999992
+        },
+        "ratio": 0.9398515989231072
+      },
+      {
+        "objective": "brotli",
+        "metric": "brotli11",
+        "lilscript": {
+          "artifact": "./comparison-artifacts/lilscript-brotli.mjs",
+          "sizes": {
+            "raw": 76753,
+            "gzip9": 28795,
+            "brotli11": 25873
+          },
+          "sha256": "8a632730918d39862d52b5e3e1bed71aa548cd2e1e663b3ed0a1ba0f4618ce21",
+          "buildSeconds": 170.31063453901152,
+          "config": "./comparison-artifacts/lilscript-brotli.toml",
+          "configSha256": "18d3681a61a17e2e520351038b7df3795e8b5e3489879f4c3c51b710652380c3"
+        },
+        "original": {
+          "tool": "Terser",
+          "version": "5.51.2",
+          "artifact": "./comparison-artifacts/original-terser.mjs",
+          "sizes": {
+            "raw": 87403,
+            "gzip9": 30458,
+            "brotli11": 27631
+          },
+          "sha256": "6f4716e49340d4d7d2191f6d0370a0d423ff6c265febf760f5f9bc80c6d0a428",
+          "buildSeconds": 2.0994397549999992
+        },
+        "ratio": 0.9363758097788716
+      }
     ],
-    "leakedNames": [],
-    "propertyNameBytes": 15907,
-    "distinctIdentifiers": 898,
-    "shortIdentifiers": 351,
-    "exports": [
-      "$",
-      "jQuery"
-    ]
+    "minifiers": [
+      {
+        "tool": "Terser",
+        "version": "5.51.2",
+        "artifact": "./comparison-artifacts/original-terser.mjs",
+        "sizes": {
+          "raw": 87403,
+          "gzip9": 30458,
+          "brotli11": 27631
+        },
+        "sha256": "6f4716e49340d4d7d2191f6d0370a0d423ff6c265febf760f5f9bc80c6d0a428",
+        "buildSeconds": 2.0994397549999992
+      },
+      {
+        "tool": "esbuild",
+        "version": "0.28.1",
+        "artifact": "./comparison-artifacts/original-esbuild.mjs",
+        "sizes": {
+          "raw": 88230,
+          "gzip9": 31490,
+          "brotli11": 28627
+        },
+        "sha256": "7853b6ca49d5b27540f6a3d12019438317d7c3420055942466df94549fce8bdc",
+        "buildSeconds": 0.09429710200000045
+      },
+      {
+        "tool": "Oxc",
+        "version": "via Vite 8.2.1",
+        "artifact": "./comparison-artifacts/original-oxc.mjs",
+        "sizes": {
+          "raw": 87344,
+          "gzip9": 30540,
+          "brotli11": 27766
+        },
+        "sha256": "ac667507f1f8211af67b2da95e8c9ab59c463b140b494f28c75138f4dda4940f",
+        "buildSeconds": 0.22061806599999909
+      }
+    ],
+    "validation": {
+      "checks": 21,
+      "runs": [
+        {
+          "objective": "raw",
+          "suite": "compat",
+          "checks": 7,
+          "command": [
+            "node",
+            "--no-warnings",
+            "--experimental-loader",
+            "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/redirect-loader.mjs",
+            "--test",
+            "test/compat.test.mjs"
+          ],
+          "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/validation/raw/jquerylil/dist/index.mjs",
+          "ok": true
+        },
+        {
+          "objective": "gzip",
+          "suite": "compat",
+          "checks": 7,
+          "command": [
+            "node",
+            "--no-warnings",
+            "--experimental-loader",
+            "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/redirect-loader.mjs",
+            "--test",
+            "test/compat.test.mjs"
+          ],
+          "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/validation/gzip/jquerylil/dist/index.mjs",
+          "ok": true
+        },
+        {
+          "objective": "brotli",
+          "suite": "compat",
+          "checks": 7,
+          "command": [
+            "node",
+            "--no-warnings",
+            "--experimental-loader",
+            "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/redirect-loader.mjs",
+            "--test",
+            "test/compat.test.mjs"
+          ],
+          "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/validation/brotli/jquerylil/dist/index.mjs",
+          "ok": true
+        }
+      ],
+      "ok": true,
+      "scope": "Current independent main-entry builds; package-format tests are recorded separately."
+    },
+    "originalValidation": {
+      "checks": 21,
+      "runs": [
+        {
+          "minifier": "terser",
+          "checks": 7,
+          "ok": true,
+          "command": [
+            "node",
+            "--no-warnings",
+            "--experimental-loader",
+            "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/redirect-loader.mjs",
+            "--test",
+            "test/compat.test.mjs"
+          ]
+        },
+        {
+          "minifier": "esbuild",
+          "checks": 7,
+          "ok": true,
+          "command": [
+            "node",
+            "--no-warnings",
+            "--experimental-loader",
+            "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/redirect-loader.mjs",
+            "--test",
+            "test/compat.test.mjs"
+          ]
+        },
+        {
+          "minifier": "oxc",
+          "checks": 7,
+          "ok": true,
+          "command": [
+            "node",
+            "--no-warnings",
+            "--experimental-loader",
+            "/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/redirect-loader.mjs",
+            "--test",
+            "test/compat.test.mjs"
+          ]
+        }
+      ]
+    }
+  },
+  "spec": {
+    "pass": 21,
+    "total": 21,
+    "label": "current main-entry checks"
   }
 }

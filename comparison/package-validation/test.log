@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: @itslil/jquery vs jquery@3.7.1
+    # Subtest: exports the 3.7.1 surface
+    ok 1 - exports the 3.7.1 surface
+      ---
+      duration_ms: 0.871953
+      ...
+    # Subtest: matches core utilities
+    ok 2 - matches core utilities
+      ---
+      duration_ms: 0.904946
+      ...
+    # Subtest: matches Deferred resolve/reject
+    ok 3 - matches Deferred resolve/reject
+      ---
+      duration_ms: 0.691075
+      ...
+    # Subtest: renders callback changes through the same public tween instance
+    ok 4 - renders callback changes through the same public tween instance
+      ---
+      duration_ms: 0.556503
+      ...
+    # Subtest: ships compact ESM with the same default and named exports
+    ok 5 - ships compact ESM with the same default and named exports
+      ---
+      duration_ms: 1.333719
+      ...
+    # Subtest: loads from CommonJS
+    ok 6 - loads from CommonJS
+      ---
+      duration_ms: 9.238892
+      ...
+    # Subtest: selects, classes, and events
+    ok 7 - selects, classes, and events
+      ---
+      duration_ms: 6.577825
+      ...
+    1..7
+ok 1 - @itslil/jquery vs jquery@3.7.1
+  ---
+  duration_ms: 21.611745
+  type: 'suite'
+  ...
+1..1
+# tests 7
+# suites 1
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 863.396435
